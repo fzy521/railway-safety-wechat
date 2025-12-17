@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风险评估系统 - 梁邹铁路专用线</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .risk-matrix-cell {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .risk-matrix-cell:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold text-gray-800">梁邹铁路专用线</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-800 transition-colors">安全监控</a>
+                    <a href="risk-assessment.html" class="text-blue-800 font-medium border-b-2 border-blue-800 pb-1">风险评估</a>
+                    <a href="incident-report.html" class="text-gray-600 hover:text-blue-800 transition-colors">事故报告</a>
+                    <a href="training-management.html" class="text-gray-600 hover:text-blue-800 transition-colors">培训管理</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="pt-16">
+        <!-- 标题区域 -->
+        <div class="bg-gradient-to-r from-orange-600 to-red-600 text-white py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="hero-title text-4xl font-bold mb-4">风险评估管理系统</h1>
+                    <p class="text-xl text-orange-100">识别、分析、评估和控制运营风险，确保铁路专用线安全运行</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- 统计概览 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">已识别风险</p>
+                            <p class="text-3xl font-bold text-blue-600" id="total-risks">24</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">本月新增 <span class="text-blue-500">+3</span></p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">高风险项</p>
+                            <p class="text-3xl font-bold text-red-600" id="high-risks">5</p>
+                        </div>
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">需立即处理</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">已解决风险</p>
+                            <p class="text-3xl font-bold text-green-600" id="resolved-risks">16</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">解决率 <span class="text-green-500">66.7%</span></p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">风险等级</p>
+                            <p class="text-3xl font-bold text-yellow-600" id="risk-level">中等</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">整体评估</p>
+                </div>
+            </div>
+
+            <!-- 主要内容网格 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 左侧：风险录入和管理 -->
+                <div class="space-y-8">
+                    <!-- 风险录入表单 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">风险识别录入</h3>
+                        <form id="risk-form" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">风险位置</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-location">
+                                        <option value="">请选择位置</option>
+                                        <option value="A站">A站</option>
+                                        <option value="B站">B站</option>
+                                        <option value="C站">C站</option>
+                                        <option value="D站">D站</option>
+                                        <option value="轨道区间1">轨道区间1</option>
+                                        <option value="轨道区间2">轨道区间2</option>
+                                        <option value="信号系统">信号系统</option>
+                                        <option value="通信系统">通信系统</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">风险类型</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-type">
+                                        <option value="">请选择类型</option>
+                                        <option value="设备故障">设备故障</option>
+                                        <option value="人为因素">人为因素</option>
+                                        <option value="环境因素">环境因素</option>
+                                        <option value="管理缺陷">管理缺陷</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">可能性</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-probability">
+                                        <option value="">请选择</option>
+                                        <option value="1">极低</option>
+                                        <option value="2">低</option>
+                                        <option value="3">中等</option>
+                                        <option value="4">高</option>
+                                        <option value="5">极高</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">严重性</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-severity">
+                                        <option value="">请选择</option>
+                                        <option value="1">轻微</option>
+                                        <option value="2">一般</option>
+                                        <option value="3">较重</option>
+                                        <option value="4">严重</option>
+                                        <option value="5">特别严重</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">风险描述</label>
+                                <textarea class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-description" rows="3" placeholder="请详细描述风险情况..."></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">发现人</label>
+                                <input type="text" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-reporter" placeholder="请输入发现人姓名">
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                                提交风险信息
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 风险列表 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">风险清单</h3>
+                            <div class="flex space-x-2">
+                                <select class="px-3 py-1 border border-gray-300 rounded text-sm" id="risk-filter">
+                                    <option value="">全部状态</option>
+                                    <option value="pending">待处理</option>
+                                    <option value="processing">处理中</option>
+                                    <option value="resolved">已解决</option>
+                                </select>
+                                <input type="text" placeholder="搜索..." class="px-3 py-1 border border-gray-300 rounded text-sm" id="risk-search">
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3" id="risk-list">
+                            <!-- 风险项目将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：风险分析和图表 -->
+                <div class="space-y-8">
+                    <!-- 风险矩阵 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">风险矩阵分析</h3>
+                        <div id="risk-matrix" class="h-80"></div>
+                    </div>
+
+                    <!-- 风险趋势 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">风险趋势分析</h3>
+                        <div id="risk-trend" class="h-64"></div>
+                    </div>
+
+                    <!-- 风险统计 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">风险分布统计</h3>
+                        <div id="risk-distribution" class="h-64"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 风险处理流程 -->
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">风险处理流程</h3>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-800">风险识别</p>
+                            <p class="text-sm text-gray-600">发现潜在风险点</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-4"></div>
+                    
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-800">风险评估</p>
+                            <p class="text-sm text-gray-600">分析风险等级</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-4"></div>
+                    
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-800">制定措施</p>
+                            <p class="text-sm text-gray-600">设计控制方案</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-4"></div>
+                    
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-800">实施监控</p>
+                            <p class="text-sm text-gray-600">执行并监控</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm text-gray-400">&copy; 2025 梁邹铁路专用线运营安全监控系统. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 风险评估页面专用JavaScript
+        const riskData = {
+            risks: [
+                {
+                    id: 1,
+                    location: 'A站',
+                    type: '设备故障',
+                    description: '信号设备老化，存在故障风险',
+                    probability: 3,
+                    severity: 4,
+                    level: '高风险',
+                    status: 'pending',
+                    reporter: '张三',
+                    date: '2025-12-10',
+                    measures: '计划下月更换设备'
+                },
+                {
+                    id: 2,
+                    location: '轨道区间1',
+                    type: '环境因素',
+                    description: '近期降雨频繁，轨道湿滑',
+                    probability: 4,
+                    severity: 3,
+                    level: '中高风险',
+                    status: 'processing',
+                    reporter: '李四',
+                    date: '2025-12-08',
+                    measures: '加强巡检，及时清理'
+                },
+                {
+                    id: 3,
+                    location: 'B站',
+                    type: '人为因素',
+                    description: '新员工操作不熟练',
+                    probability: 2,
+                    severity: 3,
+                    level: '中等风险',
+                    status: 'resolved',
+                    reporter: '王五',
+                    date: '2025-12-05',
+                    measures: '加强培训，安排师傅指导'
+                }
+            ],
+            trendData: [
+                { month: '2025-01', high: 2, medium: 5, low: 8 },
+                { month: '2025-02', high: 1, medium: 4, low: 7 },
+                { month: '2025-03', high: 3, medium: 6, low: 9 },
+                { month: '2025-04', high: 2, medium: 5, low: 8 },
+                { month: '2025-05', high: 4, medium: 7, low: 10 },
+                { month: '2025-06', high: 3, medium: 6, low: 9 },
+                { month: '2025-07', high: 2, medium: 5, low: 8 },
+                { month: '2025-08', high: 1, medium: 4, low: 7 },
+                { month: '2025-09', high: 2, medium: 5, low: 8 },
+                { month: '2025-10', high: 3, medium: 6, low: 9 },
+                { month: '2025-11', high: 4, medium: 7, low: 10 },
+                { month: '2025-12', high: 5, medium: 8, low: 11 }
+            ]
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initRiskMatrix();
+            initRiskTrend();
+            initRiskDistribution();
+            renderRiskList();
+            bindEvents();
+        });
+
+        // 初始化风险矩阵
+        function initRiskMatrix() {
+            const matrixChart = echarts.init(document.getElementById('risk-matrix'));
+            
+            const data = [];
+            for (let i = 1; i <= 5; i++) {
+                for (let j = 1; j <= 5; j++) {
+                    let level = '';
+                    let color = '';
+                    if (i * j <= 6) {
+                        level = '低风险';
+                        color = '#10b981';
+                    } else if (i * j <= 12) {
+                        level = '中等风险';
+                        color = '#f59e0b';
+                    } else {
+                        level = '高风险';
+                        color = '#ef4444';
+                    }
+                    data.push([j, i, level, color, i * j]);
+                }
+            }
+
+            const option = {
+                tooltip: {
+                    position: 'top',
+                    formatter: function(params) {
+                        return `可能性: ${params.data[0]}<br/>严重性: ${params.data[1]}<br/>等级: ${params.data[2]}`;
+                    }
+                },
+                grid: {
+                    height: '70%',
+                    top: '10%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['极低', '低', '中等', '高', '极高'],
+                    splitArea: {
+                        show: true
+                    },
+                    axisLabel: {
+                        color: '#64748b'
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: ['轻微', '一般', '较重', '严重', '特别严重'],
+                    splitArea: {
+                        show: true
+                    },
+                    axisLabel: {
+                        color: '#64748b'
+                    }
+                },
+                visualMap: {
+                    min: 1,
+                    max: 25,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '5%',
+                    inRange: {
+                        color: ['#10b981', '#f59e0b', '#ef4444']
+                    }
+                },
+                series: [{
+                    name: '风险矩阵',
+                    type: 'heatmap',
+                    data: data.map(item => [item[0]-1, item[1]-1, item[4]]),
+                    label: {
+                        show: true,
+                        formatter: function(params) {
+                            return data[params.dataIndex][2];
+                        }
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+
+            matrixChart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                matrixChart.resize();
+            });
+        }
+
+        // 初始化风险趋势图
+        function initRiskTrend() {
+            const trendChart = echarts.init(document.getElementById('risk-trend'));
+            
+            const months = riskData.trendData.map(item => item.month);
+            const highRisks = riskData.trendData.map(item => item.high);
+            const mediumRisks = riskData.trendData.map(item => item.medium);
+            const lowRisks = riskData.trendData.map(item => item.low);
+            
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                },
+                legend: {
+                    data: ['高风险', '中等风险', '低风险'],
+                    top: 10
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: months,
+                    axisLabel: {
+                        color: '#64748b'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        color: '#64748b'
+                    }
+                },
+                series: [
+                    {
+                        name: '高风险',
+                        type: 'line',
+                        data: highRisks,
+                        smooth: true,
+                        lineStyle: { color: '#ef4444', width: 3 },
+                        itemStyle: { color: '#ef4444' },
+                        areaStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0, y: 0, x2: 0, y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(239, 68, 68, 0.3)' },
+                                    { offset: 1, color: 'rgba(239, 68, 68, 0.05)' }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        name: '中等风险',
+                        type: 'line',
+                        data: mediumRisks,
+                        smooth: true,
+                        lineStyle: { color: '#f59e0b', width: 3 },
+                        itemStyle: { color: '#f59e0b' },
+                        areaStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0, y: 0, x2: 0, y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(245, 158, 11, 0.3)' },
+                                    { offset: 1, color: 'rgba(245, 158, 11, 0.05)' }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        name: '低风险',
+                        type: 'line',
+                        data: lowRisks,
+                        smooth: true,
+                        lineStyle: { color: '#10b981', width: 3 },
+                        itemStyle: { color: '#10b981' },
+                        areaStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0, y: 0, x2: 0, y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
+                                    { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            };
+            
+            trendChart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                trendChart.resize();
+            });
+        }
+
+        // 初始化风险分布统计
+        function initRiskDistribution() {
+            const distributionChart = echarts.init(document.getElementById('risk-distribution'));
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: { color: '#64748b' }
+                },
+                series: [
+                    {
+                        name: '风险类型分布',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['60%', '50%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: { show: false },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 16,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        data: [
+                            { value: 35, name: '设备故障', itemStyle: { color: '#ef4444' } },
+                            { value: 25, name: '人为因素', itemStyle: { color: '#f97316' } },
+                            { value: 20, name: '环境因素', itemStyle: { color: '#eab308' } },
+                            { value: 15, name: '管理缺陷', itemStyle: { color: '#3b82f6' } },
+                            { value: 5, name: '其他', itemStyle: { color: '#6b7280' } }
+                        ]
+                    }
+                ]
+            };
+            
+            distributionChart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                distributionChart.resize();
+            });
+        }
+
+        // 渲染风险列表
+        function renderRiskList() {
+            const riskList = document.getElementById('risk-list');
+            const filter = document.getElementById('risk-filter').value;
+            const search = document.getElementById('risk-search').value.toLowerCase();
+            
+            let filteredRisks = riskData.risks;
+            
+            // 应用筛选
+            if (filter) {
+                filteredRisks = filteredRisks.filter(risk => risk.status === filter);
+            }
+            
+            if (search) {
+                filteredRisks = filteredRisks.filter(risk => 
+                    risk.location.toLowerCase().includes(search) ||
+                    risk.type.toLowerCase().includes(search) ||
+                    risk.description.toLowerCase().includes(search)
+                );
+            }
+            
+            riskList.innerHTML = filteredRisks.map(risk => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 text-xs rounded-full ${getRiskLevelColor(risk.level)}">${risk.level}</span>
+                            <span class="text-sm font-medium text-gray-800">${risk.location}</span>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(risk.status)}">${getStatusText(risk.status)}</span>
+                    </div>
+                    <p class="text-sm text-gray-700 mb-2">${risk.description}</p>
+                    <div class="flex justify-between items-center text-xs text-gray-500">
+                        <span>类型: ${risk.type}</span>
+                        <span>发现人: ${risk.reporter}</span>
+                        <span>日期: ${risk.date}</span>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-600">
+                        <span>措施: ${risk.measures}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取风险等级颜色
+        function getRiskLevelColor(level) {
+            if (level.includes('高')) return 'bg-red-100 text-red-800';
+            if (level.includes('中')) return 'bg-yellow-100 text-yellow-800';
+            return 'bg-green-100 text-green-800';
+        }
+
+        // 获取状态颜色
+        function getStatusColor(status) {
+            switch (status) {
+                case 'pending': return 'bg-orange-100 text-orange-800';
+                case 'processing': return 'bg-blue-100 text-blue-800';
+                case 'resolved': return 'bg-green-100 text-green-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return '待处理';
+                case 'processing': return '处理中';
+                case 'resolved': return '已解决';
+                default: return '未知';
+            }
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 表单提交
+            document.getElementById('risk-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    location: document.getElementById('risk-location').value,
+                    type: document.getElementById('risk-type').value,
+                    probability: document.getElementById('risk-probability').value,
+                    severity: document.getElementById('risk-severity').value,
+                    description: document.getElementById('risk-description').value,
+                    reporter: document.getElementById('risk-reporter').value
+                };
+                
+                if (!formData.location || !formData.type || !formData.probability || !formData.severity || !formData.description || !formData.reporter) {
+                    alert('请填写完整的风险信息');
+                    return;
+                }
+                
+                // 计算风险等级
+                const riskScore = formData.probability * formData.severity;
+                let level = '';
+                if (riskScore <= 6) {
+                    level = '低风险';
+                } else if (riskScore <= 12) {
+                    level = '中等风险';
+                } else {
+                    level = '高风险';
+                }
+                
+                // 添加新风险
+                const newRisk = {
+                    id: riskData.risks.length + 1,
+                    location: formData.location,
+                    type: formData.type,
+                    description: formData.description,
+                    probability: parseInt(formData.probability),
+                    severity: parseInt(formData.severity),
+                    level: level,
+                    status: 'pending',
+                    reporter: formData.reporter,
+                    date: new Date().toISOString().split('T')[0],
+                    measures: '待制定'
+                };
+                
+                riskData.risks.unshift(newRisk);
+                renderRiskList();
+                
+                // 重置表单
+                document.getElementById('risk-form').reset();
+                
+                // 显示成功消息
+                alert('风险信息已提交成功！');
+            });
+            
+            // 筛选和搜索
+            document.getElementById('risk-filter').addEventListener('change', renderRiskList);
+            document.getElementById('risk-search').addEventListener('input', renderRiskList);
+        }
+
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            anime({
+                targets: '.card-hover',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事故报告管理 - 梁邹铁路专用线</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background-color: #3b82f6;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.8125rem;
+            top: 1.25rem;
+            width: 0.125rem;
+            height: calc(100% - 1.25rem);
+            background-color: #e5e7eb;
+        }
+        .timeline-item:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold text-gray-800">梁邹铁路专用线</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-800 transition-colors">安全监控</a>
+                    <a href="risk-assessment.html" class="text-gray-600 hover:text-blue-800 transition-colors">风险评估</a>
+                    <a href="incident-report.html" class="text-blue-800 font-medium border-b-2 border-blue-800 pb-1">事故报告</a>
+                    <a href="training-management.html" class="text-gray-600 hover:text-blue-800 transition-colors">培训管理</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="pt-16">
+        <!-- 标题区域 -->
+        <div class="bg-gradient-to-r from-red-600 to-orange-600 text-white py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="hero-title text-4xl font-bold mb-4">事故报告管理系统</h1>
+                    <p class="text-xl text-red-100">规范事故报告流程，确保及时响应和有效处理</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- 统计概览 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">本月事故</p>
+                            <p class="text-3xl font-bold text-red-600" id="monthly-incidents">3</p>
+                        </div>
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">较上月 <span class="text-red-500">+1</span></p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">处理中</p>
+                            <p class="text-3xl font-bold text-orange-600" id="processing-incidents">2</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">需跟进</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">已结案</p>
+                            <p class="text-3xl font-bold text-green-600" id="closed-incidents">8</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">结案率 <span class="text-green-500">72.7%</span></p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">平均处理时间</p>
+                            <p class="text-3xl font-bold text-blue-600" id="avg-process-time">4.2天</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">目标 5天</p>
+                </div>
+            </div>
+
+            <!-- 主要内容网格 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 左侧：事故报告和列表 -->
+                <div class="space-y-8">
+                    <!-- 事故报告表单 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">事故报告录入</h3>
+                        <form id="incident-form" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">事故发生时间</label>
+                                    <input type="datetime-local" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-time" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">事故地点</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-location" required>
+                                        <option value="">请选择地点</option>
+                                        <option value="A站">A站</option>
+                                        <option value="B站">B站</option>
+                                        <option value="C站">C站</option>
+                                        <option value="D站">D站</option>
+                                        <option value="轨道区间1">轨道区间1</option>
+                                        <option value="轨道区间2">轨道区间2</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">事故类型</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-type" required>
+                                        <option value="">请选择类型</option>
+                                        <option value="列车冲突">列车冲突</option>
+                                        <option value="列车脱轨">列车脱轨</option>
+                                        <option value="信号故障">信号故障</option>
+                                        <option value="设备故障">设备故障</option>
+                                        <option value="人员伤亡">人员伤亡</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">严重程度</label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-severity" required>
+                                        <option value="">请选择</option>
+                                        <option value="一般事故">一般事故</option>
+                                        <option value="险性事故">险性事故</option>
+                                        <option value="大事故">大事故</option>
+                                        <option value="重大事故">重大事故</option>
+                                        <option value="特别重大事故">特别重大事故</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">事故描述</label>
+                                <textarea class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-description" rows="3" placeholder="请详细描述事故经过..." required></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">报告人</label>
+                                    <input type="text" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-reporter" placeholder="请输入报告人姓名" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">联系电话</label>
+                                    <input type="tel" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-phone" placeholder="请输入联系电话">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">初步原因分析</label>
+                                <textarea class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" id="incident-cause" rows="2" placeholder="请简要分析事故原因..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors font-medium">
+                                提交事故报告
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 事故列表 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">事故报告列表</h3>
+                            <div class="flex space-x-2">
+                                <select class="px-3 py-1 border border-gray-300 rounded text-sm" id="incident-filter">
+                                    <option value="">全部状态</option>
+                                    <option value="pending">待处理</option>
+                                    <option value="investigating">调查中</option>
+                                    <option value="processing">处理中</option>
+                                    <option value="closed">已结案</option>
+                                </select>
+                                <input type="text" placeholder="搜索..." class="px-3 py-1 border border-gray-300 rounded text-sm" id="incident-search">
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3" id="incident-list">
+                            <!-- 事故项目将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：事故分析和图表 -->
+                <div class="space-y-8">
+                    <!-- 事故分类统计 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">事故分类统计</h3>
+                        <div id="incident-category-chart" class="h-64"></div>
+                    </div>
+
+                    <!-- 事故趋势分析 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">事故趋势分析</h3>
+                        <div id="incident-trend-chart" class="h-64"></div>
+                    </div>
+
+                    <!-- 事故处理时间分析 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">处理时间分析</h3>
+                        <div id="process-time-chart" class="h-64"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 事故调查流程 -->
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">事故调查流程</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-2">
+                            <span class="text-xl font-bold">1</span>
+                        </div>
+                        <h4 class="font-medium text-gray-800">事故报告</h4>
+                        <p class="text-sm text-gray-600">立即报告事故</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-2">
+                            <span class="text-xl font-bold">2</span>
+                        </div>
+                        <h4 class="font-medium text-gray-800">现场保护</h4>
+                        <p class="text-sm text-gray-600">保护事故现场</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-yellow-500 text-white rounded-full flex items-center justify-center mx-auto mb-2">
+                            <span class="text-xl font-bold">3</span>
+                        </div>
+                        <h4 class="font-medium text-gray-800">调查取证</h4>
+                        <p class="text-sm text-gray-600">收集证据材料</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-2">
+                            <span class="text-xl font-bold">4</span>
+                        </div>
+                        <h4 class="font-medium text-gray-800">原因分析</h4>
+                        <p class="text-sm text-gray-600">分析事故原因</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-2">
+                            <span class="text-xl font-bold">5</span>
+                        </div>
+                        <h4 class="font-medium text-gray-800">整改措施</h4>
+                        <p class="text-sm text-gray-600">制定改进措施</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm text-gray-400">&copy; 2025 梁邹铁路专用线运营安全监控系统. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 事故报告管理页面专用JavaScript
+        const incidentData = {
+            incidents: [
+                {
+                    id: 1,
+                    time: '2025-12-10T08:30',
+                    location: 'A站',
+                    type: '信号故障',
+                    severity: '一般事故',
+                    description: 'A站信号机显示异常，导致列车临时停车',
+                    reporter: '张三',
+                    phone: '138****1234',
+                    cause: '信号设备老化，电路接触不良',
+                    status: 'processing',
+                    processTime: 3.5,
+                    measures: '更换信号设备，加强日常维护'
+                },
+                {
+                    id: 2,
+                    time: '2025-12-08T14:20',
+                    location: '轨道区间1',
+                    type: '设备故障',
+                    severity: '险性事故',
+                    description: '轨道电路故障，影响列车正常运行',
+                    reporter: '李四',
+                    phone: '139****5678',
+                    cause: '轨道电路绝缘破损',
+                    status: 'closed',
+                    processTime: 2.1,
+                    measures: '修复绝缘，定期检查'
+                },
+                {
+                    id: 3,
+                    time: '2025-12-05T16:45',
+                    location: 'B站',
+                    type: '人为因素',
+                    severity: '一般事故',
+                    description: '操作人员误操作，导致设备异常',
+                    reporter: '王五',
+                    phone: '137****9012',
+                    cause: '操作人员培训不足，操作不熟练',
+                    status: 'closed',
+                    processTime: 1.8,
+                    measures: '加强人员培训，完善操作规程'
+                }
+            ],
+            trendData: [
+                { month: '2025-01', count: 2, resolved: 2 },
+                { month: '2025-02', count: 1, resolved: 1 },
+                { month: '2025-03', count: 3, resolved: 2 },
+                { month: '2025-04', count: 2, resolved: 3 },
+                { month: '2025-05', count: 4, resolved: 3 },
+                { month: '2025-06', count: 3, resolved: 4 },
+                { month: '2025-07', count: 2, resolved: 2 },
+                { month: '2025-08', count: 1, resolved: 1 },
+                { month: '2025-09', count: 2, resolved: 2 },
+                { month: '2025-10', count: 3, resolved: 3 },
+                { month: '2025-11', count: 4, resolved: 3 },
+                { month: '2025-12', count: 3, resolved: 2 }
+            ]
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initIncidentCategoryChart();
+            initIncidentTrendChart();
+            initProcessTimeChart();
+            renderIncidentList();
+            bindEvents();
+        });
+
+        // 初始化事故分类统计图表
+        function initIncidentCategoryChart() {
+            const categoryChart = echarts.init(document.getElementById('incident-category-chart'));
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: { color: '#64748b' }
+                },
+                series: [
+                    {
+                        name: '事故类型',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['60%', '50%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: { show: false },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 16,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        data: [
+                            { value: 30, name: '信号故障', itemStyle: { color: '#ef4444' } },
+                            { value: 25, name: '设备故障', itemStyle: { color: '#f97316' } },
+                            { value: 20, name: '人为因素', itemStyle: { color: '#eab308' } },
+                            { value: 15, name: '环境因素', itemStyle: { color: '#3b82f6' } },
+                            { value: 10, name: '其他', itemStyle: { color: '#6b7280' } }
+                        ]
+                    }
+                ]
+            };
+            
+            categoryChart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                categoryChart.resize();
+            });
+        }
+
+        // 初始化事故趋势图表
+        function initIncidentTrendChart() {
+            const trendChart = echarts.init(document.getElementById('incident-trend-chart'));
+            
+            const months = incidentData.trendData.map(item => item.month);
+            const counts = incidentData.trendData.map(item => item.count);
+            const resolved = incidentData.trendData.map(item => item.resolved);
+            
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'cross' }
+                },
+                legend: {
+                    data: ['发生事故', '解决事故'],
+                    top: 10
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: months,
+                    axisLabel: { color: '#64748b' }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: { color: '#64748b' }
+                },
+                series: [
+                    {
+                        name: '发生事故',
+                        type: 'bar',
+                        data: counts,
+                        itemStyle: { color: '#ef4444' },
+                        barWidth: '40%'
+                    },
+                    {
+                        name: '解决事故',
+                        type: 'line',
+                        data: resolved,
+                        smooth: true,
+                        lineStyle: { color: '#10b981', width: 3 },
+                        itemStyle: { color: '#10b981' }
+                    }
+                ]
+            };
+            
+            trendChart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                trendChart.resize();
+            });
+        }
+
+        // 初始化处理时间分析图表
+        function initProcessTimeChart() {
+            const processChart = echarts.init(document.getElementById('process-time-chart'));
+            
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1天以内', '1-3天', '3-5天', '5-7天', '7天以上'],
+                    axisLabel: { color: '#64748b' }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: { color: '#64748b' }
+                },
+                series: [
+                    {
+                        name: '事故数量',
+                        type: 'bar',
+                        data: [2, 4, 3, 2, 1],
+                        itemStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0, y: 0, x2: 0, y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: '#3b82f6' },
+                                    { offset: 1, color: '#1d4ed8' }
+                                ]
+                            }
+                        },
+                        barWidth: '60%'
+                    }
+                ]
+            };
+            
+            processChart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                processChart.resize();
+            });
+        }
+
+        // 渲染事故列表
+        function renderIncidentList() {
+            const incidentList = document.getElementById('incident-list');
+            const filter = document.getElementById('incident-filter').value;
+            const search = document.getElementById('incident-search').value.toLowerCase();
+            
+            let filteredIncidents = incidentData.incidents;
+            
+            // 应用筛选
+            if (filter) {
+                filteredIncidents = filteredIncidents.filter(incident => incident.status === filter);
+            }
+            
+            if (search) {
+                filteredIncidents = filteredIncidents.filter(incident => 
+                    incident.location.toLowerCase().includes(search) ||
+                    incident.type.toLowerCase().includes(search) ||
+                    incident.description.toLowerCase().includes(search)
+                );
+            }
+            
+            incidentList.innerHTML = filteredIncidents.map(incident => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 text-xs rounded-full ${getSeverityColor(incident.severity)}">${incident.severity}</span>
+                            <span class="text-sm font-medium text-gray-800">${incident.location}</span>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(incident.status)}">${getStatusText(incident.status)}</span>
+                    </div>
+                    <p class="text-sm text-gray-700 mb-2">${incident.description}</p>
+                    <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                        <span>类型: ${incident.type}</span>
+                        <span>报告人: ${incident.reporter}</span>
+                        <span>时间: ${new Date(incident.time).toLocaleString()}</span>
+                    </div>
+                    <div class="text-xs text-gray-600 mb-2">
+                        <span>原因: ${incident.cause}</span>
+                    </div>
+                    <div class="text-xs text-gray-600">
+                        <span>整改措施: ${incident.measures}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取严重程度颜色
+        function getSeverityColor(severity) {
+            if (severity.includes('重大') || severity.includes('特别重大')) return 'bg-red-100 text-red-800';
+            if (severity.includes('大') || severity.includes('险性')) return 'bg-orange-100 text-orange-800';
+            return 'bg-yellow-100 text-yellow-800';
+        }
+
+        // 获取状态颜色
+        function getStatusColor(status) {
+            switch (status) {
+                case 'pending': return 'bg-orange-100 text-orange-800';
+                case 'investigating': return 'bg-blue-100 text-blue-800';
+                case 'processing': return 'bg-yellow-100 text-yellow-800';
+                case 'closed': return 'bg-green-100 text-green-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return '待处理';
+                case 'investigating': return '调查中';
+                case 'processing': return '处理中';
+                case 'closed': return '已结案';
+                default: return '未知';
+            }
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 表单提交
+            document.getElementById('incident-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    time: document.getElementById('incident-time').value,
+                    location: document.getElementById('incident-location').value,
+                    type: document.getElementById('incident-type').value,
+                    severity: document.getElementById('incident-severity').value,
+                    description: document.getElementById('incident-description').value,
+                    reporter: document.getElementById('incident-reporter').value,
+                    phone: document.getElementById('incident-phone').value,
+                    cause: document.getElementById('incident-cause').value
+                };
+                
+                if (!formData.time || !formData.location || !formData.type || !formData.severity || !formData.description || !formData.reporter) {
+                    alert('请填写完整的事故信息');
+                    return;
+                }
+                
+                // 添加新事故
+                const newIncident = {
+                    id: incidentData.incidents.length + 1,
+                    time: formData.time,
+                    location: formData.location,
+                    type: formData.type,
+                    severity: formData.severity,
+                    description: formData.description,
+                    reporter: formData.reporter,
+                    phone: formData.phone || '未提供',
+                    cause: formData.cause || '待调查',
+                    status: 'pending',
+                    processTime: 0,
+                    measures: '待制定'
+                };
+                
+                incidentData.incidents.unshift(newIncident);
+                renderIncidentList();
+                
+                // 重置表单
+                document.getElementById('incident-form').reset();
+                
+                // 显示成功消息
+                alert('事故报告已提交成功！');
+            });
+            
+            // 筛选和搜索
+            document.getElementById('incident-filter').addEventListener('change', renderIncidentList);
+            document.getElementById('incident-search').addEventListener('input', renderIncidentList);
+        }
+
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            anime({
+                targets: '.card-hover',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+</body>
+</html>
