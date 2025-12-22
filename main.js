@@ -1,90 +1,137 @@
 // 梁邹铁路专用线运营安全监控系统 - 主要JavaScript逻辑
 
-// 数据存储
-const safetyData = {
-    dailyEvents: 3,
-    monthlyIncidents: 1,
-    inspectionRate: 98.5,
-    riskLevel: '中等',
-    stations: {
-        normal: 6,
-        maintenance: 2,
-        fault: 0
-    },
-    safetyTrend: [
-        { date: '2025-01', incidents: 2, events: 15 },
-        { date: '2025-02', incidents: 1, events: 12 },
-        { date: '2025-03', incidents: 0, events: 8 },
-        { date: '2025-04', incidents: 1, events: 10 },
-        { date: '2025-05', incidents: 2, events: 14 },
-        { date: '2025-06', incidents: 1, events: 9 },
-        { date: '2025-07', incidents: 0, events: 7 },
-        { date: '2025-08', incidents: 1, events: 11 },
-        { date: '2025-09', incidents: 0, events: 6 },
-        { date: '2025-10', incidents: 2, events: 13 },
-        { date: '2025-11', incidents: 1, events: 9 },
-        { date: '2025-12', incidents: 1, events: 10 }
-    ],
-    riskTypes: [
-        { name: '设备故障', value: 35, color: '#ef4444' },
-        { name: '人为因素', value: 25, color: '#f97316' },
-        { name: '环境因素', value: 20, color: '#eab308' },
-        { name: '管理缺陷', value: 15, color: '#3b82f6' },
-        { name: '其他', value: 5, color: '#6b7280' }
-    ]
-};
-
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
-    checkUserLogin();
-    initializeCharts();
+document.addEventListener('DOMContentLoaded', async function() {
+    await checkUserLogin();
+    await initializeCharts();
     startRealTimeUpdates();
     addInteractiveEffects();
+    updateNavigation();
 });
 
 // 检查用户登录状态
-function checkUserLogin() {
-    const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+async function checkUserLogin() {
+    // 恢复认证状态
+    apiClient.restoreAuth();
     
-    if (!userInfo) {
+    if (!apiClient.token || !apiClient.user) {
         // 未登录，跳转到登录页
         window.location.href = 'login.html';
         return;
     }
     
-    const user = JSON.parse(userInfo);
+    const user = apiClient.user;
     
     // 显示用户信息
-    document.getElementById('user-info').style.display = 'flex';
-    document.getElementById('logout-btn').style.display = 'block';
-    document.getElementById('user-name').textContent = user.fullName;
-    document.getElementById('user-role').textContent = user.role;
-    document.getElementById('user-avatar').textContent = user.fullName.charAt(0);
+    if (document.getElementById('user-info')) {
+        document.getElementById('user-info').style.display = 'flex';
+        document.getElementById('logout-btn').style.display = 'block';
+        document.getElementById('user-name').textContent = user.fullName || user.username;
+        document.getElementById('user-role').textContent = user.roleName || user.role;
+        document.getElementById('user-avatar').textContent = (user.fullName || user.username).charAt(0);
+    }
     
     // 检查是否有后台管理权限
     if (user.permissions && user.permissions.includes('user.manage')) {
-        document.getElementById('admin-link').style.display = 'block';
+        if (document.getElementById('admin-link')) {
+            document.getElementById('admin-link').style.display = 'block';
+        }
+    }
+    
+    // 检查是否有证书管理权限
+    if (user.permissions && user.permissions.includes('certificate.view')) {
+        if (document.getElementById('certificate-link')) {
+            document.getElementById('certificate-link').style.display = 'block';
+        }
+    }
+    
+    // 检查是否有巡检管理权限
+    if (user.permissions && user.permissions.includes('inspection.view')) {
+        if (document.getElementById('inspection-link')) {
+            document.getElementById('inspection-link').style.display = 'block';
+        }
     }
 }
 
 // 退出登录
-function logout() {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('userInfo');
-    sessionStorage.removeItem('token');
-    window.location.href = 'login.html';
+async function logout() {
+    try {
+        await apiClient.logout();
+    } catch (error) {
+        console.error('退出登录失败:', error);
+    } finally {
+        window.location.href = 'login.html';
+    }
 }
 
 // 初始化所有图表
-function initializeCharts() {
-    initSafetyGauge();
-    initSafetyTrend();
-    initRiskDistribution();
+async function initializeCharts() {
+    try {
+        // 获取安全数据
+        const response = await apiService.getSafetyData();
+        if (response.success) {
+            updateSafetyMetrics(response.data);
+            initSafetyGauge(response.data.safetyIndex || 85);
+            initSafetyTrend(response.data);
+            initRiskDistribution();
+        } else {
+            console.error('获取安全数据失败:', response.message);
+            // 使用默认数据
+            updateSafetyMetrics({});
+            initSafetyGauge(85);
+            initSafetyTrend({});
+            initRiskDistribution();
+        }
+    } catch (error) {
+        console.error('初始化图表失败:', error);
+        // 使用默认数据
+        updateSafetyMetrics({});
+        initSafetyGauge(85);
+        initSafetyTrend({});
+        initRiskDistribution();
+    }
+}
+
+// 更新安全指标显示
+function updateSafetyMetrics(data) {
+    const dailyEvents = data.dailyEvents || 3;
+    const monthlyIncidents = data.monthlyIncidents || 1;
+    const inspectionRate = data.inspectionRate || 98.5;
+    const riskLevel = data.riskLevel || '中等';
+    const stations = data.stations || { normal: 6, maintenance: 2, fault: 0 };
+
+    if (document.getElementById('daily-events')) {
+        document.getElementById('daily-events').textContent = dailyEvents;
+    }
+    if (document.getElementById('monthly-incidents')) {
+        document.getElementById('monthly-incidents').textContent = monthlyIncidents;
+    }
+    if (document.getElementById('inspection-rate')) {
+        document.getElementById('inspection-rate').textContent = inspectionRate.toFixed(1) + '%';
+    }
+    if (document.getElementById('risk-level')) {
+        document.getElementById('risk-level').textContent = riskLevel;
+    }
+
+    // 更新站点状态
+    if (document.getElementById('total-stations')) {
+        document.getElementById('total-stations').textContent = stations.normal + stations.maintenance + stations.fault;
+    }
+    if (document.getElementById('normal-stations')) {
+        document.getElementById('normal-stations').textContent = stations.normal;
+    }
+    if (document.getElementById('maintenance-stations')) {
+        document.getElementById('maintenance-stations').textContent = stations.maintenance;
+    }
+    if (document.getElementById('fault-stations')) {
+        document.getElementById('fault-stations').textContent = stations.fault;
+    }
 }
 
 // 安全状态仪表盘
-function initSafetyGauge() {
+function initSafetyGauge(value = 85) {
+    if (!document.getElementById('safety-gauge')) return;
+    
     const gaugeChart = echarts.init(document.getElementById('safety-gauge'));
     
     const option = {
@@ -139,7 +186,7 @@ function initSafetyGauge() {
                 fontWeight: 'bold'
             },
             data: [{
-                value: 85,
+                value: value,
                 name: '安全指数'
             }]
         }]
@@ -154,12 +201,30 @@ function initSafetyGauge() {
 }
 
 // 安全趋势分析图表
-function initSafetyTrend() {
+function initSafetyTrend(data = {}) {
+    if (!document.getElementById('safety-trend')) return;
+    
     const trendChart = echarts.init(document.getElementById('safety-trend'));
     
-    const dates = safetyData.safetyTrend.map(item => item.date);
-    const incidents = safetyData.safetyTrend.map(item => item.incidents);
-    const events = safetyData.safetyTrend.map(item => item.events);
+    // 使用默认数据或从API获取的数据
+    const safetyTrend = data.safetyTrend || [
+        { date: '2025-01', incidents: 2, events: 15 },
+        { date: '2025-02', incidents: 1, events: 12 },
+        { date: '2025-03', incidents: 0, events: 8 },
+        { date: '2025-04', incidents: 1, events: 10 },
+        { date: '2025-05', incidents: 2, events: 14 },
+        { date: '2025-06', incidents: 1, events: 9 },
+        { date: '2025-07', incidents: 0, events: 7 },
+        { date: '2025-08', incidents: 1, events: 11 },
+        { date: '2025-09', incidents: 0, events: 6 },
+        { date: '2025-10', incidents: 2, events: 13 },
+        { date: '2025-11', incidents: 1, events: 9 },
+        { date: '2025-12', incidents: 1, events: 10 }
+    ];
+    
+    const dates = safetyTrend.map(item => item.date);
+    const incidents = safetyTrend.map(item => item.incidents);
+    const events = safetyTrend.map(item => item.events);
     
     const option = {
         tooltip: {
@@ -271,7 +336,18 @@ function initSafetyTrend() {
 
 // 风险分布统计图表
 function initRiskDistribution() {
+    if (!document.getElementById('risk-distribution')) return;
+    
     const riskChart = echarts.init(document.getElementById('risk-distribution'));
+    
+    // 风险类型数据
+    const riskTypes = [
+        { name: '设备故障', value: 35, color: '#ef4444' },
+        { name: '人为因素', value: 25, color: '#f97316' },
+        { name: '环境因素', value: 20, color: '#eab308' },
+        { name: '管理缺陷', value: 15, color: '#3b82f6' },
+        { name: '其他', value: 5, color: '#6b7280' }
+    ];
     
     const option = {
         tooltip: {
@@ -311,7 +387,7 @@ function initRiskDistribution() {
                 labelLine: {
                     show: false
                 },
-                data: safetyData.riskTypes.map(item => ({
+                data: riskTypes.map(item => ({
                     value: item.value,
                     name: item.name,
                     itemStyle: {
@@ -332,123 +408,130 @@ function initRiskDistribution() {
 
 // 实时数据更新
 function startRealTimeUpdates() {
-    setInterval(() => {
-        updateSafetyData();
-        updateCharts();
+    setInterval(async () => {
+        await updateSafetyData();
+        // 不需要手动更新图表，因为ECharts会自动响应数据变化
     }, 30000); // 每30秒更新一次
 }
 
 // 更新安全数据
-function updateSafetyData() {
-    // 模拟数据变化
-    const variations = {
-        dailyEvents: Math.floor(Math.random() * 3) - 1, // -1, 0, 1
-        inspectionRate: (Math.random() - 0.5) * 2, // ±1%
-        stations: {
-            normal: Math.floor(Math.random() * 2) - 1,
-            maintenance: Math.floor(Math.random() * 2),
-            fault: Math.random() > 0.95 ? 1 : 0 // 5%概率出现故障
+async function updateSafetyData() {
+    try {
+        const response = await apiService.getSafetyData();
+        if (response.success) {
+            updateSafetyMetrics(response.data);
+            
+            // 动画更新数字
+            if (document.getElementById('daily-events')) {
+                anime({
+                    targets: '#daily-events',
+                    scale: [1.2, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
         }
-    };
-    
-    // 更新数据（带边界检查）
-    safetyData.dailyEvents = Math.max(0, safetyData.dailyEvents + variations.dailyEvents);
-    safetyData.inspectionRate = Math.max(90, Math.min(100, safetyData.inspectionRate + variations.inspectionRate));
-    
-    // 更新显示
-    document.getElementById('daily-events').textContent = safetyData.dailyEvents;
-    document.getElementById('inspection-rate').textContent = safetyData.inspectionRate.toFixed(1) + '%';
-    
-    // 动画更新数字
-    anime({
-        targets: '#daily-events',
-        scale: [1.2, 1],
-        duration: 300,
-        easing: 'easeOutQuad'
-    });
-}
-
-// 更新图表数据
-function updateCharts() {
-    // 这里可以添加图表数据更新逻辑
-    console.log('图表数据已更新');
+    } catch (error) {
+        console.error('更新安全数据失败:', error);
+    }
 }
 
 // 添加交互效果
 function addInteractiveEffects() {
     // 卡片悬停效果
     const cards = document.querySelectorAll('.card-hover');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            anime({
-                targets: this,
-                scale: 1.02,
-                duration: 200,
-                easing: 'easeOutQuad'
+    if (cards) {
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                anime({
+                    targets: this,
+                    scale: 1.02,
+                    duration: 200,
+                    easing: 'easeOutQuad'
+                });
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                anime({
+                    targets: this,
+                    scale: 1,
+                    duration: 200,
+                    easing: 'easeOutQuad'
+                });
             });
         });
-        
-        card.addEventListener('mouseleave', function() {
-            anime({
-                targets: this,
-                scale: 1,
-                duration: 200,
-                easing: 'easeOutQuad'
-            });
-        });
-    });
+    }
     
     // 状态指示器动画
     const statusIndicators = document.querySelectorAll('.status-indicator');
-    statusIndicators.forEach(indicator => {
-        anime({
-            targets: indicator,
-            scale: [1, 1.2, 1],
-            duration: 2000,
-            loop: true,
-            easing: 'easeInOutQuad'
+    if (statusIndicators) {
+        statusIndicators.forEach(indicator => {
+            anime({
+                targets: indicator,
+                scale: [1, 1.2, 1],
+                duration: 2000,
+                loop: true,
+                easing: 'easeInOutQuad'
+            });
         });
-    });
+    }
 }
 
-// 导航菜单交互
-document.addEventListener('DOMContentLoaded', function() {
+// 更新导航菜单
+function updateNavigation() {
+    const currentPath = window.location.pathname.split('/').pop();
+    
+    // 定义页面映射
+    const pageMap = {
+        'index.html': '安全监控',
+        'risk-assessment.html': '风险评估',
+        'incident-report.html': '事故报告',
+        'training-management.html': '培训管理',
+        'certificate-management.html': '证书管理',
+        'inspection-management.html': '巡检管理',
+        'admin.html': '后台管理'
+    };
+    
+    // 更新导航链接状态
     const navLinks = document.querySelectorAll('nav a');
     navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            // 移除所有活动状态
-            navLinks.forEach(l => {
-                l.classList.remove('text-blue-800', 'border-b-2', 'border-blue-800');
-                l.classList.add('text-gray-600');
-            });
-            
-            // 添加当前活动状态
-            this.classList.remove('text-gray-600');
-            this.classList.add('text-blue-800', 'border-b-2', 'border-blue-800');
-        });
+        const href = link.getAttribute('href');
+        if (href && pageMap[currentPath] && link.textContent.includes(pageMap[currentPath])) {
+            link.classList.remove('text-gray-600');
+            link.classList.add('text-blue-800', 'font-medium', 'border-b-2', 'border-blue-800');
+        } else {
+            link.classList.remove('text-blue-800', 'font-medium', 'border-b-2', 'border-blue-800');
+            link.classList.add('text-gray-600');
+        }
     });
-});
+}
 
 // 页面加载动画
 window.addEventListener('load', function() {
     // 页面元素进入动画
-    anime({
-        targets: '.card-hover',
-        translateY: [50, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100),
-        duration: 800,
-        easing: 'easeOutQuad'
-    });
+    const cardElements = document.querySelectorAll('.card-hover');
+    if (cardElements.length > 0) {
+        anime({
+            targets: '.card-hover',
+            translateY: [50, 0],
+            opacity: [0, 1],
+            delay: anime.stagger(100),
+            duration: 800,
+            easing: 'easeOutQuad'
+        });
+    }
     
     // 标题动画
-    anime({
-        targets: '.hero-title',
-        scale: [0.8, 1],
-        opacity: [0, 1],
-        duration: 1000,
-        easing: 'easeOutElastic(1, .8)'
-    });
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) {
+        anime({
+            targets: '.hero-title',
+            scale: [0.8, 1],
+            opacity: [0, 1],
+            duration: 1000,
+            easing: 'easeOutElastic(1, .8)'
+        });
+    }
 });
 
 // 错误处理
@@ -459,7 +542,6 @@ window.addEventListener('error', function(e) {
 // 导出数据功能（用于调试）
 function exportData() {
     return {
-        safetyData: safetyData,
         timestamp: new Date().toISOString()
     };
 }

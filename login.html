@@ -175,6 +175,7 @@
         </div>
     </div>
 
+    <script src="api-client.js"></script>
     <script>
         // 登录功能
         document.addEventListener('DOMContentLoaded', function() {
@@ -202,37 +203,31 @@
 
         // 处理登录
         async function handleLogin() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
             const remember = document.getElementById('remember').checked;
 
-            if (!username || !password) {
-                showMessage('请输入用户名和密码', 'error');
+            // 验证输入
+            if (!username) {
+                showMessage('请输入用户名', 'error');
+                return;
+            }
+
+            if (!password) {
+                showMessage('请输入密码', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('密码长度至少为6位', 'error');
                 return;
             }
 
             try {
-                // 模拟API调用
-                const response = await simulateLogin(username, password);
+                // 使用真实API调用
+                const response = await apiClient.login(username, password);
                 
                 if (response.success) {
-                    // 保存用户信息
-                    const userInfo = {
-                        id: response.user.id,
-                        username: response.user.username,
-                        fullName: response.user.fullName,
-                        role: response.user.role,
-                        permissions: response.user.permissions
-                    };
-
-                    if (remember) {
-                        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-                        localStorage.setItem('token', response.token);
-                    } else {
-                        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-                        sessionStorage.setItem('token', response.token);
-                    }
-
                     showMessage('登录成功，正在跳转...', 'success');
                     
                     // 跳转到主页

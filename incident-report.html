@@ -73,6 +73,8 @@
                     <a href="risk-assessment.html" class="text-gray-600 hover:text-blue-800 transition-colors">风险评估</a>
                     <a href="incident-report.html" class="text-blue-800 font-medium border-b-2 border-blue-800 pb-1">事故报告</a>
                     <a href="training-management.html" class="text-gray-600 hover:text-blue-800 transition-colors">培训管理</a>
+                    <a href="certificate-management.html" class="text-gray-600 hover:text-blue-800 transition-colors" id="certificate-link" style="display: none;">证书管理</a>
+                    <a href="inspection-management.html" class="text-gray-600 hover:text-blue-800 transition-colors" id="inspection-link" style="display: none;">巡检管理</a>
                 </div>
             </div>
         </div>
@@ -644,6 +646,7 @@
             document.getElementById('incident-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
+                // 获取表单数据
                 const formData = {
                     time: document.getElementById('incident-time').value,
                     location: document.getElementById('incident-location').value,
@@ -655,8 +658,22 @@
                     cause: document.getElementById('incident-cause').value
                 };
                 
+                // 验证必填字段
                 if (!formData.time || !formData.location || !formData.type || !formData.severity || !formData.description || !formData.reporter) {
-                    alert('请填写完整的事故信息');
+                    showMessage('请填写所有必填字段', 'error');
+                    return;
+                }
+                
+                // 验证时间格式
+                const incidentTime = new Date(formData.time);
+                if (isNaN(incidentTime.getTime())) {
+                    showMessage('请选择有效的事故时间', 'error');
+                    return;
+                }
+                
+                // 验证描述长度
+                if (formData.description.length < 10) {
+                    showMessage('事故描述至少需要10个字符', 'error');
                     return;
                 }
                 
@@ -683,7 +700,7 @@
                 document.getElementById('incident-form').reset();
                 
                 // 显示成功消息
-                alert('事故报告已提交成功！');
+                showMessage('事故报告已提交成功！', 'success');
             });
             
             // 筛选和搜索

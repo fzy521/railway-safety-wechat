@@ -55,6 +55,8 @@
                     <a href="risk-assessment.html" class="text-blue-800 font-medium border-b-2 border-blue-800 pb-1">风险评估</a>
                     <a href="incident-report.html" class="text-gray-600 hover:text-blue-800 transition-colors">事故报告</a>
                     <a href="training-management.html" class="text-gray-600 hover:text-blue-800 transition-colors">培训管理</a>
+                    <a href="certificate-management.html" class="text-gray-600 hover:text-blue-800 transition-colors" id="certificate-link" style="display: none;">证书管理</a>
+                    <a href="inspection-management.html" class="text-gray-600 hover:text-blue-800 transition-colors" id="inspection-link" style="display: none;">巡检管理</a>
                 </div>
             </div>
         </div>
@@ -173,27 +175,47 @@
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">可能性</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        M - 可能性
+                                        <span class="text-xs text-gray-500 ml-1">(事故发生的概率)</span>
+                                    </label>
                                     <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-probability">
                                         <option value="">请选择</option>
-                                        <option value="1">极低</option>
-                                        <option value="2">低</option>
-                                        <option value="3">中等</option>
-                                        <option value="4">高</option>
-                                        <option value="5">极高</option>
+                                        <option value="1">1 - 极不可能</option>
+                                        <option value="2">2 - 不太可能</option>
+                                        <option value="3">3 - 可能发生</option>
+                                        <option value="4">4 - 很可能发生</option>
+                                        <option value="5">5 - 几乎确定</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">严重性</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        E - 暴露频率
+                                        <span class="text-xs text-gray-500 ml-1">(暴露在危险中的频率)</span>
+                                    </label>
+                                    <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-exposure">
+                                        <option value="">请选择</option>
+                                        <option value="1">1 - 极少暴露</option>
+                                        <option value="2">2 - 偶尔暴露</option>
+                                        <option value="3">3 - 定期暴露</option>
+                                        <option value="4">4 - 经常暴露</option>
+                                        <option value="5">5 - 持续暴露</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        S - 严重程度
+                                        <span class="text-xs text-gray-500 ml-1">(事故后果的严重性)</span>
+                                    </label>
                                     <select class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="risk-severity">
                                         <option value="">请选择</option>
-                                        <option value="1">轻微</option>
-                                        <option value="2">一般</option>
-                                        <option value="3">较重</option>
-                                        <option value="4">严重</option>
-                                        <option value="5">特别严重</option>
+                                        <option value="1">1 - 轻微伤害</option>
+                                        <option value="2">2 - 轻伤</option>
+                                        <option value="3">3 - 重伤</option>
+                                        <option value="4">4 - 一人死亡</option>
+                                        <option value="5">5 - 多人死亡</option>
                                     </select>
                                 </div>
                             </div>
@@ -317,12 +339,16 @@
                     type: '设备故障',
                     description: '信号设备老化，存在故障风险',
                     probability: 3,
+                    exposure: 4,
                     severity: 4,
+                    riskScore: 48,
                     level: '高风险',
+                    levelClass: 'high',
                     status: 'pending',
                     reporter: '张三',
                     date: '2025-12-10',
-                    measures: '计划下月更换设备'
+                    measures: '计划下月更换设备',
+                    mes: 'M3-E4-S4'
                 },
                 {
                     id: 2,
@@ -330,12 +356,16 @@
                     type: '环境因素',
                     description: '近期降雨频繁，轨道湿滑',
                     probability: 4,
+                    exposure: 5,
                     severity: 3,
-                    level: '中高风险',
+                    riskScore: 60,
+                    level: '高风险',
+                    levelClass: 'high',
                     status: 'processing',
                     reporter: '李四',
                     date: '2025-12-08',
-                    measures: '加强巡检，及时清理'
+                    measures: '加强巡检，及时清理',
+                    mes: 'M4-E5-S3'
                 },
                 {
                     id: 3,
@@ -343,12 +373,33 @@
                     type: '人为因素',
                     description: '新员工操作不熟练',
                     probability: 2,
+                    exposure: 3,
                     severity: 3,
+                    riskScore: 18,
                     level: '中等风险',
+                    levelClass: 'medium',
                     status: 'resolved',
                     reporter: '王五',
                     date: '2025-12-05',
-                    measures: '加强培训，安排师傅指导'
+                    measures: '加强培训，安排师傅指导',
+                    mes: 'M2-E3-S3'
+                },
+                {
+                    id: 4,
+                    location: 'C站',
+                    type: '管理缺陷',
+                    description: '应急预案不完善',
+                    probability: 2,
+                    exposure: 2,
+                    severity: 5,
+                    riskScore: 20,
+                    level: '中等风险',
+                    levelClass: 'medium',
+                    status: 'pending',
+                    reporter: '赵六',
+                    date: '2025-12-12',
+                    measures: '待制定',
+                    mes: 'M2-E2-S5'
                 }
             ],
             trendData: [
@@ -650,15 +701,20 @@
                         <div class="flex items-center space-x-2">
                             <span class="px-2 py-1 text-xs rounded-full ${getRiskLevelColor(risk.level)}">${risk.level}</span>
                             <span class="text-sm font-medium text-gray-800">${risk.location}</span>
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 font-mono">${risk.mes || `M${risk.probability}-E${risk.exposure || '?'}-S${risk.severity}`}</span>
                         </div>
                         <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(risk.status)}">${getStatusText(risk.status)}</span>
                     </div>
                     <p class="text-sm text-gray-700 mb-2">${risk.description}</p>
                     <div class="flex justify-between items-center text-xs text-gray-500">
                         <span>类型: ${risk.type}</span>
+                        <span>MES: M${risk.probability}/E${risk.exposure || '?'}/S${risk.severity}</span>
                         <span>发现人: ${risk.reporter}</span>
                         <span>日期: ${risk.date}</span>
                     </div>
+                    ${risk.exposure ? `<div class="mt-2 text-xs text-blue-600">
+                        <span>风险值: ${risk.riskScore} (M${risk.probability}×E${risk.exposure}×S${risk.severity})</span>
+                    </div>` : ''}
                     <div class="mt-2 text-xs text-gray-600">
                         <span>措施: ${risk.measures}</span>
                     </div>
@@ -668,6 +724,7 @@
 
         // 获取风险等级颜色
         function getRiskLevelColor(level) {
+            if (level.includes('极高')) return 'bg-purple-100 text-purple-800';
             if (level.includes('高')) return 'bg-red-100 text-red-800';
             if (level.includes('中')) return 'bg-yellow-100 text-yellow-800';
             return 'bg-green-100 text-green-800';
@@ -698,55 +755,86 @@
             // 表单提交
             document.getElementById('risk-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
+                // 获取表单数据
                 const formData = {
                     location: document.getElementById('risk-location').value,
                     type: document.getElementById('risk-type').value,
                     probability: document.getElementById('risk-probability').value,
+                    exposure: document.getElementById('risk-exposure').value,
                     severity: document.getElementById('risk-severity').value,
                     description: document.getElementById('risk-description').value,
                     reporter: document.getElementById('risk-reporter').value
                 };
-                
-                if (!formData.location || !formData.type || !formData.probability || !formData.severity || !formData.description || !formData.reporter) {
-                    alert('请填写完整的风险信息');
+
+                // 验证必填字段
+                if (!formData.location || !formData.type || !formData.probability || !formData.exposure || !formData.severity || !formData.description || !formData.reporter) {
+                    showMessage('请填写所有必填字段', 'error');
                     return;
                 }
-                
-                // 计算风险等级
-                const riskScore = formData.probability * formData.severity;
-                let level = '';
-                if (riskScore <= 6) {
-                    level = '低风险';
-                } else if (riskScore <= 12) {
-                    level = '中等风险';
-                } else {
-                    level = '高风险';
+
+                // 验证数值字段
+                if (isNaN(formData.probability) || isNaN(formData.exposure) || isNaN(formData.severity)) {
+                    showMessage('风险评估参数必须为数字', 'error');
+                    return;
                 }
-                
+
+                const probability = parseInt(formData.probability);
+                const exposure = parseInt(formData.exposure);
+                const severity = parseInt(formData.severity);
+
+                if (probability < 1 || probability > 5 || exposure < 1 || exposure > 5 || severity < 1 || severity > 5) {
+                    showMessage('风险评估参数必须在1-5之间', 'error');
+                    return;
+                }
+
+                // 计算风险等级（MES方法：M × E × S）
+                const riskScore = probability * exposure * severity;
+                let level = '';
+                let levelClass = '';
+
+                // MES风险等级划分标准
+                if (riskScore <= 8) {
+                    level = '低风险';
+                    levelClass = 'low';
+                } else if (riskScore <= 36) {
+                    level = '中等风险';
+                    levelClass = 'medium';
+                } else if (riskScore <= 64) {
+                    level = '高风险';
+                    levelClass = 'high';
+                } else {
+                    level = '极高风险';
+                    levelClass = 'extreme';
+                }
+
                 // 添加新风险
                 const newRisk = {
                     id: riskData.risks.length + 1,
                     location: formData.location,
                     type: formData.type,
                     description: formData.description,
-                    probability: parseInt(formData.probability),
-                    severity: parseInt(formData.severity),
+                    probability: probability,
+                    exposure: exposure,
+                    severity: severity,
+                    riskScore: riskScore,
                     level: level,
+                    levelClass: levelClass,
                     status: 'pending',
                     reporter: formData.reporter,
                     date: new Date().toISOString().split('T')[0],
-                    measures: '待制定'
+                    measures: '待制定',
+                    mes: `M${formData.probability}-E${formData.exposure}-S${formData.severity}`
                 };
-                
+
                 riskData.risks.unshift(newRisk);
                 renderRiskList();
-                
+
                 // 重置表单
                 document.getElementById('risk-form').reset();
-                
+
                 // 显示成功消息
-                alert('风险信息已提交成功！');
+                showMessage(`风险信息已提交！MES评分: ${newRisk.mes}, 等级: ${level}`, 'success');
             });
             
             // 筛选和搜索

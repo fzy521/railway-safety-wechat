@@ -430,87 +430,41 @@
     <script>
         // 巡检管理系统JavaScript
         let currentUser = null;
-        let inspectionPoints = [
-            {
-                id: 1,
-                name: 'A站信号设备',
-                type: '设备',
-                location: 'A站控制室',
-                description: 'A站主要信号设备状态检查',
-                requirements: '检查信号机、轨道电路、道岔转换设备状态',
-                inspection_cycle: 1,
-                responsible_department: '维护部',
-                responsible_person: '张三',
-                status: 'active',
-                created_at: '2025-12-01 10:00:00'
-            },
-            {
-                id: 2,
-                name: 'B站通信设备',
-                type: '设备',
-                location: 'B站通信机房',
-                description: 'B站通信设备运行状态检查',
-                requirements: '检查通信线路、交换机、无线设备',
-                inspection_cycle: 2,
-                responsible_department: '维护部',
-                responsible_person: '李四',
-                status: 'active',
-                created_at: '2025-12-02 14:30:00'
-            },
-            {
-                id: 3,
-                name: '轨道区间1',
-                type: '线路',
-                location: 'A站至B站区间',
-                description: '轨道线路状态检查',
-                requirements: '检查轨道、道岔、信号标志状态',
-                inspection_cycle: 3,
-                responsible_department: '运营部',
-                responsible_person: '王五',
-                status: 'active',
-                created_at: '2025-12-03 09:15:00'
-            }
-        ];
-
-        let inspectionRecords = [
-            {
-                id: 1,
-                point_name: 'A站信号设备',
-                inspector_name: '张三',
-                inspection_time: '2025-12-17 10:30:00',
-                status: 'normal',
-                notes: '一切正常'
-            },
-            {
-                id: 2,
-                point_name: 'B站通信设备',
-                inspector_name: '李四',
-                inspection_time: '2025-12-17 11:15:00',
-                status: 'abnormal',
-                notes: '通信线路有轻微干扰'
-            },
-            {
-                id: 3,
-                point_name: '轨道区间1',
-                inspector_name: '王五',
-                inspection_time: '2025-12-17 14:20:00',
-                status: 'normal',
-                notes: '轨道状态良好'
-            }
-        ];
-
         let currentQRCode = null;
+        let inspectionPoints = [];
+        let inspectionRecords = [];
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             checkUserLogin();
             loadUserInfo();
-            renderInspectionPoints();
-            renderInspectionRecords();
-            renderQRPointOptions();
+            loadInspectionData();
             initInspectionChart();
             bindEvents();
         });
+
+        // 加载巡检数据
+        async function loadInspectionData() {
+            try {
+                // 获取巡检点数据
+                const pointsResponse = await apiService.getInspectionPoints();
+                if (pointsResponse.success) {
+                    inspectionPoints = pointsResponse.data;
+                    renderInspectionPoints();
+                    renderQRPointOptions();
+                }
+
+                // 获取巡检记录数据
+                const recordsResponse = await apiService.getInspectionRecords();
+                if (recordsResponse.success) {
+                    inspectionRecords = recordsResponse.data;
+                    renderInspectionRecords();
+                }
+            } catch (error) {
+                console.error('加载巡检数据失败:', error);
+                showMessage('加载数据失败', 'error');
+            }
+        }
 
         // 检查用户登录状态
         function checkUserLogin() {
@@ -578,23 +532,32 @@
         function renderInspectionRecords() {
             const container = document.getElementById('inspection-records');
             
-            container.innerHTML = inspectionRecords.slice(0, 5).map(record => `
-                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h4 class="font-medium text-gray-800">${record.point_name}</h4>
-                            <p class="text-sm text-gray-600">巡检员：${record.inspector_name}</p>
+            // 获取最新的5条记录
+            const latestRecords = [...inspectionRecords].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+            
+            container.innerHTML = latestRecords.map(record => {
+                // 根据point_id获取巡检点名称
+                const point = inspectionPoints.find(p => p.id === record.point_id);
+                const pointName = point ? point.name : '未知巡检点';
+                
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-medium text-gray-800">${pointName}</h4>
+                                <p class="text-sm text-gray-600">巡检员：${record.inspector_id}</p>
+                            </div>
+                            <span class="px-2 py-1 text-xs rounded-full ${getInspectionStatusColor(record.status)}">
+                                ${getInspectionStatusText(record.status)}
+                            </span>
                         </div>
-                        <span class="px-2 py-1 text-xs rounded-full ${getInspectionStatusColor(record.status)}">
-                            ${getInspectionStatusText(record.status)}
-                        </span>
+                        <div class="text-xs text-gray-500">
+                            <p>时间：${record.inspection_time}</p>
+                            <p>备注：${record.notes}</p>
+                        </div>
                     </div>
-                    <div class="text-xs text-gray-500">
-                        <p>时间：${record.inspection_time}</p>
-                        <p>备注：${record.notes}</p>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // 渲染二维码巡检点选项
@@ -712,16 +675,20 @@
                     document.getElementById('point-type').value = point.type;
                     document.getElementById('point-location').value = point.location;
                     document.getElementById('point-description').value = point.description;
-                    document.getElementById('point-requirements').value = point.requirements;
+                    document.getElementById('point-requirements').value = point.requirements || '';
                     document.getElementById('point-cycle').value = point.inspection_cycle;
                     document.getElementById('point-status').value = point.status;
                     document.getElementById('point-department').value = point.responsible_department;
                     document.getElementById('point-person').value = point.responsible_person;
+                    
+                    // 存储当前编辑的巡检点ID
+                    document.getElementById('point-form').dataset.pointId = pointId;
                 }
             } else {
                 // 添加巡检点
                 title.textContent = '添加巡检点';
                 document.getElementById('point-form').reset();
+                delete document.getElementById('point-form').dataset.pointId;
             }
             
             modal.classList.remove('hidden');
@@ -754,7 +721,7 @@
         }
 
         // 生成二维码
-        function generateQRCode() {
+        async function generateQRCode() {
             const pointId = document.getElementById('qr-point-select').value;
             const expireTime = document.getElementById('qr-expire-time').value;
             
@@ -763,109 +730,75 @@
                 return;
             }
             
-            const point = inspectionPoints.find(p => p.id === parseInt(pointId));
-            if (!point) {
-                showMessage('巡检点不存在', 'error');
-                return;
-            }
-            
-            // 生成二维码内容
-            const qrContent = {
-                type: 'inspection_point',
-                point_id: pointId,
-                point_name: point.name,
-                token: generateToken(),
-                timestamp: Date.now(),
-                expire_time: parseInt(expireTime) * 3600 * 1000
-            };
-            
-            // 生成二维码
-            generateQRCodeImage(JSON.stringify(qrContent), point.name, expireTime);
-        }
-
-        // 生成Token
-        function generateToken() {
-            return 'qr_' + Math.random().toString(36).substr(2, 15) + '_' + Date.now();
-        }
-
-        // 生成二维码图片
-        function generateQRCodeImage(content, pointName, expireTime) {
-            const container = document.getElementById('qr-code-container');
-            container.innerHTML = '';
-            
-            const qrcode = new QRCode(container, {
-                text: content,
-                width: 200,
-                height: 200,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-            // 显示下载按钮
-            document.getElementById('download-qr-btn').style.display = 'inline-block';
-            
-            // 保存当前二维码信息
-            currentQRCode = {
-                content: content,
-                pointName: pointName,
-                expireTime: expireTime
-            };
-            
-            showMessage('二维码生成成功', 'success');
-        }
-
-        // 下载二维码
-        function downloadQRCode() {
-            if (!currentQRCode) {
-                showMessage('请先生成二维码', 'error');
-                return;
-            }
-            
-            const canvas = document.querySelector('#qr-code-container canvas');
-            if (canvas) {
-                const link = document.createElement('a');
-                link.download = `巡检点_${currentQRCode.pointName}_二维码.png`;
-                link.href = canvas.toDataURL();
-                link.click();
-                showMessage('二维码下载成功', 'success');
+            try {
+                // 使用API生成二维码
+                const response = await apiService.generateQRCode(pointId, parseInt(expireTime) * 3600 * 1000);
+                if (response.success) {
+                    // 生成二维码图片
+                    const container = document.getElementById('qr-code-container');
+                    container.innerHTML = '';
+                    
+                    const qrcode = new QRCode(container, {
+                        text: JSON.stringify(response.data.content),
+                        width: 200,
+                        height: 200,
+                        colorDark: '#000000',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    
+                    // 显示下载按钮
+                    document.getElementById('download-qr-btn').style.display = 'inline-block';
+                    
+                    // 保存当前二维码信息
+                    currentQRCode = {
+                        content: response.data.content,
+                        pointName: response.data.content.point_name,
+                        expireTime: expireTime
+                    };
+                    
+                    showMessage('二维码生成成功', 'success');
+                } else {
+                    showMessage('生成二维码失败: ' + response.message, 'error');
+                }
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                showMessage('生成二维码失败', 'error');
             }
         }
 
         // 生成指定巡检点的二维码
-        function generatePointQRCode(pointId) {
-            const point = inspectionPoints.find(p => p.id === pointId);
-            if (!point) {
-                showMessage('巡检点不存在', 'error');
-                return;
+        async function generatePointQRCode(pointId) {
+            try {
+                // 使用API生成二维码
+                const response = await apiService.generateQRCode(pointId, 24 * 3600 * 1000); // 24小时
+                if (response.success) {
+                    const point = inspectionPoints.find(p => p.id === pointId);
+                    if (point) {
+                        // 显示二维码
+                        showQRDisplayModal(point.name, '24小时');
+                        
+                        setTimeout(() => {
+                            const container = document.getElementById('qr-display-container');
+                            container.innerHTML = '';
+                            
+                            new QRCode(container, {
+                                text: JSON.stringify(response.data.content),
+                                width: 250,
+                                height: 250,
+                                colorDark: '#000000',
+                                colorLight: '#ffffff',
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+                        }, 100);
+                    }
+                } else {
+                    showMessage('生成二维码失败: ' + response.message, 'error');
+                }
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                showMessage('生成二维码失败', 'error');
             }
-            
-            // 生成二维码内容
-            const qrContent = {
-                type: 'inspection_point',
-                point_id: pointId,
-                point_name: point.name,
-                token: generateToken(),
-                timestamp: Date.now(),
-                expire_time: 24 * 3600 * 1000 // 24小时
-            };
-            
-            // 显示二维码
-            showQRDisplayModal(point.name, '24小时');
-            
-            setTimeout(() => {
-                const container = document.getElementById('qr-display-container');
-                container.innerHTML = '';
-                
-                new QRCode(container, {
-                    text: JSON.stringify(qrContent),
-                    width: 250,
-                    height: 250,
-                    colorDark: '#000000',
-                    colorLight: '#ffffff',
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            }, 100);
         }
 
         // 显示二维码显示模态框
@@ -921,60 +854,70 @@
         }
 
         // 删除巡检点
-        function deletePoint(pointId) {
+        async function deletePoint(pointId) {
             if (confirm('确定要删除这个巡检点吗？')) {
-                inspectionPoints = inspectionPoints.filter(point => point.id !== pointId);
-                renderInspectionPoints();
-                renderQRPointOptions();
-                showMessage('巡检点删除成功', 'success');
+                try {
+                    const response = await apiService.deleteInspectionPoint(pointId);
+                    if (response.success) {
+                        // 从本地数组中移除
+                        inspectionPoints = inspectionPoints.filter(point => point.id !== pointId);
+                        renderInspectionPoints();
+                        renderQRPointOptions();
+                        showMessage('巡检点删除成功', 'success');
+                    } else {
+                        showMessage('删除巡检点失败: ' + response.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('删除巡检点失败:', error);
+                    showMessage('删除巡检点失败', 'error');
+                }
             }
         }
 
         // 搜索巡检点
-        function searchPoints() {
+        async function searchPoints() {
             const search = document.getElementById('point-search').value.toLowerCase();
             const filter = document.getElementById('point-filter').value;
             
-            let filteredPoints = inspectionPoints;
-            
-            if (search) {
-                filteredPoints = filteredPoints.filter(point => 
-                    point.name.toLowerCase().includes(search) ||
-                    point.location.toLowerCase().includes(search) ||
-                    point.description.toLowerCase().includes(search)
-                );
+            try {
+                const params = {};
+                if (search) params.search = search;
+                if (filter) params.type = filter;
+                
+                const response = await apiService.getInspectionPoints(params);
+                if (response.success) {
+                    const filteredPoints = response.data;
+                    const tbody = document.getElementById('points-table-body');
+                    tbody.innerHTML = filteredPoints.map(point => `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${point.name}</div>
+                                <div class="text-sm text-gray-500">${point.description}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs rounded-full ${getPointTypeColor(point.type)}">
+                                    ${point.type}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${point.location}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${point.inspection_cycle}天</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(point.status)}">
+                                    ${getStatusText(point.status)}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="generatePointQRCode(${point.id})" class="text-green-600 hover:text-green-900 mr-3">二维码</button>
+                                <button onclick="editPoint(${point.id})" class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
+                                <button onclick="deletePoint(${point.id})" class="text-red-600 hover:text-red-900">删除</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('搜索巡检点失败:', error);
+                showMessage('搜索巡检点失败', 'error');
             }
-            
-            if (filter) {
-                filteredPoints = filteredPoints.filter(point => point.type === filter);
-            }
-            
-            const tbody = document.getElementById('points-table-body');
-            tbody.innerHTML = filteredPoints.map(point => `
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">${point.name}</div>
-                        <div class="text-sm text-gray-500">${point.description}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full ${getPointTypeColor(point.type)}">
-                            ${point.type}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${point.location}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${point.inspection_cycle}天</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(point.status)}">
-                            ${getStatusText(point.status)}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="generatePointQRCode(${point.id})" class="text-green-600 hover:text-green-900 mr-3">二维码</button>
-                        <button onclick="editPoint(${point.id})" class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
-                        <button onclick="deletePoint(${point.id})" class="text-red-600 hover:text-red-900">删除</button>
-                    </td>
-                </tr>
-            `).join('');
         }
 
         // 显示所有记录
@@ -994,31 +937,49 @@
         // 绑定事件
         function bindEvents() {
             // 巡检点表单提交
-            document.getElementById('point-form').addEventListener('submit', function(e) {
+            document.getElementById('point-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(this);
                 const pointData = Object.fromEntries(formData.entries());
                 
-                if (document.getElementById('point-modal-title').textContent === '添加巡检点') {
-                    // 添加新巡检点
-                    pointData.id = Math.max(...inspectionPoints.map(p => p.id)) + 1;
-                    pointData.created_at = new Date().toLocaleString();
-                    inspectionPoints.push(pointData);
-                    showMessage('巡检点添加成功', 'success');
-                } else {
-                    // 更新巡检点
-                    const pointId = parseInt(document.getElementById('point-name').dataset.pointId);
-                    const index = inspectionPoints.findIndex(p => p.id === pointId);
-                    if (index !== -1) {
-                        inspectionPoints[index] = { ...inspectionPoints[index], ...pointData };
-                        showMessage('巡检点更新成功', 'success');
-                    }
-                }
+                const isEdit = this.dataset.pointId !== undefined;
                 
-                renderInspectionPoints();
-                renderQRPointOptions();
-                hidePointModal();
+                try {
+                    if (isEdit) {
+                        // 更新巡检点
+                        const pointId = parseInt(this.dataset.pointId);
+                        const response = await apiService.updateInspectionPoint(pointId, pointData);
+                        if (response.success) {
+                            // 更新本地数组
+                            const index = inspectionPoints.findIndex(p => p.id === pointId);
+                            if (index !== -1) {
+                                inspectionPoints[index] = { ...inspectionPoints[index], ...response.data };
+                            }
+                            showMessage('巡检点更新成功', 'success');
+                        } else {
+                            showMessage('更新巡检点失败: ' + response.message, 'error');
+                            return;
+                        }
+                    } else {
+                        // 添加新巡检点
+                        const response = await apiService.createInspectionPoint(pointData);
+                        if (response.success) {
+                            inspectionPoints.push(response.data);
+                            showMessage('巡检点添加成功', 'success');
+                        } else {
+                            showMessage('添加巡检点失败: ' + response.message, 'error');
+                            return;
+                        }
+                    }
+                    
+                    renderInspectionPoints();
+                    renderQRPointOptions();
+                    hidePointModal();
+                } catch (error) {
+                    console.error('保存巡检点失败:', error);
+                    showMessage('保存巡检点失败', 'error');
+                }
             });
 
             // 搜索事件

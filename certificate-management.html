@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证书管理 - 梁邹铁路专用线安全管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            animation: pulse 2s infinite;
+        }
+        .modal {
+            backdrop-filter: blur(5px);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold text-gray-800">梁邹铁路专用线</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-800 transition-colors">安全监控</a>
+                    <a href="risk-assessment.html" class="text-gray-600 hover:text-blue-800 transition-colors">风险评估</a>
+                    <a href="incident-report.html" class="text-gray-600 hover:text-blue-800 transition-colors">事故报告</a>
+                    <a href="training-management.html" class="text-gray-600 hover:text-blue-800 transition-colors">培训管理</a>
+                    <a href="certificate-management.html" class="text-blue-800 font-medium border-b-2 border-blue-800 pb-1">证书管理</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="pt-16">
+        <!-- 标题区域 -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="hero-title text-4xl font-bold mb-4">证书管理系统</h1>
+                    <p class="text-xl text-purple-100">统一管理员工培训证书，确保资质合规有效</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- 统计概览 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">证书总数</p>
+                            <p class="text-3xl font-bold text-blue-600" id="total-certificates">156</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">本月新增 <span class="text-blue-500">+8</span></p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">即将到期</p>
+                            <p class="text-3xl font-bold text-orange-600" id="expiring-certificates">12</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">30天内到期</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">已过期</p>
+                            <p class="text-3xl font-bold text-red-600" id="expired-certificates">3</p>
+                        </div>
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">需及时处理</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">合规率</p>
+                            <p class="text-3xl font-bold text-green-600" id="compliance-rate">97.4%</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">目标 100%</p>
+                </div>
+            </div>
+
+            <!-- 主要内容网格 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 左侧：证书列表 -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">证书管理</h3>
+                            <div class="flex space-x-2">
+                                <input type="text" id="certificate-search" placeholder="搜索证书..." class="px-3 py-2 border border-gray-300 rounded-md text-sm">
+                                <select id="certificate-filter" class="px-3 py-2 border border-gray-300 rounded-md text-sm">
+                                    <option value="">全部状态</option>
+                                    <option value="valid">有效</option>
+                                    <option value="expiring">即将到期</option>
+                                    <option value="expired">已过期</option>
+                                </select>
+                                <button onclick="showCertificateModal()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    添加
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">员工姓名</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">证书名称</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">证书编号</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">发证日期</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">到期日期</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certificates-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- 证书数据将通过JavaScript动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：统计图表和提醒 -->
+                <div class="space-y-8">
+                    <!-- 证书状态统计 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">证书状态统计</h3>
+                        <div id="certificate-chart" class="h-64"></div>
+                    </div>
+
+                    <!-- 证书到期提醒 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">即将到期证书</h3>
+                        <div id="expiring-certificates-list" class="space-y-3">
+                            <!-- 即将到期的证书将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 操作说明 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">操作说明</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>定期检查证书有效期，确保合规操作</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>证书到期前30天会自动生成提醒</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>过期证书需要重新培训和认证</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 证书编辑模态框 -->
+    <div id="certificate-modal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 m-4 max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800" id="certificate-modal-title">添加证书</h3>
+                <button onclick="hideCertificateModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="certificate-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">员工姓名</label>
+                        <input type="text" id="certificate-employee" name="employee" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">员工ID</label>
+                        <input type="text" id="certificate-employee-id" name="employee_id" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">证书名称</label>
+                    <input type="text" id="certificate-name" name="certificate_name" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">证书编号</label>
+                        <input type="text" id="certificate-number" name="certificate_number" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">颁发机构</label>
+                        <input type="text" id="certificate-authority" name="issuing_authority" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">发证日期</label>
+                        <input type="date" id="certificate-issue-date" name="issue_date" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">到期日期</label>
+                        <input type="date" id="certificate-expiry-date" name="expiry_date" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">证书类型</label>
+                    <select id="certificate-type" name="certificate_type" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="操作证">操作证</option>
+                        <option value="安全证">安全证</option>
+                        <option value="特种作业证">特种作业证</option>
+                        <option value="管理证">管理证</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">备注说明</label>
+                    <textarea id="certificate-notes" name="notes" rows="3" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="证书相关信息..."></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button type="button" onclick="hideCertificateModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+                        保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm text-gray-400">&copy; 2025 梁邹铁路专用线安全管理系统. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="api-service.js"></script>
+    <script>
+        // 证书管理系统JavaScript
+        let certificates = [
+            {
+                id: 1,
+                employee: '张三',
+                employee_id: 'E001',
+                certificate_name: '铁路安全操作证',
+                certificate_number: 'RSA2023001',
+                issuing_authority: '国家铁路局',
+                issue_date: '2023-01-15',
+                expiry_date: '2026-01-15',
+                certificate_type: '安全证',
+                status: 'valid',
+                notes: '高级操作员资质',
+                created_at: '2023-01-15 10:00:00'
+            },
+            {
+                id: 2,
+                employee: '李四',
+                employee_id: 'E002',
+                certificate_name: '信号设备维护证',
+                certificate_number: 'RSM2023002',
+                issuing_authority: '国家铁路局',
+                issue_date: '2023-02-20',
+                expiry_date: '2026-02-20',
+                certificate_type: '操作证',
+                status: 'expiring',
+                notes: '信号设备维护资质',
+                created_at: '2023-02-20 14:30:00'
+            },
+            {
+                id: 3,
+                employee: '王五',
+                employee_id: 'E003',
+                certificate_name: '应急处置资格证',
+                certificate_number: 'REQ2022003',
+                issuing_authority: '应急管理部',
+                issue_date: '2022-03-10',
+                expiry_date: '2025-03-09',
+                certificate_type: '安全证',
+                status: 'expired',
+                notes: '应急处理资质',
+                created_at: '2022-03-10 09:15:00'
+            },
+            {
+                id: 4,
+                employee: '赵六',
+                employee_id: 'E004',
+                certificate_name: '轨道工程特种作业证',
+                certificate_number: 'RTW2024004',
+                issuing_authority: '住建部',
+                issue_date: '2024-05-12',
+                expiry_date: '2027-05-12',
+                certificate_type: '特种作业证',
+                status: 'valid',
+                notes: '轨道工程作业资质',
+                created_at: '2024-05-12 16:45:00'
+            },
+            {
+                id: 5,
+                employee: '钱七',
+                employee_id: 'E005',
+                certificate_name: '安全管理资格证',
+                certificate_number: 'RSQ2023005',
+                issuing_authority: '国家安监总局',
+                issue_date: '2023-07-08',
+                expiry_date: '2026-07-08',
+                certificate_type: '管理证',
+                status: 'valid',
+                notes: '安全管理资质',
+                created_at: '2023-07-08 11:20:00'
+            }
+        ];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCertificatesTable();
+            renderExpiringCertificates();
+            initCertificateChart();
+            bindEvents();
+        });
+
+        // 初始化证书状态统计图表
+        function initCertificateChart() {
+            const chart = echarts.init(document.getElementById('certificate-chart'));
+            
+            // 统计各类状态的证书数量
+            const validCount = certificates.filter(cert => cert.status === 'valid').length;
+            const expiringCount = certificates.filter(cert => cert.status === 'expiring').length;
+            const expiredCount = certificates.filter(cert => cert.status === 'expired').length;
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: { color: '#64748b' }
+                },
+                series: [
+                    {
+                        name: '证书状态',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['60%', '50%'],
+                        data: [
+                            { value: validCount, name: '有效', itemStyle: { color: '#10b981' } },
+                            { value: expiringCount, name: '即将到期', itemStyle: { color: '#f59e0b' } },
+                            { value: expiredCount, name: '已过期', itemStyle: { color: '#ef4444' } }
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            
+            chart.setOption(option);
+            
+            window.addEventListener('resize', () => {
+                chart.resize();
+            });
+        }
+
+        // 渲染证书表格
+        function renderCertificatesTable() {
+            const tbody = document.getElementById('certificates-table-body');
+            const filter = document.getElementById('certificate-filter').value;
+            const search = document.getElementById('certificate-search').value.toLowerCase();
+            
+            let filteredCertificates = certificates;
+            
+            // 应用搜索过滤
+            if (search) {
+                filteredCertificates = filteredCertificates.filter(cert => 
+                    cert.employee.toLowerCase().includes(search) ||
+                    cert.certificate_name.toLowerCase().includes(search) ||
+                    cert.certificate_number.toLowerCase().includes(search)
+                );
+            }
+            
+            // 应用状态过滤
+            if (filter) {
+                filteredCertificates = filteredCertificates.filter(cert => cert.status === filter);
+            }
+            
+            tbody.innerHTML = filteredCertificates.map(cert => {
+                // 计算剩余天数
+                const expiryDate = new Date(cert.expiry_date);
+                const today = new Date();
+                const timeDiff = expiryDate.getTime() - today.getTime();
+                const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-sm font-bold">${cert.employee.charAt(0)}</span>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${cert.employee}</div>
+                                    <div class="text-sm text-gray-500">${cert.employee_id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.certificate_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.certificate_number}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.issue_date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.expiry_date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${getCertificateStatusColor(cert.status)}">
+                                ${getCertificateStatusText(cert.status)}
+                                ${daysLeft <= 30 && cert.status !== 'expired' ? `(${daysLeft}天)` : ''}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="editCertificate(${cert.id})" class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
+                            <button onclick="deleteCertificate(${cert.id})" class="text-red-600 hover:text-red-900">删除</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // 更新统计数字
+            document.getElementById('total-certificates').textContent = certificates.length;
+            document.getElementById('expiring-certificates').textContent = certificates.filter(cert => cert.status === 'expiring').length;
+            document.getElementById('expired-certificates').textContent = certificates.filter(cert => cert.status === 'expired').length;
+            const validCount = certificates.filter(cert => cert.status === 'valid').length;
+            const complianceRate = certificates.length > 0 ? (validCount / certificates.length * 100).toFixed(1) : 0;
+            document.getElementById('compliance-rate').textContent = complianceRate + '%';
+        }
+
+        // 渲染即将到期的证书
+        function renderExpiringCertificates() {
+            const container = document.getElementById('expiring-certificates-list');
+            
+            // 获取30天内到期的证书
+            const expiringCertificates = certificates.filter(cert => {
+                if (cert.status === 'expired') return false;
+                
+                const expiryDate = new Date(cert.expiry_date);
+                const today = new Date();
+                const timeDiff = expiryDate.getTime() - today.getTime();
+                const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                return daysLeft <= 30 && daysLeft >= 0;
+            });
+            
+            if (expiringCertificates.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-4">暂无即将到期的证书</div>';
+                return;
+            }
+            
+            container.innerHTML = expiringCertificates.map(cert => {
+                const expiryDate = new Date(cert.expiry_date);
+                const today = new Date();
+                const timeDiff = expiryDate.getTime() - today.getTime();
+                const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-medium text-gray-800">${cert.employee}</h4>
+                                <p class="text-sm text-gray-600">${cert.certificate_name}</p>
+                            </div>
+                            <span class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-800">${daysLeft}天后到期</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2">
+                            <p>证书编号: ${cert.certificate_number}</p>
+                            <p>到期日期: ${cert.expiry_date}</p>
+                        </div>
+                        <div class="mt-2">
+                            <button class="px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600 transition-colors" onclick="renewCertificate(${cert.id})">
+                                续期提醒
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 获取证书状态颜色
+        function getCertificateStatusColor(status) {
+            switch (status) {
+                case 'valid': return 'bg-green-100 text-green-800';
+                case 'expiring': return 'bg-orange-100 text-orange-800';
+                case 'expired': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 获取证书状态文本
+        function getCertificateStatusText(status) {
+            switch (status) {
+                case 'valid': return '有效';
+                case 'expiring': return '即将到期';
+                case 'expired': return '已过期';
+                default: return '未知';
+            }
+        }
+
+        // 显示证书模态框
+        function showCertificateModal(certId = null) {
+            const modal = document.getElementById('certificate-modal');
+            const title = document.getElementById('certificate-modal-title');
+            
+            if (certId) {
+                // 编辑证书
+                const cert = certificates.find(c => c.id === certId);
+                if (cert) {
+                    title.textContent = '编辑证书';
+                    document.getElementById('certificate-employee').value = cert.employee;
+                    document.getElementById('certificate-employee-id').value = cert.employee_id;
+                    document.getElementById('certificate-name').value = cert.certificate_name;
+                    document.getElementById('certificate-number').value = cert.certificate_number;
+                    document.getElementById('certificate-authority').value = cert.issuing_authority;
+                    document.getElementById('certificate-issue-date').value = cert.issue_date;
+                    document.getElementById('certificate-expiry-date').value = cert.expiry_date;
+                    document.getElementById('certificate-type').value = cert.certificate_type;
+                    document.getElementById('certificate-notes').value = cert.notes || '';
+                    
+                    // 存储当前编辑的证书ID
+                    document.getElementById('certificate-form').dataset.certId = certId;
+                }
+            } else {
+                // 添加证书
+                title.textContent = '添加证书';
+                document.getElementById('certificate-form').reset();
+                delete document.getElementById('certificate-form').dataset.certId;
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            anime({
+                targets: '#certificate-modal > div',
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        // 隐藏证书模态框
+        function hideCertificateModal() {
+            const modal = document.getElementById('certificate-modal');
+            
+            anime({
+                targets: '#certificate-modal > div',
+                scale: [1, 0.8],
+                opacity: [1, 0],
+                duration: 200,
+                easing: 'easeInQuad',
+                complete: () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+
+        // 编辑证书
+        function editCertificate(certId) {
+            showCertificateModal(certId);
+        }
+
+        // 删除证书
+        function deleteCertificate(certId) {
+            if (confirm('确定要删除这个证书吗？')) {
+                certificates = certificates.filter(cert => cert.id !== certId);
+                renderCertificatesTable();
+                renderExpiringCertificates();
+                initCertificateChart();
+                showMessage('证书删除成功', 'success');
+            }
+        }
+
+        // 续期证书
+        function renewCertificate(certId) {
+            const cert = certificates.find(c => c.id === certId);
+            if (cert) {
+                alert(`已发送续期提醒给${cert.employee}，证书：${cert.certificate_name}`);
+            }
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 证书表单提交
+            document.getElementById('certificate-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const formData = Object.fromEntries(new FormData(this).entries());
+                
+                // 验证必填字段
+                if (!formData.employee || !formData.certificate_name || !formData.certificate_number || 
+                    !formData.issuing_authority || !formData.issue_date || !formData.expiry_date) {
+                    showMessage('请填写所有必填字段', 'error');
+                    return;
+                }
+                
+                // 验证日期
+                const issueDate = new Date(formData.issue_date);
+                const expiryDate = new Date(formData.expiry_date);
+                
+                if (isNaN(issueDate.getTime()) || isNaN(expiryDate.getTime())) {
+                    showMessage('请选择有效的发证日期和到期日期', 'error');
+                    return;
+                }
+                
+                if (expiryDate <= issueDate) {
+                    showMessage('到期日期必须晚于发证日期', 'error');
+                    return;
+                }
+                
+                // 验证员工姓名
+                if (formData.employee.length < 2) {
+                    showMessage('员工姓名至少需要2个字符', 'error');
+                    return;
+                }
+                
+                // 验证证书名称
+                if (formData.certificate_name.length < 2) {
+                    showMessage('证书名称至少需要2个字符', 'error');
+                    return;
+                }
+                
+                const isEdit = this.dataset.certId !== undefined;
+                
+                if (isEdit) {
+                    // 更新现有证书
+                    const certId = parseInt(this.dataset.certId);
+                    const index = certificates.findIndex(c => c.id === certId);
+                    if (index !== -1) {
+                        // 计算新状态
+                        const timeDiff = expiryDate.getTime() - new Date().getTime();
+                        const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        
+                        let newStatus = 'valid';
+                        if (daysLeft < 0) {
+                            newStatus = 'expired';
+                        } else if (daysLeft <= 30) {
+                            newStatus = 'expiring';
+                        }
+                        
+                        certificates[index] = {
+                            ...certificates[index],
+                            ...formData,
+                            status: newStatus
+                        };
+                        
+                        showMessage('证书更新成功', 'success');
+                    }
+                } else {
+                    // 添加新证书
+                    const newCertId = Math.max(...certificates.map(c => c.id)) + 1;
+                    
+                    // 计算状态
+                    const timeDiff = expiryDate.getTime() - new Date().getTime();
+                    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    let status = 'valid';
+                    if (daysLeft < 0) {
+                        status = 'expired';
+                    } else if (daysLeft <= 30) {
+                        status = 'expiring';
+                    }
+                    
+                    const newCertificate = {
+                        id: newCertId,
+                        ...formData,
+                        status: status,
+                        created_at: new Date().toISOString().split('T')[0]
+                    };
+                    
+                    certificates.push(newCertificate);
+                    showMessage('证书添加成功', 'success');
+                }
+                
+                renderCertificatesTable();
+                renderExpiringCertificates();
+                initCertificateChart();
+                hideCertificateModal();
+            });
+
+            // 搜索和筛选事件
+            document.getElementById('certificate-search').addEventListener('input', renderCertificatesTable);
+            document.getElementById('certificate-filter').addEventListener('change', renderCertificatesTable);
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            messageDiv.textContent = message;
+            
+            document.body.appendChild(messageDiv);
+            
+            anime({
+                targets: messageDiv,
+                translateX: [300, 0],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+            
+            setTimeout(() => {
+                anime({
+                    targets: messageDiv,
+                    translateX: [0, 300],
+                    opacity: [1, 0],
+                    duration: 300,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        document.body.removeChild(messageDiv);
+                    }
+                });
+            }, 3000);
+        }
+
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            anime({
+                targets: '.card-hover',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+</body>
+</html>

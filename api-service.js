@@ -191,6 +191,165 @@ class ApiService {
                 createdBy: 3
             }
         ];
+
+        // 巡检点数据
+        this.inspectionPoints = [
+            {
+                id: 1,
+                name: 'A站信号设备',
+                type: '设备',
+                location: 'A站控制室',
+                description: 'A站主要信号设备状态检查',
+                requirements: '检查信号机、轨道电路、道岔转换设备状态',
+                inspection_cycle: 1,
+                responsible_department: '维护部',
+                responsible_person: '张三',
+                status: 'active',
+                created_at: '2025-12-01 10:00:00'
+            },
+            {
+                id: 2,
+                name: 'B站通信设备',
+                type: '设备',
+                location: 'B站通信机房',
+                description: 'B站通信设备运行状态检查',
+                requirements: '检查通信线路、交换机、无线设备',
+                inspection_cycle: 2,
+                responsible_department: '维护部',
+                responsible_person: '李四',
+                status: 'active',
+                created_at: '2025-12-02 14:30:00'
+            },
+            {
+                id: 3,
+                name: '轨道区间1',
+                type: '线路',
+                location: 'A站至B站区间',
+                description: '轨道线路状态检查',
+                requirements: '检查轨道、道岔、信号标志状态',
+                inspection_cycle: 3,
+                responsible_department: '运营部',
+                responsible_person: '王五',
+                status: 'active',
+                created_at: '2025-12-03 09:15:00'
+            }
+        ];
+
+        // 巡检记录数据
+        this.inspectionRecords = [
+            {
+                id: 1,
+                point_id: 1,
+                inspector_id: 2,
+                inspection_time: '2025-12-17 10:30:00',
+                status: 'normal',
+                items_checked: [1, 2, 3],
+                abnormal_items: [],
+                photos: [],
+                notes: '一切正常',
+                gps_location: '39.9042,116.4074',
+                weather_condition: '晴朗',
+                next_inspection_date: '2025-12-18',
+                created_at: '2025-12-17 10:30:00'
+            },
+            {
+                id: 2,
+                point_id: 2,
+                inspector_id: 3,
+                inspection_time: '2025-12-17 11:15:00',
+                status: 'abnormal',
+                items_checked: [1, 2, 3, 4],
+                abnormal_items: [3],
+                photos: ['photo_abnormal_1.jpg'],
+                notes: '通信线路有轻微干扰',
+                gps_location: '39.9052,116.4084',
+                weather_condition: '晴朗',
+                next_inspection_date: '2025-12-18',
+                created_at: '2025-12-17 11:15:00'
+            },
+            {
+                id: 3,
+                point_id: 3,
+                inspector_id: 4,
+                inspection_time: '2025-12-17 14:20:00',
+                status: 'normal',
+                items_checked: [1, 2, 3, 4, 5],
+                abnormal_items: [],
+                photos: [],
+                notes: '轨道状态良好',
+                gps_location: '39.9062,116.4094',
+                weather_condition: '晴朗',
+                next_inspection_date: '2025-12-19',
+                created_at: '2025-12-17 14:20:00'
+            }
+        ];
+
+        // 巡检项目数据
+        this.inspectionItems = [
+            {
+                id: 1,
+                point_id: 1,
+                item_name: '设备外观检查',
+                item_type: 'checkbox',
+                required: true,
+                sort_order: 1,
+                created_at: '2025-12-01 10:00:00'
+            },
+            {
+                id: 2,
+                point_id: 1,
+                item_name: '运行状态指示灯',
+                item_type: 'checkbox',
+                required: true,
+                sort_order: 2,
+                created_at: '2025-12-01 10:00:00'
+            },
+            {
+                id: 3,
+                point_id: 1,
+                item_name: '设备温度检查',
+                item_type: 'text',
+                required: false,
+                sort_order: 3,
+                created_at: '2025-12-01 10:00:00'
+            },
+            {
+                id: 4,
+                point_id: 2,
+                item_name: '通信链路测试',
+                item_type: 'checkbox',
+                required: true,
+                sort_order: 1,
+                created_at: '2025-12-02 14:30:00'
+            },
+            {
+                id: 5,
+                point_id: 2,
+                item_name: '设备运行日志检查',
+                item_type: 'checkbox',
+                required: true,
+                sort_order: 2,
+                created_at: '2025-12-02 14:30:00'
+            },
+            {
+                id: 6,
+                point_id: 3,
+                item_name: '轨道表面检查',
+                item_type: 'checkbox',
+                required: true,
+                sort_order: 1,
+                created_at: '2025-12-03 09:15:00'
+            },
+            {
+                id: 7,
+                point_id: 3,
+                item_name: '道岔状态检查',
+                item_type: 'checkbox',
+                required: true,
+                sort_order: 2,
+                created_at: '2025-12-03 09:15:00'
+            }
+        ];
     }
 
     // 用户认证相关API
@@ -596,114 +755,6 @@ class ApiService {
             success: true
         });
     }
-
-    // 巡检相关数据
-    this.inspectionPoints = [
-        {
-            id: 1,
-            name: 'A站信号设备',
-            type: '设备',
-            location: 'A站控制室',
-            description: 'A站主要信号设备状态检查',
-            requirements: '检查信号机、轨道电路、道岔转换设备状态',
-            inspection_cycle: 1,
-            responsible_department: '维护部',
-            responsible_person: '张三',
-            status: 'active',
-            created_at: '2025-12-01 10:00:00',
-            qr_code: null,
-            qr_token: null
-        },
-        {
-            id: 2,
-            name: 'B站通信设备',
-            type: '设备',
-            location: 'B站通信机房',
-            description: 'B站通信设备运行状态检查',
-            requirements: '检查通信线路、交换机、无线设备',
-            inspection_cycle: 2,
-            responsible_department: '维护部',
-            responsible_person: '李四',
-            status: 'active',
-            created_at: '2025-12-02 14:30:00',
-            qr_code: null,
-            qr_token: null
-        }
-    ];
-
-    this.inspectionRecords = [
-        {
-            id: 1,
-            point_id: 1,
-            point_name: 'A站信号设备',
-            inspector_id: 2,
-            inspector_name: '张三',
-            inspection_time: '2025-12-17 10:30:00',
-            status: 'normal',
-            items_checked: [1, 2, 3],
-            abnormal_items: [],
-            photos: [],
-            notes: '一切正常',
-            gps_location: '116.3974,39.9093',
-            weather_condition: '晴朗',
-            created_at: '2025-12-17 10:35:00'
-        },
-        {
-            id: 2,
-            point_id: 2,
-            point_name: 'B站通信设备',
-            inspector_id: 3,
-            inspector_name: '李四',
-            inspection_time: '2025-12-17 11:15:00',
-            status: 'abnormal',
-            items_checked: [1, 2, 3, 4],
-            abnormal_items: [4],
-            photos: ['photo1.jpg'],
-            notes: '通信线路有轻微干扰',
-            gps_location: '116.3980,39.9095',
-            weather_condition: '晴朗',
-            created_at: '2025-12-17 11:20:00'
-        }
-    ];
-
-    this.inspectionItems = [
-        {
-            id: 1,
-            point_id: 1,
-            item_name: '设备外观检查',
-            item_type: 'checkbox',
-            options: null,
-            required: true,
-            sort_order: 1
-        },
-        {
-            id: 2,
-            point_id: 1,
-            item_name: '运行状态检查',
-            item_type: 'checkbox',
-            options: null,
-            required: true,
-            sort_order: 2
-        },
-        {
-            id: 3,
-            point_id: 1,
-            item_name: '环境状况检查',
-            item_type: 'radio',
-            options: ['良好', '一般', '较差'],
-            required: true,
-            sort_order: 3
-        },
-        {
-            id: 4,
-            point_id: 1,
-            item_name: '备注说明',
-            item_type: 'text',
-            options: null,
-            required: false,
-            sort_order: 4
-        }
-    ];
 
     // 巡检点管理相关API
     async getInspectionPoints(params = {}) {

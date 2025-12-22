@@ -267,55 +267,56 @@
         let inspectionItems = [];
         let inspectionData = {};
         let currentLocation = null;
-
-        // 模拟数据
-        let todayRecords = [
-            {
-                id: 1,
-                point_name: 'A站信号设备',
-                inspection_time: '10:30',
-                status: 'normal',
-                inspector: '张三'
-            },
-            {
-                id: 2,
-                point_name: 'B站通信设备',
-                inspection_time: '11:15',
-                status: 'normal',
-                inspector: '李四'
-            },
-            {
-                id: 3,
-                point_name: '轨道区间1',
-                inspection_time: '14:20',
-                status: 'abnormal',
-                inspector: '王五'
-            }
-        ];
-
-        let todayRoutes = [
-            {
-                name: 'A站 → B站',
-                points: 8,
-                completed: 6,
-                estimated_time: '2小时'
-            },
-            {
-                name: 'C站 → D站',
-                points: 6,
-                completed: 4,
-                estimated_time: '1.5小时'
-            }
-        ];
+        let todayRecords = [];
+        let todayRoutes = [];
 
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             checkUserLogin();
-            loadUserInfo();
-            loadTodayData();
+            await loadUserInfo();
+            await loadTodayData();
             getCurrentLocation();
             bindEvents();
         });
+
+        // 加载今日数据
+        async function loadTodayData() {
+            try {
+                // 获取今日巡检记录
+                const recordsResponse = await apiService.getInspectionRecords({
+                    inspector_id: currentUser.id,
+                    start_date: new Date().toISOString().split('T')[0],
+                    end_date: new Date().toISOString().split('T')[0]
+                });
+                
+                if (recordsResponse.success) {
+                    todayRecords = recordsResponse.data;
+                    renderRecentRecords();
+                    updateStatistics();
+                }
+
+                // 模拟今日路线数据
+                todayRoutes = [
+                    {
+                        name: 'A站 → B站',
+                        points: 8,
+                        completed: todayRecords.filter(r => r.point_id >= 1 && r.point_id <= 8).length,
+                        estimated_time: '2小时'
+                    },
+                    {
+                        name: 'C站 → D站',
+                        points: 6,
+                        completed: todayRecords.filter(r => r.point_id >= 9 && r.point_id <= 14).length,
+                        estimated_time: '1.5小时'
+                    }
+                ];
+                
+                renderTodayRoutes();
+            } catch (error) {
+                console.error('加载今日数据失败:', error);
+                showMessage('加载数据失败', 'error');
+            }
+        }
 
         // 检查用户登录状态
         function checkUserLogin() {
@@ -333,15 +334,18 @@
         }
 
         // 加载用户信息
-        function loadUserInfo() {
-            console.log('Current user:', currentUser);
-        }
-
-        // 加载今日数据
-        function loadTodayData() {
-            renderRecentRecords();
-            renderTodayRoutes();
-            updateStatistics();
+        async function loadUserInfo() {
+            try {
+                const response = await apiService.getCurrentUser();
+                if (response.success) {
+                    currentUser = response.user;
+                    console.log('Current user:', currentUser);
+                } else {
+                    console.error('获取用户信息失败:', response.message);
+                }
+            } catch (error) {
+                console.error('获取用户信息失败:', error);
+            }
         }
 
         // 获取当前位置
@@ -368,19 +372,34 @@
         function renderRecentRecords() {
             const container = document.getElementById('recent-records');
             
-            container.innerHTML = todayRecords.slice(0, 3).map(record => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex-1">
-                        <div class="font-medium text-gray-800 text-sm">${record.point_name}</div>
-                        <div class="text-xs text-gray-600">${record.inspection_time} - ${record.inspector}</div>
+            container.innerHTML = todayRecords.slice(0, 3).map(record => {
+                // 根据point_id获取巡检点名称
+                const pointName = `巡检点 ${record.point_id}`;
+                
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800 text-sm">${pointName}</div>
+                            <div class="text-xs text-gray-600">${formatTime(record.inspection_time)} - ${record.inspector_id}</div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(record.status)}">
+                                ${getStatusText(record.status)}
+                            </span>
+                        </div>
                     </div>
-                    <div class="flex-shrink-0">
-                        <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(record.status)}">
-                            ${getStatusText(record.status)}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        // 格式化时间显示
+        function formatTime(timeString) {
+            try {
+                const date = new Date(timeString);
+                return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return timeString;
+            }
         }
 
         // 渲染今日巡检路线
@@ -467,32 +486,57 @@
         }
 
         // 模拟扫码
-        function simulateScan() {
+        async function simulateScan() {
             hideScanModal();
             
-            // 模拟扫码结果
-            const mockQRResult = {
-                type: 'inspection_point',
-                point_id: '1',
-                point_name: 'A站信号设备',
-                location: 'A站控制室',
-                description: 'A站主要信号设备状态检查'
-            };
-            
-            // 显示巡检表单
-            showInspectionModal(mockQRResult);
+            try {
+                // 模拟扫码结果
+                const mockQRResult = {
+                    type: 'inspection_point',
+                    point_id: '1',
+                    point_name: 'A站信号设备',
+                    location: 'A站控制室',
+                    description: 'A站主要信号设备状态检查'
+                };
+                
+                // 验证二维码
+                const response = await apiService.verifyQRCode({qr_token: btoa(JSON.stringify(mockQRResult))});
+                
+                if (response.success) {
+                    // 显示巡检表单
+                    showInspectionModal(response.data);
+                } else {
+                    showMessage('二维码验证失败: ' + response.message, 'error');
+                }
+            } catch (error) {
+                console.error('扫码验证失败:', error);
+                showMessage('扫码验证失败', 'error');
+            }
         }
 
         // 显示巡检表单模态框
-        function showInspectionModal(pointInfo) {
+        async function showInspectionModal(pointInfo) {
             currentPoint = pointInfo;
             
-            document.getElementById('inspection-point-name').textContent = pointInfo.point_name;
+            document.getElementById('inspection-point-name').textContent = pointInfo.name;
             document.getElementById('inspection-point-location').textContent = pointInfo.location;
             document.getElementById('inspection-point-description').textContent = pointInfo.description;
             
-            // 生成巡检项目
-            generateInspectionItems();
+            try {
+                // 获取巡检项目
+                const response = await apiService.getInspectionItems(pointInfo.id);
+                if (response.success) {
+                    inspectionItems = response.data;
+                    generateInspectionItems();
+                } else {
+                    showMessage('获取巡检项目失败: ' + response.message, 'error');
+                    return;
+                }
+            } catch (error) {
+                console.error('获取巡检项目失败:', error);
+                showMessage('获取巡检项目失败', 'error');
+                return;
+            }
             
             const modal = document.getElementById('inspection-modal');
             modal.classList.remove('hidden');
@@ -526,15 +570,6 @@
 
         // 生成巡检项目
         function generateInspectionItems() {
-            // 模拟巡检项目
-            inspectionItems = [
-                { id: 1, name: '设备外观检查', type: 'checkbox', required: true },
-                { id: 2, name: '运行状态检查', type: 'checkbox', required: true },
-                { id: 3, name: '安全标志检查', type: 'checkbox', required: false },
-                { id: 4, name: '环境状况检查', type: 'radio', options: ['良好', '一般', '较差'], required: true },
-                { id: 5, name: '备注说明', type: 'text', required: false }
-            ];
-            
             const container = document.getElementById('inspection-items');
             container.innerHTML = '';
             
@@ -544,31 +579,37 @@
                 
                 let inputHTML = '';
                 
-                switch (item.type) {
+                switch (item.item_type) {
                     case 'checkbox':
                         inputHTML = `
                             <label class="flex items-center">
                                 <input type="checkbox" name="item_${item.id}" class="mr-2" ${item.required ? 'required' : ''}>
-                                <span class="text-sm ${item.required ? 'font-medium text-red-700' : 'text-gray-700'}">${item.name}${item.required ? '*' : ''}</span>
+                                <span class="text-sm ${item.required ? 'font-medium text-red-700' : 'text-gray-700'}">${item.item_name}${item.required ? '*' : ''}</span>
                             </label>
                         `;
                         break;
                     case 'radio':
                         inputHTML = `
-                            <div class="text-sm ${item.required ? 'font-medium text-red-700' : 'text-gray-700'} mb-2">${item.name}${item.required ? '*' : ''}</div>
+                            <div class="text-sm ${item.required ? 'font-medium text-red-700' : 'text-gray-700'} mb-2">${item.item_name}${item.required ? '*' : ''}</div>
                             <div class="space-y-1">
-                                ${item.options.map(option => `
-                                    <label class="flex items-center">
-                                        <input type="radio" name="item_${item.id}" value="${option}" class="mr-2" ${item.required ? 'required' : ''}>
-                                        <span class="text-sm text-gray-700">${option}</span>
-                                    </label>
-                                `).join('')}
+                                <label class="flex items-center">
+                                    <input type="radio" name="item_${item.id}" value="良好" class="mr-2" ${item.required ? 'required' : ''}>
+                                    <span class="text-sm text-gray-700">良好</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="item_${item.id}" value="一般" class="mr-2" ${item.required ? 'required' : ''}>
+                                    <span class="text-sm text-gray-700">一般</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="item_${item.id}" value="较差" class="mr-2" ${item.required ? 'required' : ''}>
+                                    <span class="text-sm text-gray-700">较差</span>
+                                </label>
                             </div>
                         `;
                         break;
                     case 'text':
                         inputHTML = `
-                            <label class="block text-sm ${item.required ? 'font-medium text-red-700' : 'text-gray-700'} mb-2">${item.name}${item.required ? '*' : ''}</label>
+                            <label class="block text-sm ${item.required ? 'font-medium text-red-700' : 'text-gray-700'} mb-2">${item.item_name}${item.required ? '*' : ''}</label>
                             <textarea name="item_${item.id}" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" ${item.required ? 'required' : ''}></textarea>
                         `;
                         break;
@@ -580,7 +621,7 @@
         }
 
         // 提交巡检表单
-        function submitInspection() {
+        async function submitInspection() {
             if (!currentPoint) return;
             
             const formData = new FormData(document.getElementById('inspection-form'));
@@ -591,45 +632,49 @@
             for (let item of requiredItems) {
                 const fieldName = `item_${item.id}`;
                 if (!data[fieldName] || data[fieldName] === '') {
-                    showMessage(`请完成必填项: ${item.name}`, 'error');
+                    showMessage(`请完成必填项: ${item.item_name}`, 'error');
                     return;
                 }
             }
             
             // 构建巡检数据
             const inspectionRecord = {
-                point_id: currentPoint.point_id,
-                point_name: currentPoint.point_name,
+                point_id: currentPoint.id,
                 inspector_id: currentUser.id,
-                inspector_name: currentUser.fullName,
-                inspection_time: new Date().toLocaleString(),
+                inspection_time: new Date().toISOString(),
                 status: data.abnormal ? 'abnormal' : 'normal',
-                items: data,
+                items_checked: inspectionItems.map(item => item.id), // 所有项目都被检查
+                abnormal_items: [], // 根据实际检查结果填充
+                photos: [],
                 notes: data.notes || '',
                 gps_location: currentLocation ? `${currentLocation.latitude},${currentLocation.longitude}` : '0,0',
                 weather_condition: '晴朗' // 可以从API获取
             };
-            
-            // 模拟提交
-            submitInspectionRecord(inspectionRecord);
-        }
 
-        // 提交巡检记录
-        function submitInspectionRecord(record) {
-            // 模拟API调用
-            setTimeout(() => {
-                todayRecords.unshift(record);
-                renderRecentRecords();
-                updateStatistics();
+            try {
+                // 提交巡检记录
+                const response = await apiService.createInspectionRecord(inspectionRecord);
                 
-                hideInspectionModal();
-                showMessage('巡检记录提交成功', 'success');
-                
-                // 重置表单
-                document.getElementById('inspection-form').reset();
-                currentPoint = null;
-                inspectionData = {};
-            }, 1000);
+                if (response.success) {
+                    // 添加到本地记录
+                    todayRecords.unshift(response.data);
+                    renderRecentRecords();
+                    updateStatistics();
+                    
+                    hideInspectionModal();
+                    showMessage('巡检记录提交成功', 'success');
+                    
+                    // 重置表单
+                    document.getElementById('inspection-form').reset();
+                    currentPoint = null;
+                    inspectionData = {};
+                } else {
+                    showMessage('提交巡检记录失败: ' + response.message, 'error');
+                }
+            } catch (error) {
+                console.error('提交巡检记录失败:', error);
+                showMessage('提交巡检记录失败', 'error');
+            }
         }
 
         // 页面切换功能

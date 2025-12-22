@@ -115,6 +115,12 @@
                         </svg>
                         操作日志
                     </a>
+                    <a href="#" class="sidebar-item flex items-center px-4 py-3 text-white rounded-lg" onclick="showSection('certificates')">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        证书管理
+                    </a>
                     <a href="#" class="sidebar-item flex items-center px-4 py-3 text-white rounded-lg" onclick="showSection('settings')">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -267,14 +273,41 @@
                 </div>
             </div>
 
-            <!-- 其他管理页面 -->
+            <!-- 角色管理 -->
             <div id="roles-section" class="section-content hidden">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">角色管理</h2>
-                    <p class="text-gray-600">管理系统角色和权限分配</p>
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">角色管理</h2>
+                        <p class="text-gray-600">管理系统角色和权限分配</p>
+                    </div>
+                    <button onclick="showRoleModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        添加角色
+                    </button>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <p class="text-gray-500">角色管理功能正在开发中...</p>
+
+                <!-- 角色列表 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">角色ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">角色名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">描述</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">权限数量</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">创建时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roles-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- 角色数据将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -283,18 +316,136 @@
                     <h2 class="text-2xl font-bold text-gray-800">权限管理</h2>
                     <p class="text-gray-600">管理系统权限和访问控制</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <p class="text-gray-500">权限管理功能正在开发中...</p>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">权限ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">权限名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">描述</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">所属角色</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="permissions-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- 权限数据将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div id="logs-section" class="section-content hidden">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">操作日志</h2>
-                    <p class="text-gray-600">查看系统操作记录和审计信息</p>
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">操作日志</h2>
+                        <p class="text-gray-600">查看系统操作记录和审计信息</p>
+                    </div>
+                    <button onclick="exportLogs()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        导出日志
+                    </button>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <p class="text-gray-500">操作日志功能正在开发中...</p>
+
+                <!-- 日志筛选 -->
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">操作类型</label>
+                            <select id="log-action-filter" class="px-3 py-2 border border-gray-300 rounded-md text-sm w-full">
+                                <option value="">全部</option>
+                                <option value="login">登录</option>
+                                <option value="logout">退出</option>
+                                <option value="create">创建</option>
+                                <option value="update">更新</option>
+                                <option value="delete">删除</option>
+                                <option value="view">查看</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">操作用户</label>
+                            <input type="text" id="log-user-filter" placeholder="用户名" class="px-3 py-2 border border-gray-300 rounded-md text-sm w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">开始日期</label>
+                            <input type="date" id="log-start-date" class="px-3 py-2 border border-gray-300 rounded-md text-sm w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">结束日期</label>
+                            <input type="date" id="log-end-date" class="px-3 py-2 border border-gray-300 rounded-md text-sm w-full">
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button onclick="filterLogs()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm">
+                            筛选
+                        </button>
+                        <button onclick="clearLogFilters()" class="ml-2 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm">
+                            清除
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 日志列表 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用户</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">模块</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">描述</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP地址</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- 日志数据将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-4 py-3 border-t border-gray-200" id="logs-pagination">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-700">显示 <span id="logs-start">1</span> - <span id="logs-end">10</span> 条，共 <span id="logs-total">0</span> 条</span>
+                            <div class="flex space-x-2">
+                                <button onclick="previousLogsPage()" class="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50" id="logs-prev-btn">上一页</button>
+                                <span class="px-3 py-1 text-sm" id="logs-page-info">第 1 页</span>
+                                <button onclick="nextLogsPage()" class="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50" id="logs-next-btn">下一页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="certificates-section" class="section-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">证书管理</h2>
+                    <p class="text-gray-600">管理用户证书和认证信息</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">员工姓名</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">证书名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">证书编号</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">颁发日期</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">到期日期</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certificates-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- 证书数据将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -303,8 +454,221 @@
                     <h2 class="text-2xl font-bold text-gray-800">系统设置</h2>
                     <p class="text-gray-600">配置系统参数和运行设置</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <p class="text-gray-500">系统设置功能正在开发中...</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 基础设置 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">基础设置</h3>
+                        </div>
+                        <div class="p-6">
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">系统名称</label>
+                                    <input type="text" value="梁邹铁路专用线安全监控系统" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">系统版本</label>
+                                    <input type="text" value="v1.0.0" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">时区设置</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>Asia/Shanghai (UTC+08:00)</option>
+                                        <option>Asia/Hong_Kong (UTC+08:00)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">语言设置</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>简体中文</option>
+                                        <option>繁体中文</option>
+                                        <option>English</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 安全设置 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">安全设置</h3>
+                        </div>
+                        <div class="p-6">
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">登录失败重试次数</label>
+                                    <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">密码有效期（天）</label>
+                                    <input type="number" value="90" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">会话超时时间（分钟）</label>
+                                    <input type="number" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">IP白名单</label>
+                                    <textarea rows="3" placeholder="请输入允许的IP地址，每行一个" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">192.168.1.0/24
+10.0.0.0/8</textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 邮件设置 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">邮件设置</h3>
+                        </div>
+                        <div class="p-6">
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">SMTP服务器</label>
+                                    <input type="text" placeholder="smtp.example.com" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">端口</label>
+                                        <input type="number" value="587" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">加密方式</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option>STARTTLS</option>
+                                            <option>SSL/TLS</option>
+                                            <option>无</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">发件人邮箱</label>
+                                    <input type="email" placeholder="noreply@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <button type="button" onclick="testEmail()" class="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                                    测试邮件发送
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 日志设置 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">日志设置</h3>
+                        </div>
+                        <div class="p-6">
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">日志保留时间（天）</label>
+                                    <input type="number" value="180" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">日志级别</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>INFO</option>
+                                        <option>DEBUG</option>
+                                        <option>WARN</option>
+                                        <option>ERROR</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">记录所有用户操作</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">自动清理过期日志</span>
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 备份设置 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">备份设置</h3>
+                        </div>
+                        <div class="p-6">
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">启用自动备份</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">备份周期</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>每天</option>
+                                        <option>每周</option>
+                                        <option>每月</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">备份时间</label>
+                                    <input type="time" value="02:00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">保留备份数量</label>
+                                        <input type="number" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <button type="button" onclick="backupNow()" class="self-end bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                                        立即备份
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 通知设置 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">通知设置</h3>
+                        </div>
+                        <div class="p-6">
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">启用邮件通知</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">高风险事件邮件提醒</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">每日安全报告</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <span class="ml-2 text-sm text-gray-700">证书到期提醒</span>
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 保存按钮 -->
+                <div class="mt-8 text-center">
+                    <button onclick="saveSettings()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium">
+                        保存设置
+                    </button>
                 </div>
             </div>
         </div>
@@ -379,9 +743,60 @@
         </div>
     </div>
 
+    <!-- 角色编辑模态框 -->
+    <div id="role-modal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 m-4 max-w-2xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800" id="role-modal-title">添加角色</h3>
+                <button onclick="hideRoleModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="role-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">角色名称</label>
+                        <input type="text" id="role-name" name="name" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">状态</label>
+                        <select id="role-status" name="status" required class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="active">启用</option>
+                            <option value="inactive">禁用</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">描述</label>
+                    <textarea id="role-description" name="description" rows="2" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="请输入角色描述"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">权限配置</label>
+                    <div class="border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
+                        <div class="space-y-3" id="permissions-list">
+                            <!-- 权限列表将动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button type="button" onclick="hideRoleModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // 后台管理页面JavaScript
         let currentUser = null;
+
+        // 用户数据
         let users = [
             {
                 id: 1,
@@ -415,6 +830,151 @@
                 role: '培训管理员',
                 status: 'active',
                 createdAt: '2025-03-10 09:15:00'
+            },
+            {
+                id: 4,
+                username: 'operator1',
+                fullName: '王五',
+                email: 'op1@example.com',
+                department: '运营部',
+                position: '操作员',
+                role: '普通用户',
+                status: 'active',
+                createdAt: '2025-04-20 11:30:00'
+            }
+        ];
+
+        // 角色数据
+        let roles = [
+            {
+                id: 1,
+                name: '超级管理员',
+                description: '系统最高权限管理员，拥有所有功能权限',
+                permissions: ['system.manage', 'user.manage', 'role.manage', 'permission.manage', 'safety.view', 'risk.manage', 'incident.manage', 'training.manage', 'certificate.manage'],
+                status: 'active',
+                createdAt: '2025-01-01 09:00:00'
+            },
+            {
+                id: 2,
+                name: '安全管理员',
+                description: '负责安全监控、风险评估和事故管理',
+                permissions: ['safety.view', 'risk.manage', 'incident.manage'],
+                status: 'active',
+                createdAt: '2025-01-02 09:00:00'
+            },
+            {
+                id: 3,
+                name: '培训管理员',
+                description: '负责培训管理、证书管理和培训效果分析',
+                permissions: ['training.manage', 'certificate.manage'],
+                status: 'active',
+                createdAt: '2025-01-03 09:00:00'
+            },
+            {
+                id: 4,
+                name: '普通用户',
+                description: '一般系统用户，只能查看安全信息',
+                permissions: ['safety.view'],
+                status: 'active',
+                createdAt: '2025-01-04 09:00:00'
+            }
+        ];
+
+        // 权限配置
+        const allPermissions = [
+            { id: 'system.manage', name: '系统管理', description: '管理整个系统的配置和设置' },
+            { id: 'user.manage', name: '用户管理', description: '管理系统用户' },
+            { id: 'role.manage', name: '角色管理', description: '管理系统角色' },
+            { id: 'permission.manage', name: '权限管理', description: '管理系统权限' },
+            { id: 'safety.view', name: '安全监控', description: '查看安全监控数据' },
+            { id: 'risk.manage', name: '风险管理', description: '管理风险评估' },
+            { id: 'incident.manage', name: '事故管理', description: '管理事故报告' },
+            { id: 'training.manage', name: '培训管理', description: '管理培训计划' },
+            { id: 'certificate.manage', name: '证书管理', description: '管理培训证书' },
+            { id: 'inspection.manage', name: '巡检管理', description: '管理巡检点和记录' }
+        ];
+
+        // 操作日志数据
+        let operationLogs = [
+            {
+                id: 1,
+                timestamp: '2025-12-17 09:00:00',
+                userId: 1,
+                username: 'admin',
+                action: 'login',
+                module: 'auth',
+                description: '用户登录系统',
+                ipAddress: '192.168.1.100'
+            },
+            {
+                id: 2,
+                timestamp: '2025-12-17 09:15:32',
+                userId: 2,
+                username: '张三',
+                action: 'create',
+                module: 'risk',
+                description: '创建了新的风险评估记录：A站信号设备老化风险',
+                ipAddress: '192.168.1.105'
+            },
+            {
+                id: 3,
+                timestamp: '2025-12-17 09:30:15',
+                userId: 2,
+                username: '张三',
+                action: 'update',
+                module: 'incident',
+                description: '更新了事故报告：A站信号故障的处理状态',
+                ipAddress: '192.168.1.105'
+            },
+            {
+                id: 4,
+                timestamp: '2025-12-17 10:00:00',
+                userId: 3,
+                username: '李四',
+                action: 'create',
+                module: 'training',
+                description: '创建了新的培训计划：冬季安全操作规程培训',
+                ipAddress: '192.168.1.110'
+            },
+            {
+                id: 5,
+                timestamp: '2025-12-17 10:30:00',
+                userId: 1,
+                username: 'admin',
+                action: 'update',
+                module: 'user',
+                description: '修改了用户zhangsan的邮箱地址',
+                ipAddress: '192.168.1.100'
+            },
+            {
+                id: 6,
+                timestamp: '2025-12-17 11:00:00',
+                userId: 4,
+                username: '王五',
+                action: 'view',
+                module: 'safety',
+                description: '查看了安全监控仪表板',
+                ipAddress: '192.168.1.115'
+            },
+            {
+                id: 7,
+                timestamp: '2025-12-17 11:30:00',
+                userId: 2,
+                username: '张三',
+                action: 'logout',
+                module: 'auth',
+                description: '用户退出系统',
+                ipAddress: '192.168.1.105'
+            },
+            {
+                id: 8,
+                timestamp: '2025-12-17 14:00:00',
+                userId: 3,
+                username: '李四',
+                action: 'update',
+                module: 'certificate',
+                description: '更新了培训证书状态',
+                ipAddress: '192.168.1.110'
             }
         ];
 
@@ -566,15 +1126,32 @@
             document.querySelectorAll('.section-content').forEach(section => {
                 section.classList.add('hidden');
             });
-            
+
             // 显示指定部分
             document.getElementById(sectionName + '-section').classList.remove('hidden');
-            
+
             // 更新侧边栏活动状态
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.classList.add('active');
+
+            // 渲染对应部分的数据
+            if (sectionName === 'roles') {
+                renderRolesTable();
+                renderPermissionsList();
+            } else if (sectionName === 'permissions') {
+                renderPermissionsTable();
+            } else if (sectionName === 'certificates') {
+                renderCertificatesTable();
+            }
+
+            // 找到对应的菜单项并添加active类
+            const menuItems = document.querySelectorAll('.sidebar-item');
+            menuItems.forEach(item => {
+                if (item.onclick && item.onclick.toString().includes(sectionName)) {
+                    item.classList.add('active');
+                }
+            });
         }
 
         // 渲染用户表格
@@ -732,6 +1309,463 @@
             `).join('');
         }
 
+        // 渲染角色表格
+        function renderRolesTable() {
+            const tbody = document.getElementById('roles-table-body');
+
+            tbody.innerHTML = roles.map(role => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${role.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${role.name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate" title="${role.description}">${role.description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${role.permissions.length}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${role.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${role.status === 'active' ? '启用' : '禁用'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${role.createdAt}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editRole(${role.id})" class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
+                        <button onclick="deleteRole(${role.id})" class="text-red-600 hover:text-red-900">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 渲染权限列表（用于角色编辑）
+        function renderPermissionsList(selectedPermissions = []) {
+            const container = document.getElementById('permissions-list');
+
+            const categories = {
+                '系统管理': ['system.manage', 'user.manage', 'role.manage', 'permission.manage'],
+                '安全与风险': ['safety.view', 'risk.manage', 'incident.manage'],
+                '培训管理': ['training.manage', 'certificate.manage'],
+                '巡检管理': ['inspection.manage']
+            };
+
+            let html = '';
+
+            for (const [category, perms] of Object.entries(categories)) {
+                html += `<div class="font-medium text-gray-800 mb-2 mt-4">${category}</div>`;
+
+                perms.forEach(permissionId => {
+                    const permission = allPermissions.find(p => p.id === permissionId);
+                    if (permission) {
+                        const isChecked = selectedPermissions.includes(permissionId);
+                        html += `
+                            <div class="flex items-start ml-4">
+                                <div class="flex items-center h-5">
+                                    <input type="checkbox" name="permissions" value="${permissionId}" ${isChecked ? 'checked' : ''} class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label class="font-medium text-gray-700">${permission.name}</label>
+                                    <p class="text-gray-500">${permission.description}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 显示角色模态框
+        function showRoleModal(roleId = null) {
+            const modal = document.getElementById('role-modal');
+            const title = document.getElementById('role-modal-title');
+
+            if (roleId) {
+                // 编辑角色
+                const role = roles.find(r => r.id === roleId);
+                if (role) {
+                    title.textContent = '编辑角色';
+                    document.getElementById('role-name').value = role.name;
+                    document.getElementById('role-description').value = role.description;
+                    document.getElementById('role-status').value = role.status;
+                    document.getElementById('role-name').dataset.roleId = roleId;
+
+                    // 渲染选中的权限
+                    renderPermissionsList(role.permissions);
+                }
+            } else {
+                // 添加角色
+                title.textContent = '添加角色';
+                document.getElementById('role-form').reset();
+                delete document.getElementById('role-name').dataset.roleId;
+
+                // 渲染空权限列表
+                renderPermissionsList([]);
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            anime({
+                targets: '#role-modal > div',
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        // 隐藏角色模态框
+        function hideRoleModal() {
+            const modal = document.getElementById('role-modal');
+
+            anime({
+                targets: '#role-modal > div',
+                scale: [1, 0.8],
+                opacity: [1, 0],
+                duration: 200,
+                easing: 'easeInQuad',
+                complete: () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+
+        // 编辑角色
+        function editRole(roleId) {
+            showRoleModal(roleId);
+        }
+
+        // 删除角色
+        function deleteRole(roleId) {
+            if (confirm('确定要删除这个角色吗？')) {
+                roles = roles.filter(role => role.id !== roleId);
+                renderRolesTable();
+                showMessage('角色删除成功', 'success');
+            }
+        }
+
+        // 渲染权限表格
+        function renderPermissionsTable() {
+            const tbody = document.getElementById('permissions-table-body');
+
+            tbody.innerHTML = allPermissions.map(permission => {
+                // 获取拥有该权限的角色
+                const permissionRoles = roles.filter(role =>
+                    role.permissions.includes(permission.id)
+                );
+
+                const roleNames = permissionRoles.map(role => role.name).join(', ');
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">${permission.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${permission.name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900 max-w-md">${permission.description}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">
+                            ${roleNames || '<span class="text-gray-400">未分配给任何角色</span>'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="viewPermissionRoles('${permission.id}')" class="text-blue-600 hover:text-blue-900 mr-3">查看角色</button>
+                            <button onclick="togglePermissionExport('${permission.id}')" class="text-green-600 hover:text-green-900">导出设置</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 渲染证书表格
+        function renderCertificatesTable() {
+            // 从证书管理页面获取证书数据
+            const certificateContainer = document.querySelector('#certificate-management-content');
+            if (!certificateContainer) {
+                // 如果在admin.html中没有找到证书数据，则使用模拟数据
+                const mockCertificates = [
+                    {
+                        id: 1,
+                        employee: '张三',
+                        employee_id: 'E001',
+                        certificate_name: '铁路安全操作证',
+                        certificate_number: 'RSA2023001',
+                        issuing_authority: '国家铁路局',
+                        issue_date: '2023-01-15',
+                        expiry_date: '2026-01-15',
+                        certificate_type: '安全证',
+                        status: 'valid',
+                        notes: '高级操作员资质'
+                    },
+                    {
+                        id: 2,
+                        employee: '李四',
+                        employee_id: 'E002',
+                        certificate_name: '信号设备维护证',
+                        certificate_number: 'RSM2023002',
+                        issuing_authority: '国家铁路局',
+                        issue_date: '2023-02-20',
+                        expiry_date: '2026-02-20',
+                        certificate_type: '操作证',
+                        status: 'expiring',
+                        notes: '信号设备维护资质'
+                    }
+                ];
+
+                const tbody = document.getElementById('certificates-table-body');
+                tbody.innerHTML = mockCertificates.map(cert => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-sm font-bold">${cert.employee.charAt(0)}</span>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${cert.employee}</div>
+                                    <div class="text-sm text-gray-500">${cert.employee_id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.certificate_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.certificate_number}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.issue_date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cert.expiry_date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${getCertificateStatusColor(cert.status)}">
+                                ${getCertificateStatusText(cert.status)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="editCertificate(${cert.id})" class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
+                            <button onclick="deleteCertificate(${cert.id})" class="text-red-600 hover:text-red-900">删除</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // 获取证书状态颜色
+        function getCertificateStatusColor(status) {
+            switch (status) {
+                case 'valid': return 'bg-green-100 text-green-800';
+                case 'expiring': return 'bg-orange-100 text-orange-800';
+                case 'expired': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 获取证书状态文本
+        function getCertificateStatusText(status) {
+            switch (status) {
+                case 'valid': return '有效';
+                case 'expiring': return '即将到期';
+                case 'expired': return '已过期';
+                default: return '未知';
+            }
+        }
+
+        // 编辑证书
+        function editCertificate(certId) {
+            alert('证书编辑功能开发中...');
+        }
+
+        // 删除证书
+        function deleteCertificate(certId) {
+            if (confirm('确定要删除这个证书吗？')) {
+                showMessage('证书删除成功', 'success');
+                renderCertificatesTable(); // 重新渲染表格
+            }
+        }
+
+        // 查看权限的所属角色
+        function viewPermissionRoles(permissionId) {
+            const permission = allPermissions.find(p => p.id === permissionId);
+            const permissionRoles = roles.filter(role =>
+                role.permissions.includes(permissionId)
+            );
+
+            let rolesList = permissionRoles.map(role => `• ${role.name}`).join('\n');
+
+            if (!rolesList) {
+                rolesList = '该权限未分配给任何角色';
+            }
+
+            alert(`权限: ${permission.name}\n\n所属角色:\n${rolesList}`);
+        }
+
+        // 切换权限导出设置（演示功能）
+        function togglePermissionExport(permissionId) {
+            alert(`权限导出设置功能开发中...\n\n权限ID: ${permissionId}`);
+        }
+
+        // 操作日志相关变量和函数
+        let currentLogsPage = 1;
+        const logsPerPage = 10;
+        let filteredLogs = [...operationLogs];
+
+        // 渲染日志列表
+        function renderLogsTable() {
+            const tbody = document.getElementById('logs-table-body');
+            const startIndex = (currentLogsPage - 1) * logsPerPage;
+            const endIndex = startIndex + logsPerPage;
+            const logsToShow = filteredLogs.slice(startIndex, endIndex);
+
+            tbody.innerHTML = logsToShow.map(log => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${log.timestamp}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${log.username}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${getActionColor(log.action)}">
+                            ${getActionText(log.action)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${log.module}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-md truncate" title="${log.description}">${log.description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">${log.ipAddress}</td>
+                </tr>
+            `).join('');
+
+            updateLogsPagination();
+        }
+
+        // 获取操作类型颜色
+        function getActionColor(action) {
+            switch (action) {
+                case 'login': return 'bg-blue-100 text-blue-800';
+                case 'logout': return 'bg-purple-100 text-purple-800';
+                case 'create': return 'bg-green-100 text-green-800';
+                case 'update': return 'bg-yellow-100 text-yellow-800';
+                case 'delete': return 'bg-red-100 text-red-800';
+                case 'view': return 'bg-gray-100 text-gray-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 获取操作类型文本
+        function getActionText(action) {
+            switch (action) {
+                case 'login': return '登录';
+                case 'logout': return '退出';
+                case 'create': return '创建';
+                case 'update': return '更新';
+                case 'delete': return '删除';
+                case 'view': return '查看';
+                default: return action;
+            }
+        }
+
+        // 更新日志分页
+        function updateLogsPagination() {
+            const totalLogs = filteredLogs.length;
+            const totalPages = Math.ceil(totalLogs / logsPerPage);
+            const startIndex = (currentLogsPage - 1) * logsPerPage + 1;
+            const endIndex = Math.min(currentLogsPage * logsPerPage, totalLogs);
+
+            document.getElementById('logs-start').textContent = totalLogs > 0 ? startIndex : 0;
+            document.getElementById('logs-end').textContent = endIndex;
+            document.getElementById('logs-total').textContent = totalLogs;
+            document.getElementById('logs-page-info').textContent = `第 ${currentLogsPage} 页`;
+
+            // 更新按钮状态
+            document.getElementById('logs-prev-btn').disabled = currentLogsPage === 1;
+            document.getElementById('logs-next-btn').disabled = currentLogsPage >= totalPages;
+        }
+
+        // 筛选日志
+        function filterLogs() {
+            const actionFilter = document.getElementById('log-action-filter').value;
+            const userFilter = document.getElementById('log-user-filter').value.toLowerCase();
+            const startDateFilter = document.getElementById('log-start-date').value;
+            const endDateFilter = document.getElementById('log-end-date').value;
+
+            filteredLogs = operationLogs.filter(log => {
+                // 操作类型筛选
+                if (actionFilter && log.action !== actionFilter) {
+                    return false;
+                }
+
+                // 用户筛选
+                if (userFilter && !log.username.toLowerCase().includes(userFilter)) {
+                    return false;
+                }
+
+                // 日期范围筛选
+                const logDate = new Date(log.timestamp);
+                if (startDateFilter) {
+                    const startDate = new Date(startDateFilter);
+                    if (logDate < startDate) return false;
+                }
+                if (endDateFilter) {
+                    const endDate = new Date(endDateFilter);
+                    endDate.setHours(23, 59, 59);
+                    if (logDate > endDate) return false;
+                }
+
+                return true;
+            });
+
+            currentLogsPage = 1;
+            renderLogsTable();
+        }
+
+        // 清除日志筛选
+        function clearLogFilters() {
+            document.getElementById('log-action-filter').value = '';
+            document.getElementById('log-user-filter').value = '';
+            document.getElementById('log-start-date').value = '';
+            document.getElementById('log-end-date').value = '';
+
+            filteredLogs = [...operationLogs];
+            currentLogsPage = 1;
+            renderLogsTable();
+        }
+
+        // 上一页
+        function previousLogsPage() {
+            if (currentLogsPage > 1) {
+                currentLogsPage--;
+                renderLogsTable();
+            }
+        }
+
+        // 下一页
+        function nextLogsPage() {
+            const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
+            if (currentLogsPage < totalPages) {
+                currentLogsPage++;
+                renderLogsTable();
+            }
+        }
+
+        // 导出日志
+        function exportLogs() {
+            const logsJson = JSON.stringify(filteredLogs, null, 2);
+            const blob = new Blob([logsJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `操作日志_${new Date().toLocaleDateString()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showMessage('日志导出成功', 'success');
+        }
+
+        // 测试邮件发送
+        function testEmail() {
+            alert('测试邮件已发送到管理员邮箱');
+            showMessage('测试邮件发送成功', 'success');
+        }
+
+        // 立即备份
+        function backupNow() {
+            alert('正在进行数据备份，请稍候...');
+            setTimeout(() => {
+                showMessage('备份完成', 'success');
+            }, 2000);
+        }
+
+        // 保存设置
+        function saveSettings() {
+            showMessage('设置保存成功', 'success');
+        }
+
         // 退出登录
         function logout() {
             localStorage.removeItem('userInfo');
@@ -773,6 +1807,45 @@
             // 搜索事件
             document.getElementById('user-search').addEventListener('input', searchUsers);
             document.getElementById('user-filter').addEventListener('change', searchUsers);
+
+            // 角色表单提交
+            document.getElementById('role-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const roleData = {
+                    name: formData.get('name'),
+                    description: formData.get('description'),
+                    status: formData.get('status'),
+                    permissions: []
+                };
+
+                // 获取选中的权限
+                const permissionCheckboxes = document.querySelectorAll('input[name="permissions"]:checked');
+                permissionCheckboxes.forEach(checkbox => {
+                    roleData.permissions.push(checkbox.value);
+                });
+
+                const roleId = document.getElementById('role-name').dataset.roleId;
+
+                if (document.getElementById('role-modal-title').textContent === '添加角色') {
+                    // 添加新角色
+                    roleData.id = Math.max(...roles.map(r => r.id)) + 1;
+                    roleData.createdAt = new Date().toLocaleString();
+                    roles.push(roleData);
+                    showMessage('角色添加成功', 'success');
+                } else {
+                    // 更新角色
+                    const index = roles.findIndex(r => r.id === parseInt(roleId));
+                    if (index !== -1) {
+                        roles[index] = { ...roles[index], ...roleData };
+                        showMessage('角色更新成功', 'success');
+                    }
+                }
+
+                renderRolesTable();
+                hideRoleModal();
+            });
         }
 
         // 显示消息
