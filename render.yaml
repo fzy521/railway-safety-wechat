@@ -1,0 +1,18 @@
+# Render部署配置文件
+services:
+  - type: web
+    name: railway-safety-system
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        value: ./database/railway_safety.db
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/database
+      sizeGB: 1
