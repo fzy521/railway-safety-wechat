@@ -100,12 +100,67 @@ railway_safety/
 - 培训管理员: train / train123
 - 普通用户: user1 / user123
 
+## 🚀 部署指南
+
+### 本地部署
+```bash
+# 1. 克隆项目
+git clone <repository-url
+cd railway_safety
+
+# 2. 安装依赖
+npm install
+
+# 3. 选择部署模式
+npm start              # 完整模式（含数据库）
+npm run demo           # 演示模式（无数据库）
+```
+
+### 云端部署（Render）
+1. Fork本项目到你的GitHub
+2. 注册 [Render](https://render.com)
+3. 连接GitHub仓库
+4. 自动部署（已包含render.yaml配置）
+
+### Docker部署
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
 ## 📄 文档
 
 详细文档请查看：
-- [系统架构](docs/architecture.md)
-- [数据库设计](docs/database-design.md)
-- [API文档](docs/api.md)
+- [系统架构](docs/architecture.md) - 技术架构和设计理念
+- [数据库设计](docs/database-design.md) - 数据表结构和关系
+- [API文档](docs/api.md) - 接口说明和使用示例
+
+## 🔍 开发说明
+
+### 目录结构
+```
+src/
+├── server/           # 后端代码
+│   ├── routes/       # API路由
+│   ├── models/       # 数据模型
+│   └── services/     # 业务逻辑
+├── database/         # 数据库文件
+├── docs/             # 项目文档
+└── public/           # 静态资源
+```
+
+### 环境变量
+```bash
+NODE_ENV=production
+PORT=3000
+DATABASE_URL=./database/railway_safety.db
+JWT_SECRET=your-secret-key
+```
 
 ## 🤝 贡献
 
