@@ -45,6 +45,7 @@
     "eslint": "^8.55.0"
   },
   "engines": {
-    "node": ">=16.0.0"
-  }
+    "node": ">=16.0.0 <=20.x"
+  },
+  "engineStrict": false
 }

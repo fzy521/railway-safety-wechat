@@ -9,7 +9,9 @@ Railway Safety Monitoring System for Dedicated Railway Lines
 ## 🚀 快速开始
 
 ### 系统要求
-- Node.js 14.0 或更高版本
+- **Node.js**: 16.0 - 20.x 版本（推荐使用 Node.js 20 LTS）
+  - ⚠️ 注意：Node.js 22+ 版本可能导致 better-sqlite3 编译问题
+  - 📖 详见 [Node.js 版本指南](NODE_VERSION_GUIDE.md)
 - 现代浏览器（Chrome, Firefox, Edge, Safari）
 
 ### 安装和启动
@@ -124,7 +126,7 @@ npm run demo           # 演示模式（无数据库）
 
 ### Docker部署
 ```dockerfile
-FROM node:18-alpine
+FROM node:20-alpine  # 使用 Node.js 20 LTS
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --production

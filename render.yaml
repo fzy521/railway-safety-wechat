@@ -5,6 +5,7 @@ services:
     env: node
     buildCommand: npm install
     startCommand: npm start
+    nodeVersion: "20"
     envVars:
       - key: NODE_ENV
         value: production
@@ -12,6 +13,8 @@ services:
         value: 3000
       - key: DATABASE_URL
         value: ./database/railway_safety.db
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=4096"
     disk:
       name: sqlite-data
       mountPath: /opt/render/project/src/database
