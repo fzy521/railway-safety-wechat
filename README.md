@@ -1,173 +1,145 @@
-# 梁邹铁路专用线运营安全监控系统
+# 铁路安全监控小程序
 
-Railway Safety Monitoring System for Dedicated Railway Lines
+基于微信小程序的铁路安全监控系统，提供实时安全监控、风险评估、事故报送和数据分析等功能。
 
-## 🚂 系统简介
-
-这是一个基于Web的铁路安全监控系统，提供安全检查、事故管理、风险评估、培训管理等核心功能。系统支持多种部署模式，从纯前端演示到完整的数据库驱动应用。
-
-## 🚀 快速开始
-
-### 系统要求
-- **Node.js**: 16.0 - 20.x 版本（推荐使用 Node.js 20 LTS）
-  - ⚠️ 注意：Node.js 22+ 版本可能导致 better-sqlite3 编译问题
-  - 📖 详见 [Node.js 版本指南](NODE_VERSION_GUIDE.md)
-- 现代浏览器（Chrome, Firefox, Edge, Safari）
-
-### 安装和启动
-
-```bash
-# 克隆或下载项目
-cd railway_safety
-
-# 安装依赖
-npm install
-
-# 启动系统（推荐）
-node start.js --demo    # 演示模式（无数据库）
-node start.js           # 完整模式（含数据库）
-node start.js --simple  # 简单模式
-node start.js --native  # 原生模式
-
-# 或通过环境变量
-MODE=demo node start.js
-```
-
-### 访问系统
-启动后访问: http://localhost:3000
-
-## 📋 功能特性
+## 🚂 系统功能
 
 ### 核心模块
-1. **安全仪表板** - 实时安全指标和统计
-2. **风险评估** - 5x5风险矩阵和趋势分析
-3. **事故管理** - 事故报告和跟踪处理
-4. **培训管理** - 培训计划和证书管理
-5. **检查管理** - 定期安全检查和隐患管理
-6. **设备管理** - 设备档案和维护记录
+1. **实时监控仪表板** - 安全指标实时展示
+2. **风险评估** - 5x5风险矩阵评估工具
+3. **事故管理** - 事故上报、查询和处理
+4. **用户中心** - 个人信息和认证管理
 
-### 用户角色
-- **超级管理员** - 系统管理权限
-- **安全管理员** - 安全相关功能管理
-- **培训管理员** - 培训和证书管理
-- **普通用户** - 查看权限
+### 技术特色
+- 微信云开发支持，无需自建服务器
+- 实时数据同步和离线缓存
+- 一键分享和协作功能
+- 响应式设计，适配各种设备
 
-## 🛠️ 技术架构
-
-### 前端技术
-- HTML5 + CSS3 + JavaScript (ES6+)
-- Tailwind CSS - UI框架
-- ECharts.js - 数据可视化
-- Anime.js - 动画效果
-
-### 后端技术（可选）
-- Node.js + Express.js
-- SQLite数据库
-- JWT认证
-- 安全中间件（Helmet, CORS等）
-
-### 部署模式
-1. **演示模式** - 纯前端，模拟数据
-2. **完整模式** - 前后端 + 数据库
-3. **简单模式** - 简化后端
-4. **原生模式** - 零依赖运行
-
-## 📁 项目结构
+## 📦 项目结构
 
 ```
 railway_safety/
-├── start.js                 # 统一启动脚本
-├── start-without-db.js      # 无数据库版本
-├── server/                  # 后端代码（可选）
-│   ├── app.js              # Express应用
-│   ├── routes/             # API路由
-│   ├── models/             # 数据模型
-│   └── services/           # 业务逻辑
-├── database/               # 数据库文件
-├── *.html                  # 前端页面
-├── main.js                 # 前端主逻辑
-└── api-service.js          # 客户端API服务
+├── miniprogram/                    # 小程序代码
+│   ├── app.js                      # 小程序入口
+│   ├── app.json                    # 全局配置
+│   ├── app.wxss                    # 全局样式
+│   ├── project.config.json         # 项目配置
+│   ├── pages/                      # 页面目录
+│   │   ├── dashboard/              # 仪表板页面
+│   │   ├── risk/                   # 风险评估页面
+│   │   ├── incident/               # 事故管理页面
+│   │   ├── login/                  # 登录页面
+│   │   └── profile/                # 个人中心
+│   ├── cloudfunctions/             # 云函数
+│   │   ├── login/                  # 用户登录
+│   │   ├── getSafetyMetrics/       # 获取安全指标
+│   │   ├── getIncidents/           # 获取事故数据
+│   │   └── initDatabase/           # 初始化数据库
+│   ├── utils/                      # 工具函数
+│   │   ├── utils.js                # 通用工具
+│   │   ├── constants.js            # 常量定义
+│   │   └── chart.js                # 图表配置
+│   └── images/                     # 图片资源
+│       └── *.png                   # 图标文件
+└── .gitignore                      # Git忽略配置
 ```
-
-## 🔧 开发指南
-
-### 添加新功能
-1. 前端：修改对应的HTML文件和main.js
-2. 后端：在server/routes/中添加新的API路由
-3. 数据：更新server/services/api-service.js
-
-### 测试账户
-- 管理员: admin / admin123
-- 安全管理员: safety / safety123
-- 培训管理员: train / train123
-- 普通用户: user1 / user123
 
 ## 🚀 部署指南
 
-### 本地部署
+### 前置要求
+- 微信小程序开发者工具
+- 微信开发者账号
+- 已开通微信云开发
+
+### 本地开发
+1. 克隆项目到本地
 ```bash
-# 1. 克隆项目
-git clone <repository-url
-cd railway_safety
-
-# 2. 安装依赖
-npm install
-
-# 3. 选择部署模式
-npm start              # 完整模式（含数据库）
-npm run demo           # 演示模式（无数据库）
+git clone <repository-url>
+cd railway_safety/miniprogram
 ```
 
-### 云端部署（Render）
-1. Fork本项目到你的GitHub
-2. 注册 [Render](https://render.com)
-3. 连接GitHub仓库
-4. 自动部署（已包含render.yaml配置）
+2. 使用微信开发者工具打开 `miniprogram` 目录
+3. 配置项目
+   - appid: 填写你的小程序appid
+   - 开通云开发环境
+   - 配置云开发环境ID
 
-### Docker部署
-```dockerfile
-FROM node:20-alpine  # 使用 Node.js 20 LTS
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --production
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
+4. 上传并部署云函数
+   - 在微信开发者工具中右键 cloudfunctions
+   - 选择"上传并部署：云端安装依赖"
 
-## 📄 文档
+### 云开发配置
+1. 在微信开发者工具中开通云开发
+2. 创建云开发环境
+3. 记录环境ID，更新到 project.config.json
+4. 部署所有云函数
 
-详细文档请查看：
-- [系统架构](docs/architecture.md) - 技术架构和设计理念
-- [数据库设计](docs/database-design.md) - 数据表结构和关系
-- [API文档](docs/api.md) - 接口说明和使用示例
+### 数据库初始化
+使用 `initDatabase` 云函数初始化数据库集合：
+- incidents (事故记录)
+- risks (风险数据)
+- users (用户信息)
 
-## 🔍 开发说明
+## 🔧 云函数列表
 
-### 目录结构
-```
-src/
-├── server/           # 后端代码
-│   ├── routes/       # API路由
-│   ├── models/       # 数据模型
-│   └── services/     # 业务逻辑
-├── database/         # 数据库文件
-├── docs/             # 项目文档
-└── public/           # 静态资源
-```
+| 云函数 | 功能 | 调用页面 |
+|--------|------|----------|
+| login | 用户登录认证 | 登录页 |
+| getSafetyMetrics | 获取安全统计数据 | 仪表板 |
+| getQuickStats | 获取快速统计 | 仪表板 |
+| getIncidents | 获取事故列表 | 事故管理 |
+| initDatabase | 初始化数据库 | 管理工具 |
 
-### 环境变量
-```bash
-NODE_ENV=production
-PORT=3000
-DATABASE_URL=./database/railway_safety.db
-JWT_SECRET=your-secret-key
-```
+## 📱 页面说明
 
-## 🤝 贡献
+### 首页 (index)
+- 系统简介和功能导航
+- 快速访问常用功能
 
-欢迎提交Issue和Pull Request来改进系统。
+### 仪表板 (dashboard)
+- 实时安全指标展示
+- 趋势图表和统计分析
+- 待办事项提醒
+
+### 风险评估 (risk)
+- 5x5风险评估矩阵
+- 风险等级说明
+- 当前风险清单
+
+### 事故管理 (incident)
+- 事故报告和处理
+- 事故统计和分析
+- 筛选和搜索功能
+
+### 个人中心 (profile)
+- 用户信息管理
+- 系统设置
+- 帮助和反馈
+
+## 🎯 使用场景
+
+1. **日常巡检** - 现场人员使用小程序上报安全隐患
+2. **事故处理** - 快速记录和处理突发事故
+3. **风险评估** - 定期评估和更新风险等级
+4. **数据分析** - 管理层查看安全趋势和指标
+
+## 📄 开发文档
+
+### 开发规范
+- 使用微信小程序原生框架
+- 遵循微信官方开发规范
+- 代码风格统一，注释清晰
+
+### 调试技巧
+- 使用微信开发者工具调试
+- 开启调试模式查看日志
+- 使用云开发控制台查看数据
+
+## 🤝 贡献指南
+
+欢迎提交Issue和Pull Request来改进小程序。
 
 ## 📄 许可证
 
-MIT License - 详见LICENSE文件
+MIT License
