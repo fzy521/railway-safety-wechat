@@ -1,0 +1,65 @@
+<view class="container">
+  <view class="header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="title">铁路安全监控系统</text>
+    <text class="subtitle">梁邹铁路专用线</text>
+  </view>
+
+  <view class="login-prompt" wx:if="{{!hasUserInfo}}">
+    <text class="prompt-text">欢迎使用铁路安全监控系统</text>
+    <text class="prompt-desc">请登录后查看安全监控数据</text>
+    <button class="btn-primary login-btn" bindtap="onLogin">立即登录</button>
+  </view>
+
+  <view class="quick-actions" wx:else>
+    <view class="quick-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{todayIncidents}}</text>
+        <text class="stat-label">今日事故</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{riskLevel}}</text>
+        <text class="stat-label">风险等级</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{completionRate}}%</text>
+        <text class="stat-label">巡检完成率</text>
+      </view>
+    </view>
+
+    <view class="action-grid">
+      <view class="action-item" bindtap="goToDashboard">
+        <image src="/images/icon-dashboard.png" class="action-icon"></image>
+        <text class="action-text">安全监控</text>
+      </view>
+      <view class="action-item" bindtap="goToRisk">
+        <image src="/images/icon-risk.png" class="action-icon"></image>
+        <text class="action-text">风险评估</text>
+      </view>
+      <view class="action-item" bindtap="goToIncident">
+        <image src="/images/icon-incident.png" class="action-icon"></image>
+        <text class="action-text">事故报告</text>
+      </view>
+      <view class="action-item" bindtap="goToInspection">
+        <image src="/images/icon-inspection.png" class="action-icon"></image>
+        <text class="action-text">巡检管理</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="latest-alerts" wx:if="{{alerts.length > 0}}">
+    <view class="section-title">
+      <text>最新预警</text>
+      <text class="more-link" bindtap="goToAlerts">查看全部</text>
+    </view>
+    <view class="alert-list">
+      <view class="alert-item" wx:for="{{alerts}}" wx:key="id">
+        <view class="alert-header">
+          <text class="alert-type">{{item.type}}</text>
+          <text class="alert-time">{{item.time}}</text>
+        </view>
+        <text class="alert-content">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+</view>

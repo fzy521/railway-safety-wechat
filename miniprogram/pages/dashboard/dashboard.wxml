@@ -1,0 +1,62 @@
+<view class="container">
+  <view class="safety-overview">
+    <text class="section-title">安全概况</text>
+    <view class="metrics-grid">
+      <view class="metric-card">
+        <text class="metric-value">{{todayIncidents}}</text>
+        <text class="metric-label">今日事故</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-value">{{riskLevel}}</text>
+        <text class="metric-label">风险等级</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-value {{safetyRate >= 95 ? 'status-safe' : safetyRate >= 80 ? 'status-warning' : 'status-danger'}}">{{safetyRate}}%</text>
+        <text class="metric-label">安全指数</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-value">{{completionRate}}%</text>
+        <text class="metric-label">巡检完成率</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="chart-section">
+    <text class="section-title">事故趋势</text>
+    <view class="chart-container">
+      <canvas canvas-id="incidentChart" type="2d" style="width: 100%; height: 300rpx;"></canvas>
+    </view>
+  </view>
+
+  <view class="risk-section">
+    <text class="section-title">风险评估</text>
+    <view class="risk-grid">
+      <view class="risk-item risk-low">
+        <text class="risk-count">{{lowRisks}}</text>
+        <text class="risk-label">低风险</text>
+      </view>
+      <view class="risk-item risk-medium">
+        <text class="risk-count">{{mediumRisks}}</text>
+        <text class="risk-label">中风险</text>
+      </view>
+      <view class="risk-item risk-high">
+        <text class="risk-count">{{highRisks}}</text>
+        <text class="risk-label">高风险</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="zone-list">
+    <text class="section-title">各区域安全状态</text>
+    <view class="zone-item" wx:for="{{zones}}" wx:key="id">
+      <view class="zone-info">
+        <text class="zone-name">{{item.name}}</text>
+        <text class="zone-status {{item.status}}">{{item.statusText}}</text>
+      </view>
+      <view class="zone-stats">
+        <text class="zone-incidents">事故: {{item.incidents}}</text>
+        <text class="zone-risks">风险: {{item.risks}}</text>
+      </view>
+    </view>
+  </view>
+</view>

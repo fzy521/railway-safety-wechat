@@ -1,0 +1,55 @@
+<view class="container">
+  <view class="risk-matrix-section">
+    <text class="section-title">风险评估矩阵</text>
+    <view class="risk-matrix">
+      <view class="matrix-row" wx:for="{{riskMatrix}}" wx:for-index="likelihoodIndex" wx:key="level">
+        <view class="risk-cell" wx:for="{{item.levels}}" wx:for-index="severityIndex" wx:key="index">
+          <view class="risk-item risk-{{item.color}} {{selectedRisk.likelihood === likelihoodIndex && selectedRisk.severity === severityIndex ? 'selected' : ''}}"
+                bindtap="onRiskSelect"
+                data-likelihood="{{likelihoodIndex}}"
+                data-severity="{{severityIndex}}"
+                data-level="{{item.level}}">
+            <text class="risk-level">{{item.level}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="axis-labels">
+        <text class="axis-label severity-label">严重程度 →</text>
+        <text class="axis-label likelihood-label">可能性 ↓</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="risk-level-description" wx:if="{{selectedRisk.level}}">
+    <text class="section-title">风险等级说明</text>
+    <view class="description-card">
+      <text class="selected-level">当前等级: {{selectedRisk.level}}</text>
+      <text class="level-color-desc">({{selectedRisk.colorText}})</text>
+      <text class="level-meaning">{{selectedRisk.description}}</text>
+    </view>
+  </view>
+
+  <view class="current-risks">
+    <view class="section-header">
+      <text class="section-title">当前风险清单</text>
+      <button class="add-btn" bindtap="addRisk">新增风险</button>
+    </view>
+    <view class="risk-list">
+      <view class="risk-item-card" wx:for="{{riskList}}" wx:key="id">
+        <view class="risk-header">
+          <text class="risk-name">{{item.name}}</text>
+          <view class="risk-level-tag risk-{{item.levelColor}}">{{item.assessment}}</view>
+        </view>
+        <text class="risk-description">{{item.description}}</text>
+        <view class="risk-meta">
+          <text class="risk-responder">负责人: {{item.responder}}</text>
+          <text class="risk-date">{{item.date}}</text>
+        </view>
+        <view class="risk-status">
+          <view class="status-dot status-{{item.status}}"></view>
+          <text class="status-text">{{item.statusText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

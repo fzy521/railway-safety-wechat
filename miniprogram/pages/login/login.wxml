@@ -1,0 +1,30 @@
+<view class="container">
+  <view class="login-header">
+    <image src="/images/logo.png" class="logo" mode="aspectFit"></image>
+    <text class="title">铁路安全监控系统</text>
+    <text class="subtitle">登录后查看安全数据</text>
+  </view>
+
+  <view class="login-form">
+    <button class="btn-primary wechat-login-btn" bindtap="onWechatLogin">
+      <image src="/images/wechat-logo.png" class="wechat-icon"></image>
+      <text>微信授权登录</text>
+    </button>
+
+    <view class="form-footer">
+      <text class="footer-text">登录即表示您同意 </text>
+      <text class="footer-link" bindtap="showServiceTerms">服务条款</text>
+      <text class="footer-text"> 和 </text>
+      <text class="footer-link" bindtap="showPrivacyPolicy">隐私政策</text>
+    </view>
+  </view>
+
+  <view class="login-notice">
+    <text class="notice-title">温馨提示</text>
+    <view class="notice-content">
+      <text class="notice-item">• 本系统仅对铁路安全管理人员开放</text>
+      <text class="notice-item">• 请确保您有权限访问数据</text>
+      <text class="notice-item">• 如有问题请联系管理员</text>
+    </view>
+  </view>
+</view>

@@ -68,3 +68,14 @@ Thumbs.db
 # 测试文件
 test-results/
 coverage/
+test/
+test-node-version.js
+
+# 临时文件和备份
+.claude/
+backup/
+nul
+
+# 本地配置文件
+.env
+*.local
