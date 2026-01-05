@@ -1,0 +1,145 @@
+@import "../../common.wxss";
+
+/* 页面容器 */
+.container {
+  padding: var(--spacing-lg);
+  background-color: var(--color-bg-page);
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+/* 标题区域 */
+.header {
+  text-align: center;
+  padding: var(--spacing-xxxl) 0;
+  margin-bottom: var(--spacing-xl);
+}
+
+.header .title {
+  display: block;
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.header .subtitle {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* 表单区域 */
+.form-section {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2rpx solid var(--color-border-light);
+}
+
+/* 表单项 */
+.form-item {
+  margin-bottom: var(--spacing-xxl);
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-hover);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  box-sizing: border-box;
+}
+
+.form-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.form-picker {
+  width: 100%;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-hover);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+
+.picker-value {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 300rpx;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-hover);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  box-sizing: border-box;
+}
+
+.form-textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* 按钮区域 */
+.form-actions {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xxl);
+}
+
+.btn-cancel,
+.btn-submit {
+  flex: 1;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  border: none;
+}
+
+.btn-cancel {
+  background: var(--color-bg-hover);
+  color: var(--color-text-secondary);
+}
+
+.btn-submit {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-submit:active {
+  background: var(--color-primary-dark);
+}

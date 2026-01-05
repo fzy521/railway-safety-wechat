@@ -105,14 +105,26 @@
   color: var(--color-text-primary);
 }
 
-.add-btn {
+/* 添加按钮 */
+.add-button {
+  position: fixed;
+  right: 40rpx;
+  bottom: 120rpx;
+  width: 120rpx;
+  height: 120rpx;
   background: var(--color-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-lg) var(--spacing-xxl);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+}
+
+.add-icon {
+  font-size: 80rpx;
+  color: #fff;
+  line-height: 1;
 }
 
 .risk-list {

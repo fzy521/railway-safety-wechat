@@ -1,0 +1,205 @@
+<view class="container">
+  <view class="header">
+    <text class="title">添加应急物资</text>
+    <text class="subtitle">登记新的应急物资</text>
+  </view>
+
+  <form bindsubmit="handleSubmit">
+    <!-- 基本信息 -->
+    <view class="form-section">
+      <view class="section-title">基本信息</view>
+      
+      <view class="form-item">
+        <text class="form-label">物资名称 <text class="required">*</text></text>
+        <input 
+          class="form-input" 
+          name="name" 
+          placeholder="请输入物资名称" 
+          value="{{formData.name}}"
+          bindinput="onInputChange"
+          data-field="name"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">物资类别 <text class="required">*</text></text>
+        <picker 
+          class="form-picker" 
+          mode="selector" 
+          range="{{supplyCategories}}" 
+          range-key="label" 
+          value="{{formData.categoryIndex}}"
+          bindchange="onCategoryChange"
+        >
+          <view class="picker-value">
+            {{formData.categoryIndex !== '' ? supplyCategories[formData.categoryIndex].label : '请选择物资类别'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">规格型号</text>
+        <input 
+          class="form-input" 
+          name="specification" 
+          placeholder="请输入规格型号" 
+          value="{{formData.specification}}"
+          bindinput="onInputChange"
+          data-field="specification"
+        />
+      </view>
+    </view>
+
+    <!-- 库存信息 -->
+    <view class="form-section">
+      <view class="section-title">库存信息</view>
+      
+      <view class="form-item">
+        <text class="form-label">当前数量 <text class="required">*</text></text>
+        <input 
+          class="form-input" 
+          name="quantity" 
+          type="number" 
+          placeholder="请输入当前数量" 
+          value="{{formData.quantity}}"
+          bindinput="onInputChange"
+          data-field="quantity"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">单位 <text class="required">*</text></text>
+        <input 
+          class="form-input" 
+          name="unit" 
+          placeholder="请输入单位（如：个、箱、套）" 
+          value="{{formData.unit}}"
+          bindinput="onInputChange"
+          data-field="unit"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">最低库存 <text class="required">*</text></text>
+        <input 
+          class="form-input" 
+          name="minimumStock" 
+          type="number" 
+          placeholder="请输入最低库存" 
+          value="{{formData.minimumStock}}"
+          bindinput="onInputChange"
+          data-field="minimumStock"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">存放位置 <text class="required">*</text></text>
+        <input 
+          class="form-input" 
+          name="location" 
+          placeholder="请输入存放位置" 
+          value="{{formData.location}}"
+          bindinput="onInputChange"
+          data-field="location"
+        />
+      </view>
+    </view>
+
+    <!-- 管理信息 -->
+    <view class="form-section">
+      <view class="section-title">管理信息</view>
+      
+      <view class="form-item">
+        <text class="form-label">责任人</text>
+        <input 
+          class="form-input" 
+          name="manager" 
+          placeholder="请输入责任人" 
+          value="{{formData.manager}}"
+          bindinput="onInputChange"
+          data-field="manager"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">联系电话</text>
+        <input 
+          class="form-input" 
+          name="managerPhone" 
+          type="number" 
+          placeholder="请输入联系电话" 
+          value="{{formData.managerPhone}}"
+          bindinput="onInputChange"
+          data-field="managerPhone"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">最后检查日期</text>
+        <picker 
+          class="form-picker" 
+          mode="date" 
+          value="{{formData.lastCheckDate}}"
+          bindchange="onLastCheckDateChange"
+        >
+          <view class="picker-value">
+            {{formData.lastCheckDate || '请选择最后检查日期'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">有效期</text>
+        <picker 
+          class="form-picker" 
+          mode="date" 
+          value="{{formData.expiryDate}}"
+          bindchange="onExpiryDateChange"
+        >
+          <view class="picker-value">
+            {{formData.expiryDate || '请选择有效期（如适用）'}}
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 物资状态 -->
+    <view class="form-section">
+      <view class="section-title">物资状态</view>
+      
+      <view class="form-item">
+        <text class="form-label">物资状态</text>
+        <picker 
+          class="form-picker" 
+          mode="selector" 
+          range="{{supplyStatuses}}" 
+          range-key="label" 
+          value="{{formData.statusIndex}}"
+          bindchange="onStatusChange"
+        >
+          <view class="picker-value">
+            {{formData.statusIndex !== '' ? supplyStatuses[formData.statusIndex].label : '请选择物资状态'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">备注</text>
+        <textarea 
+          class="form-textarea" 
+          name="remarks" 
+          placeholder="请输入备注信息" 
+          value="{{formData.remarks}}"
+          bindinput="onInputChange"
+          data-field="remarks"
+        />
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="form-actions">
+      <button class="btn-cancel" bindtap="handleCancel">取消</button>
+      <button class="btn-submit" formType="submit">保存物资</button>
+    </view>
+  </form>
+</view>

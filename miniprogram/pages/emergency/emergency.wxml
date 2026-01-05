@@ -39,7 +39,7 @@
     </view>
   </view>
 
-  <!-- 应急预案标签页 -->
+<!-- 应急预案标签页 -->
   <view wx:if="{{activeTab === 'plans'}}" class="tab-content">
     <view wx:for="{{emergencyPlans}}" wx:key="id" class="plan-card">
       <view class="plan-header">
@@ -52,55 +52,68 @@
         </view>
       </view>
 
-      <view class="plan-info">
-        <view class="info-row">
-          <text class="info-label">预案类型：</text>
+      <view class="plan-info-grid">
+        <view class="info-item">
+          <text class="info-label">预案类型</text>
           <text class="info-value">{{item.typeName}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">版本：</text>
+        <view class="info-item">
+          <text class="info-label">版本</text>
           <text class="info-value">{{item.version}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">批准部门：</text>
-          <text class="info-value">{{item.approvalDept}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">演练频率：</text>
+        <view class="info-item">
+          <text class="info-label">演练频次</text>
           <text class="info-value">{{item.drillFrequency}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">演练进度</text>
+          <text class="info-value {{item.drillStatus === 'sufficient' ? 'status-success' : 'status-warning'}}">
+            {{item.drillCount}}/{{item.drillRequired}}次
+          </text>
         </view>
       </view>
 
-      <view class="plan-dates">
-        <view class="date-info">
-          <text class="date-label">上次评审：</text>
-          <text class="date-value">{{item.lastReviewDate}}</text>
+      <view class="plan-meta">
+        <view class="meta-item">
+          <text class="meta-label">上次评审</text>
+          <text class="meta-value">{{item.lastReviewDate}}</text>
         </view>
-        <view class="date-info">
-          <text class="date-label">下次评审：</text>
-          <text class="date-value">{{item.nextReviewDate}}</text>
+        <view class="meta-item">
+          <text class="meta-label">下次评审</text>
+          <text class="meta-value">{{item.nextReviewDate}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">上次演练</text>
+          <text class="meta-value">{{item.lastDrillDate}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">下次演练</text>
+          <text class="meta-value">{{item.nextDrillDate}}</text>
         </view>
       </view>
 
       <view class="plan-effectiveness">
-        <text class="effectiveness-label">有效性评价：</text>
+        <text class="effectiveness-label">有效性评估</text>
         <text class="effectiveness-value">{{item.effectiveness}}</text>
       </view>
 
       <view class="plan-actions">
-        <button class="action-btn primary" data-id="{{item.id}}" bindtap="activatePlan">
-          启动预案
-        </button>
-        <button class="action-btn secondary" data-id="{{item.id}}" bindtap="viewPlanDetail">
-          查看详情
-        </button>
+        <button class="action-btn" bindtap="viewPlanDetail" data-id="{{item.id}}">详情</button>
+        <button class="action-btn" bindtap="viewPlanDrills" data-id="{{item.id}}">演练记录</button>
+        <button class="action-btn primary" bindtap="addDrillForPlan" data-id="{{item.id}}" data-name="{{item.name}}">添加演练</button>
       </view>
     </view>
   </view>
 
   <!-- 演练记录标签页 -->
   <view wx:if="{{activeTab === 'drills'}}" class="tab-content">
-    <view wx:for="{{drillRecords}}" wx:key="id" class="drill-card">
+    <!-- 过滤提示 -->
+    <view wx:if="{{currentPlanId}}" class="filter-hint">
+      <text class="filter-text">显示预案：{{currentPlanName}}</text>
+      <button class="clear-filter-btn" bindtap="viewAllDrills">查看全部</button>
+    </view>
+
+    <view wx:for="{{filteredDrills || drillRecords}}" wx:key="id" class="drill-card">
       <view class="drill-header">
         <view class="drill-title">
           <text class="drill-id">{{item.id}}</text>
@@ -214,6 +227,43 @@
         <view wx:if="{{item.expiryDate !== '无'}}" class="expiry-info">
           <text class="expiry-label">到期日期：</text>
           <text class="expiry-value">{{item.expiryDate}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="add-button" bindtap="handleAddClick">
+    <text class="add-icon">+</text>
+  </view>
+
+  <!-- 新增菜单弹窗 -->
+  <view class="add-menu-overlay {{showAddMenu ? 'show' : ''}}" bindtap="hideAddMenu">
+    <view class="add-menu" catchtap="stopPropagation">
+      <view class="menu-header">
+        <text class="menu-title">新增项</text>
+        <view class="close-btn" bindtap="hideAddMenu">
+          <text class="close-icon">×</text>
+        </view>
+      </view>
+      
+      <view class="menu-items">
+        <view class="menu-item" bindtap="addPlan">
+          <image class="menu-item-icon" src="/images/file-fill.png" mode="aspectFit" />
+          <view class="menu-item-content">
+            <text class="menu-item-title">应急预案</text>
+            <text class="menu-item-desc">创建新的应急响应预案</text>
+          </view>
+          <view class="menu-item-arrow">→</view>
+        </view>
+        
+        <view class="menu-item" bindtap="addSupply">
+          <image class="menu-item-icon" src="/images/database-fill.png" mode="aspectFit" />
+          <view class="menu-item-content">
+            <text class="menu-item-title">应急物资</text>
+            <text class="menu-item-desc">管理应急物资库存</text>
+          </view>
+          <view class="menu-item-arrow">→</view>
         </view>
       </view>
     </view>

@@ -1,0 +1,222 @@
+<view class="container">
+  <view class="header">
+    <text class="title">添加演练记录</text>
+    <text class="subtitle">记录应急演练情况</text>
+  </view>
+
+  <!-- 关联预案信息 -->
+  <view class="plan-info" wx:if="{{planName}}">
+    <view class="plan-info-label">关联预案</view>
+    <view class="plan-info-value">{{planName}}</view>
+  </view>
+
+  <form bindsubmit="handleSubmit">
+    <!-- 基本信息 -->
+    <view class="form-section">
+      <view class="section-title">基本信息</view>
+      
+      <view class="form-item">
+        <text class="form-label">演练日期 <text class="required">*</text></text>
+        <picker 
+          class="form-picker" 
+          mode="date" 
+          value="{{formData.date}}"
+          bindchange="onDateChange"
+        >
+          <view class="picker-value">
+            {{formData.date || '请选择演练日期'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">开始时间 <text class="required">*</text></text>
+        <picker 
+          class="form-picker" 
+          mode="time" 
+          value="{{formData.startTime}}"
+          bindchange="onStartTimeChange"
+        >
+          <view class="picker-value">
+            {{formData.startTime || '请选择开始时间'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">结束时间</text>
+        <picker 
+          class="form-picker" 
+          mode="time" 
+          value="{{formData.endTime}}"
+          bindchange="onEndTimeChange"
+        >
+          <view class="picker-value">
+            {{formData.endTime || '请选择结束时间'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">演练类型 <text class="required">*</text></text>
+        <picker 
+          class="form-picker" 
+          mode="selector" 
+          range="{{drillTypes}}" 
+          range-key="label" 
+          value="{{formData.typeIndex}}"
+          bindchange="onTypeChange"
+        >
+          <view class="picker-value">
+            {{formData.typeIndex !== '' ? drillTypes[formData.typeIndex].label : '请选择演练类型'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">参演人数</text>
+        <input 
+          class="form-input" 
+          name="participants" 
+          type="number" 
+          placeholder="请输入参演人数" 
+          value="{{formData.participants}}"
+          bindinput="onInputChange"
+          data-field="participants"
+        />
+      </view>
+    </view>
+
+    <!-- 演练内容 -->
+    <view class="form-section">
+      <view class="section-title">演练内容</view>
+      
+      <view class="form-item">
+        <text class="form-label">演练场景</text>
+        <textarea 
+          class="form-textarea" 
+          name="scenario" 
+          placeholder="请描述演练场景" 
+          value="{{formData.scenario}}"
+          bindinput="onInputChange"
+          data-field="scenario"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">演练目标</text>
+        <textarea 
+          class="form-textarea" 
+          name="objectives" 
+          placeholder="请描述演练目标" 
+          value="{{formData.objectives}}"
+          bindinput="onInputChange"
+          data-field="objectives"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">执行单位</text>
+        <input 
+          class="form-input" 
+          name="executor" 
+          placeholder="请输入执行单位" 
+          value="{{formData.executor}}"
+          bindinput="onInputChange"
+          data-field="executor"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">记录人</text>
+        <input 
+          class="form-input" 
+          name="recorder" 
+          placeholder="请输入记录人" 
+          value="{{formData.recorder}}"
+          bindinput="onInputChange"
+          data-field="recorder"
+        />
+      </view>
+    </view>
+
+    <!-- 演练评估 -->
+    <view class="form-section">
+      <view class="section-title">演练评估</view>
+      
+      <view class="form-item">
+        <text class="form-label">完成状态 <text class="required">*</text></text>
+        <picker 
+          class="form-picker" 
+          mode="selector" 
+          range="{{completionStatuses}}" 
+          range-key="label" 
+          value="{{formData.completionStatusIndex}}"
+          bindchange="onCompletionStatusChange"
+        >
+          <view class="picker-value">
+            {{formData.completionStatusIndex !== '' ? completionStatuses[formData.completionStatusIndex].label : '请选择完成状态'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">演练效果 <text class="required">*</text></text>
+        <picker 
+          class="form-picker" 
+          mode="selector" 
+          range="{{effectivenessLevels}}" 
+          range-key="label" 
+          value="{{formData.effectivenessIndex}}"
+          bindchange="onEffectivenessChange"
+        >
+          <view class="picker-value">
+            {{formData.effectivenessIndex !== '' ? effectivenessLevels[formData.effectivenessIndex].label : '请选择演练效果'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">存在问题</text>
+        <textarea 
+          class="form-textarea" 
+          name="issues" 
+          placeholder="请描述演练中发现的问题" 
+          value="{{formData.issues}}"
+          bindinput="onInputChange"
+          data-field="issues"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">改进措施</text>
+        <textarea 
+          class="form-textarea" 
+          name="improvements" 
+          placeholder="请描述改进措施" 
+          value="{{formData.improvements}}"
+          bindinput="onInputChange"
+          data-field="improvements"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">备注</text>
+        <textarea 
+          class="form-textarea" 
+          name="remarks" 
+          placeholder="请输入备注信息" 
+          value="{{formData.remarks}}"
+          bindinput="onInputChange"
+          data-field="remarks"
+        />
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="form-actions">
+      <button class="btn-cancel" bindtap="handleCancel">取消</button>
+      <button class="btn-submit" formType="submit">保存记录</button>
+    </view>
+  </form>
+</view>

@@ -1,0 +1,40 @@
+﻿<view style="padding: 40rpx; background: #fff; min-height: 100vh;">
+  <view style="text-align: center; margin-bottom: 40rpx;">
+    <text style="font-size: 36rpx; font-weight: bold; color: #333;">添加应急预案</text>
+  </view>
+  
+  <form bindsubmit="handleSubmit">
+    <view style="margin-bottom: 32rpx;">
+      <text style="display: block; font-size: 28rpx; margin-bottom: 16rpx;">预案名称 *</text>
+      <input 
+        style="width: 100%; padding: 24rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box;"
+        name="name" 
+        placeholder="请输入预案名称" 
+        value="{{formData.name}}"
+        bindinput="onInputChange"
+        data-field="name"
+      />
+    </view>
+    
+    <view style="margin-bottom: 32rpx;">
+      <text style="display: block; font-size: 28rpx; margin-bottom: 16rpx;">预案类型 *</text>
+      <picker 
+        style="width: 100%; padding: 24rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box;"
+        mode="selector" 
+        range="{{planTypes}}" 
+        range-key="label" 
+        value="{{formData.typeIndex}}"
+        bindchange="onTypeChange"
+      >
+        <view style="font-size: 28rpx;">
+          {{formData.typeIndex !== '' ? planTypes[formData.typeIndex].label : '请选择预案类型'}}
+        </view>
+      </picker>
+    </view>
+    
+    <view style="display: flex; gap: 24rpx; margin-top: 40rpx;">
+      <button style="flex: 1; padding: 24rpx; background: #f5f5f5; color: #666; border: none; border-radius: 8rpx; font-size: 28rpx;" bindtap="handleCancel">取消</button>
+      <button style="flex: 1; padding: 24rpx; background: #1976d2; color: #fff; border: none; border-radius: 8rpx; font-size: 28rpx;" formType="submit">保存预案</button>
+    </view>
+  </form>
+</view>

@@ -1,0 +1,107 @@
+<view class="container">
+  <!-- 统计卡片 - 隐患排查治理 -->
+  <view class="stats-cards">
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.total}}</text>
+      <text class="stat-label">隐患总数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.identified}}</text>
+      <text class="stat-label">已发现</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.treating}}</text>
+      <text class="stat-label">整改中</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.completed}}</text>
+      <text class="stat-label">已销号</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterStatus === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-status="all">
+      <text>全部</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'identified' ? 'active' : ''}}" bindtap="onFilterChange" data-status="identified">
+      <text>已发现</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'treating' ? 'active' : ''}}" bindtap="onFilterChange" data-status="treating">
+      <text>整改中</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'completed' ? 'active' : ''}}" bindtap="onFilterChange" data-status="completed">
+      <text>已销号</text>
+    </view>
+  </view>
+
+  <!-- 隐患类型选择器 -->
+  <view class="hazard-type-selector">
+    <view class="type-item {{selectedType === 'equipment' ? 'active' : ''}}" bindtap="selectType" data-type="equipment">
+      <image class="type-icon" src="/images/bug-report.png" mode="aspectFit" />
+      <text class="type-label">设备设施</text>
+      <text class="type-desc">设备类隐患</text>
+    </view>
+    <view class="type-item {{selectedType === 'behavior' ? 'active' : ''}}" bindtap="selectType" data-type="behavior">
+      <image class="type-icon" src="/images/user-fill.png" mode="aspectFit" />
+      <text class="type-label">人员行为</text>
+      <text class="type-desc">行为类隐患</text>
+    </view>
+    <view class="type-item {{selectedType === 'environment' ? 'active' : ''}}" bindtap="selectType" data-type="environment">
+      <image class="type-icon" src="/images/cloudupload-fill.png" mode="aspectFit" />
+      <text class="type-label">环境因素</text>
+      <text class="type-desc">环境类隐患</text>
+    </view>
+  </view>
+
+  <!-- 隐患列表 -->
+  <scroll-view class="hazard-list" scroll-y bindscrolltolower="onReachBottom">
+    <view class="hazard-item" wx:for="{{hazardList}}" wx:key="id">
+      <view class="hazard-header">
+        <text class="hazard-title">{{item.title}}</text>
+        <view class="priority-tag priority-{{item.priority}}">{{item.priorityName}}</view>
+      </view>
+
+      <view class="hazard-meta">
+        <text class="hazard-type">{{item.typeName}}</text>
+        <text class="hazard-zone">{{item.zone}}</text>
+      </view>
+
+      <view class="hazard-description">
+        <text class="label">描述:</text>
+        <text class="value">{{item.description}}</text>
+      </view>
+
+      <view class="hazard-deadline">
+        <text class="label">整改期限:</text>
+        <text class="value">{{item.deadline}}</text>
+      </view>
+
+      <view class="hazard-responsible">
+        <text class="label">责任人:</text>
+        <text class="value">{{item.responsiblePerson}}</text>
+      </view>
+
+      <view class="hazard-footer">
+        <view class="hazard-status">
+          <view class="status-dot status-{{item.status}}"></view>
+          <text class="status-text">{{item.statusName}}</text>
+        </view>
+        <view class="actions">
+          <button wx:if="{{item.status === 'identified'}}" class="action-btn start-btn" bindtap="startRectification" data-id="{{item.id}}">开始整改</button>
+          <button class="action-btn detail-btn" bindtap="viewHazardDetail" data-id="{{item.id}}">详情</button>
+        </view>
+      </view>
+
+      <view wx:if="{{item.rectificationResult}}" class="hazard-rectification">
+        <text class="label">整改结果:</text>
+        <text class="value">{{item.rectificationResult}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 添加按钮 -->
+  <view class="add-button" bindtap="addHazard">
+    <text class="add-icon">+</text>
+  </view>
+</view>

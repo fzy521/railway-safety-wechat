@@ -1,4 +1,4 @@
-{
+﻿{
   "pages": [
     "pages/dashboard/dashboard",
     "pages/login/login",
@@ -15,8 +15,12 @@
     "pages/inspection/inspection-detail",
     "pages/inspection/danger-supervision",
     "pages/inspection/danger-add",
+    "pages/hazard/hazard",
     "pages/profile/profile",
     "pages/emergency/emergency",
+    "pages/emergency/plan-add/plan-add",
+    "pages/emergency/supply-add/supply-add",
+    "pages/emergency/drill-add/drill-add",
     "pages/review/review"
   ],
   "window": {
@@ -45,7 +49,7 @@
         "text": "风险"
       },
       {
-        "pagePath": "pages/inspection/inspection",
+        "pagePath": "pages/hazard/hazard",
         "iconPath": "images/check-circle-fill.png",
         "selectedIconPath": "images/check-circle-fill.png",
         "text": "隐患"

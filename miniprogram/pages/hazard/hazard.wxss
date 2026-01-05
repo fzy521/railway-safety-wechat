@@ -1,32 +1,31 @@
-/* inspection.wxss */
 @import "../../styles/design-system.wxss";
 
 .container {
   padding: var(--spacing-lg);
   background-color: var(--color-bg-page);
   min-height: 100vh;
-  padding-bottom: 100rpx;
+  padding-bottom: 40rpx;
 }
 
 /* 统计卡片 */
 .stats-cards {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-xl);
-  gap: var(--spacing-lg);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
 .stat-card {
-  flex: 1;
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-xxl) var(--spacing-lg);
-  text-align: center;
+  padding: var(--spacing-lg) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   box-shadow: var(--shadow-md);
 }
 
 .stat-number {
-  display: block;
   font-size: var(--font-size-xxxl);
   font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
@@ -34,9 +33,9 @@
 }
 
 .stat-label {
-  display: block;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 /* 筛选栏 */
@@ -44,36 +43,63 @@
   display: flex;
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
   box-shadow: var(--shadow-md);
-  gap: var(--spacing-lg);
 }
 
-/* 检查类型选择器 */
-.check-type-selector {
-  display: flex;
-  background: var(--color-bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+.filter-item {
+  flex: 1;
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.filter-item.active {
+  background: var(--color-primary);
+}
+
+.filter-item text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-tertiary);
+}
+
+.filter-item.active text {
+  color: #fff;
+}
+
+/* 隐患类型选择器 */
+.hazard-type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow-md);
-  gap: var(--spacing-lg);
 }
 
 .type-item {
-  flex: 1;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl) var(--spacing-md);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--spacing-lg) var(--spacing-md);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-hover);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
 }
 
 .type-item.active {
   background: var(--color-primary);
+}
+
+.type-item.active .type-label,
+.type-item.active .type-desc {
+  color: #fff;
+}
+
+.type-item.active .type-icon {
+  filter: brightness(0) invert(1);
 }
 
 .type-icon {
@@ -82,19 +108,11 @@
   margin-bottom: var(--spacing-md);
 }
 
-.type-item.active .type-icon {
-  filter: brightness(0) invert(1);
-}
-
 .type-label {
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
   margin-bottom: var(--spacing-sm);
-}
-
-.type-item.active .type-label {
-  color: white;
 }
 
 .type-desc {
@@ -102,77 +120,63 @@
   color: var(--color-text-tertiary);
 }
 
-.type-item.active .type-desc {
-  color: rgba(255, 255, 255, 0.9);
+/* 隐患列表 */
+.hazard-list {
+  height: calc(100vh - 400rpx);
 }
 
-.filter-item {
-  flex: 1;
-  padding: var(--spacing-lg);
-  text-align: center;
-  border-radius: var(--radius-md);
-  background: var(--color-bg-hover);
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-base);
-}
-
-.filter-item.active {
-  background: var(--color-primary);
-  color: white;
-  font-weight: var(--font-weight-medium);
-}
-
-/* 巡检列表 */
-.inspection-list {
-  max-height: calc(100vh - 400rpx);
-}
-
-.inspection-item {
+.hazard-item {
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-xxl);
+  padding: var(--spacing-xl);
   margin-bottom: var(--spacing-lg);
   box-shadow: var(--shadow-md);
 }
 
-.inspection-header {
+.hazard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
 }
 
-.inspection-title {
+.hazard-title {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   flex: 1;
+  margin-right: var(--spacing-lg);
 }
 
 .priority-tag {
   padding: var(--spacing-xs) var(--spacing-lg);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  margin-left: var(--spacing-lg);
+  white-space: nowrap;
 }
 
-.priority-tag.priority-high {
+.priority-1 {
   background: var(--color-danger-light);
   color: var(--color-danger);
 }
 
-.priority-tag.priority-medium {
+.priority-2 {
   background: var(--color-warning-light);
   color: var(--color-warning);
 }
 
-.priority-tag.priority-low {
+.priority-3 {
+  background: var(--color-info-light);
+  color: var(--color-info);
+}
+
+.priority-4 {
   background: var(--color-success-light);
   color: var(--color-success);
 }
 
-.inspection-meta {
+.hazard-meta {
   display: flex;
   justify-content: space-between;
   margin-bottom: var(--spacing-lg);
@@ -180,51 +184,49 @@
   color: var(--color-text-tertiary);
 }
 
-.inspection-type {
-  background: var(--color-primary-light);
+.hazard-type {
   color: var(--color-primary);
-  padding: var(--spacing-xs) var(--spacing-md);
-  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
 }
 
-.inspection-schedule,
-.inspection-inspector,
-.inspection-description,
-.inspection-findings {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: var(--spacing-lg);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-relaxed);
-}
-
-.inspection-description .value,
-.inspection-findings .value {
-  flex: 1;
+.hazard-zone {
   color: var(--color-text-secondary);
 }
 
-.label {
+.hazard-description,
+.hazard-deadline,
+.hazard-responsible,
+.hazard-rectification {
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.hazard-description .label,
+.hazard-deadline .label,
+.hazard-responsible .label,
+.hazard-rectification .label {
   color: var(--color-text-tertiary);
-  margin-right: var(--spacing-lg);
-  min-width: 120rpx;
+  margin-right: var(--spacing-sm);
 }
 
-.value {
+.hazard-description .value,
+.hazard-deadline .value,
+.hazard-responsible .value,
+.hazard-rectification .value {
   color: var(--color-text-primary);
-  flex: 1;
 }
 
-.inspection-footer {
+.hazard-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: var(--spacing-lg);
   border-top: 1rpx solid var(--color-border-light);
-  margin-top: var(--spacing-lg);
 }
 
-.inspection-status {
+.hazard-status {
   display: flex;
   align-items: center;
   font-size: var(--font-size-sm);
@@ -238,49 +240,42 @@
   margin-right: var(--spacing-md);
 }
 
-.status-dot.status-pending {
-  background: #ff976a;
+.status-identified {
+  background: var(--color-warning);
 }
 
-.status-dot.status-in-progress {
+.status-treating {
   background: var(--color-primary);
 }
 
-.status-dot.status-completed {
+.status-completed {
   background: var(--color-success);
 }
 
 .status-text {
-  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 .actions {
   display: flex;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .action-btn {
-  padding: var(--spacing-lg) var(--spacing-xxl);
-  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  border: none;
-  margin: 0;
-  line-height: 1;
-}
-
-.action-btn::after {
   border: none;
 }
 
 .start-btn {
-  background: var(--color-success);
-  color: white;
+  background: var(--color-primary);
+  color: #fff;
 }
 
 .detail-btn {
   background: var(--color-bg-hover);
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
 
 /* 添加按钮 */
