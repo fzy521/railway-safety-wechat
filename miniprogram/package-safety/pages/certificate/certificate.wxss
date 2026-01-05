@@ -1,0 +1,2 @@
+/* 引入通用样式 */
+@import "../../../pages/common.wxss";

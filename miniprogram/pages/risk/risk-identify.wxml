@@ -1,0 +1,116 @@
+<view class="container">
+  <view class="form-section">
+    <view class="section-title">基本信息</view>
+    
+    <view class="form-item">
+      <text class="label">风险名称 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入风险名称" 
+        value="{{riskName}}"
+        bindinput="onRiskNameChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">风险类别</text>
+      <picker mode="selector" range="{{riskTypes}}" bindchange="onRiskTypeChange">
+        <view class="picker">
+          {{riskType}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">作业环节</text>
+      <input 
+        class="input" 
+        placeholder="请输入作业环节" 
+        value="{{operationLink}}"
+        bindinput="onOperationLinkChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">风险地点 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入风险地点" 
+        value="{{location}}"
+        bindinput="onLocationChange"
+      />
+    </view>
+
+    <view class="form-item vertical">
+      <text class="label">风险描述 *</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请详细描述风险情况"
+        value="{{riskDescription}}"
+        bindinput="onRiskDescriptionChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">辨识信息</view>
+    
+    <view class="form-item">
+      <text class="label">辨识方法</text>
+      <picker mode="selector" range="{{identificationMethods}}" bindchange="onIdentificationMethodChange">
+        <view class="picker">
+          {{identificationMethod}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">辨识日期</text>
+      <picker mode="date" value="{{identificationDate}}" bindchange="onIdentificationDateChange">
+        <view class="picker">
+          {{identificationDate}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">发现人 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入发现人" 
+        value="{{discoverer}}"
+        bindinput="onDiscovererChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">发现部门 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入发现部门" 
+        value="{{discovererDept}}"
+        bindinput="onDiscovererDeptChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">现场照片</view>
+    
+    <view class="photo-list">
+      <view class="photo-item" wx:for="{{photos}}" wx:key="*this" bindtap="onPreviewImage" data-url="{{item}}">
+        <image class="photo" src="{{item}}" mode="aspectFill" />
+        <view class="photo-remove" catchtap="onRemovePhoto" data-index="{{index}}">×</view>
+      </view>
+      <view class="photo-add" wx:if="{{photos.length < 9}}" bindtap="onChooseImage">
+        <text class="photo-add-icon">+</text>
+        <text class="photo-add-text">添加照片</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="button-section">
+    <button class="btn btn-secondary" bindtap="onSave">保存草稿</button>
+    <button class="btn btn-primary" bindtap="onSubmitForAssessment">提交评估</button>
+  </view>
+</view>

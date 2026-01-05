@@ -1,0 +1,221 @@
+<!--pages/emergency/emergency.wxml-->
+<view class="container">
+  <!-- 标题区域 -->
+  <view class="header">
+    <text class="title">应急管理中心</text>
+    <text class="subtitle">GBT 33000-2025 应急准备与响应</text>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.totalPlans}}</text>
+      <text class="stat-label">应急预案</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.completedDrills}}</text>
+      <text class="stat-label">已演练</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.plannedDrills}}</text>
+      <text class="stat-label">计划中</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.suppliesReady}}</text>
+      <text class="stat-label">物资就绪</text>
+    </view>
+  </view>
+
+  <!-- 标签页切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'plans' ? 'active' : ''}}" data-tab="plans" bindtap="switchTab">
+      <text>应急预案</text>
+    </view>
+    <view class="tab-item {{activeTab === 'drills' ? 'active' : ''}}" data-tab="drills" bindtap="switchTab">
+      <text>演练记录</text>
+    </view>
+    <view class="tab-item {{activeTab === 'supplies' ? 'active' : ''}}" data-tab="supplies" bindtap="switchTab">
+      <text>应急物资</text>
+    </view>
+  </view>
+
+  <!-- 应急预案标签页 -->
+  <view wx:if="{{activeTab === 'plans'}}" class="tab-content">
+    <view wx:for="{{emergencyPlans}}" wx:key="id" class="plan-card">
+      <view class="plan-header">
+        <view class="plan-title">
+          <text class="plan-id">{{item.id}}</text>
+          <text class="plan-name">{{item.name}}</text>
+        </view>
+        <view class="plan-status {{item.status}}">
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="plan-info">
+        <view class="info-row">
+          <text class="info-label">预案类型：</text>
+          <text class="info-value">{{item.typeName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">版本：</text>
+          <text class="info-value">{{item.version}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">批准部门：</text>
+          <text class="info-value">{{item.approvalDept}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练频率：</text>
+          <text class="info-value">{{item.drillFrequency}}</text>
+        </view>
+      </view>
+
+      <view class="plan-dates">
+        <view class="date-info">
+          <text class="date-label">上次评审：</text>
+          <text class="date-value">{{item.lastReviewDate}}</text>
+        </view>
+        <view class="date-info">
+          <text class="date-label">下次评审：</text>
+          <text class="date-value">{{item.nextReviewDate}}</text>
+        </view>
+      </view>
+
+      <view class="plan-effectiveness">
+        <text class="effectiveness-label">有效性评价：</text>
+        <text class="effectiveness-value">{{item.effectiveness}}</text>
+      </view>
+
+      <view class="plan-actions">
+        <button class="action-btn primary" data-id="{{item.id}}" bindtap="activatePlan">
+          启动预案
+        </button>
+        <button class="action-btn secondary" data-id="{{item.id}}" bindtap="viewPlanDetail">
+          查看详情
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 演练记录标签页 -->
+  <view wx:if="{{activeTab === 'drills'}}" class="tab-content">
+    <view wx:for="{{drillRecords}}" wx:key="id" class="drill-card">
+      <view class="drill-header">
+        <view class="drill-title">
+          <text class="drill-id">{{item.id}}</text>
+          <text class="drill-plan">{{item.planName}}</text>
+        </view>
+        <view class="drill-status {{item.effectiveness}}">
+          <text>{{item.effectivenessText}}</text>
+        </view>
+      </view>
+
+      <view class="drill-date">
+        <text class="date-icon">📅</text>
+        <text class="date-text">{{item.date}} {{item.startTime}}-{{item.endTime || '进行中'}}</text>
+      </view>
+
+      <view class="drill-info">
+        <view class="info-row">
+          <text class="info-label">演练类型：</text>
+          <text class="info-value">{{item.typeName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练场景：</text>
+          <text class="info-value">{{item.scenario}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练目的：</text>
+          <text class="info-value">{{item.objectives}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">参与人员：</text>
+          <text class="info-value">{{item.participants}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">执行部门：</text>
+          <text class="info-value">{{item.executor}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">记录人：</text>
+          <text class="info-value">{{item.recorder}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练时长：</text>
+          <text class="info-value">{{item.duration}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.issues}}" class="drill-issues">
+        <text class="issues-label">发现的问题：</text>
+        <text class="issues-value">{{item.issues}}</text>
+      </view>
+
+      <view wx:if="{{item.improvements}}" class="drill-improvements">
+        <text class="improvement-label">改进建议：</text>
+        <text class="improvement-value">{{item.improvements}}</text>
+      </view>
+
+      <view class="drill-actions">
+        <button class="action-btn primary" data-id="{{item.id}}" bindtap="evaluateDrill">
+          演练评估
+        </button>
+        <button class="action-btn secondary" data-id="{{item.id}}" bindtap="viewDrillDetail">
+          查看详情
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 应急物资标签页 -->
+  <view wx:if="{{activeTab === 'supplies'}}" class="tab-content">
+    <view wx:for="{{emergencySupplies}}" wx:key="id" class="supply-card">
+      <view class="supply-header">
+        <view class="supply-title">
+          <text class="supply-name">{{item.name}}</text>
+          <view class="supply-status {{item.status}}">
+            <text>{{item.statusText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="supply-category">
+        <text class="category-label">类别：</text>
+        <text class="category-value">{{item.categoryName}}</text>
+      </view>
+
+      <view class="supply-quantity">
+        <view class="quantity-info">
+          <text class="quantity-label">当前库存：</text>
+          <text class="quantity-value {{item.status}}">{{item.quantity}}{{item.unit}}</text>
+        </view>
+        <view class="minimum-info">
+          <text class="minimum-label">最低库存：</text>
+          <text class="minimum-value">{{item.minimumStock}}{{item.unit}}</text>
+        </view>
+      </view>
+
+      <view class="supply-location">
+        <text class="location-label">存放位置：</text>
+        <text class="location-value">{{item.location}}</text>
+      </view>
+
+      <view class="supply-manager">
+        <text class="manager-label">管理人：</text>
+        <text class="manager-value">{{item.manager}}</text>
+      </view>
+
+      <view class="supply-check">
+        <view class="check-info">
+          <text class="check-label">上次检查：</text>
+          <text class="check-value">{{item.lastCheckDate}}</text>
+        </view>
+        <view wx:if="{{item.expiryDate !== '无'}}" class="expiry-info">
+          <text class="expiry-label">到期日期：</text>
+          <text class="expiry-value">{{item.expiryDate}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

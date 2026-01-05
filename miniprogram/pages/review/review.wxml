@@ -1,0 +1,285 @@
+<!--pages/review/review.wxml-->
+<view class="container">
+  <!-- 标题区域 -->
+  <view class="header">
+    <text class="title">管理评审</text>
+    <text class="subtitle">GBT 33000-2025 检查与评价、持续改进</text>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.totalPlans}}</text>
+      <text class="stat-label">评审计划</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.completedReviews}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.pendingItems}}</text>
+      <text class="stat-label">待改进</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.completedImprovements}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+  </view>
+
+  <!-- 标签页切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'plans' ? 'active' : ''}}" data-tab="plans" bindtap="switchTab">
+      <text>评审计划</text>
+    </view>
+    <view class="tab-item {{activeTab === 'reports' ? 'active' : ''}}" data-tab="reports" bindtap="switchTab">
+      <text>评审报告</text>
+    </view>
+    <view class="tab-item {{activeTab === 'improvements' ? 'active' : ''}}" data-tab="improvements" bindtap="switchTab">
+      <text>改进措施</text>
+    </view>
+  </view>
+
+  <!-- 评审计划标签页 -->
+  <view wx:if="{{activeTab === 'plans'}}" class="tab-content">
+    <view wx:for="{{reviewPlans}}" wx:key="id" class="plan-card">
+      <view class="plan-header">
+        <view class="plan-title">
+          <text class="plan-id">{{item.id}}</text>
+          <text class="plan-name">{{item.name}}</text>
+        </view>
+        <view class="plan-status {{item.status}}">
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="plan-type">
+        <text class="type-label">评审类型：</text>
+        <text class="type-value">{{item.typeName}}</text>
+      </view>
+
+      <view class="plan-date">
+        <text class="date-icon">📅</text>
+        <text class="date-text">{{item.plannedDate}}</text>
+      </view>
+
+      <view class="plan-responsible">
+        <text class="responsible-label">负责部门：</text>
+        <text class="responsible-value">{{item.responsibleDept}}</text>
+      </view>
+
+      <view class="plan-responsible-person">
+        <text class="person-label">负责人：</text>
+        <text class="person-value">{{item.responsiblePerson}}</text>
+      </view>
+
+      <view class="plan-participants">
+        <text class="participants-label">参与人员：</text>
+        <text class="participants-value">{{item.participants}}</text>
+      </view>
+
+      <view class="plan-scope">
+        <text class="scope-label">评审范围：</text>
+        <text class="scope-value">{{item.reviewScope}}</text>
+      </view>
+
+      <view wx:if="{{item.reviewFocus}}" class="plan-focus">
+        <text class="focus-label">评审重点：</text>
+        <view wx:for="{{item.reviewFocus}}" wx:key="*this" class="focus-item">
+          <text class="focus-dot">•</text>
+          <text class="focus-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view wx:if="item.actualDate" class="plan-actual">
+        <text class="actual-label">实际评审：</text>
+        <text class="actual-value">{{item.actualDate}}</text>
+      </view>
+
+      <view wx:if="item.conclusion" class="plan-conclusion">
+        <text class="conclusion-label">评审结论：</text>
+        <text class="conclusion-value">{{item.conclusion}}</text>
+      </view>
+
+      <view class="plan-actions">
+        <button class="action-btn primary" data-id="{{item.id}}" bindtap="viewPlanDetail">
+          查看详情
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评审报告标签页 -->
+  <view wx:if="{{activeTab === 'reports'}}" class="tab-content">
+    <view wx:for="{{reviewReports}}" wx:key="id" class="report-card">
+      <view class="report-header">
+        <view class="report-title">
+          <text class="report-id">{{item.id}}</text>
+          <text class="report-name">{{item.planName}}</text>
+        </view>
+        <view class="report-status {{item.status}}">
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="report-date">
+        <text class="date-icon">📅</text>
+        <text class="date-text">{{item.reportDate}}</text>
+      </view>
+
+      <view class="report-submitter">
+        <text class="submitter-label">提交人：</text>
+        <text class="submitter-value">{{item.submitter}}</text>
+      </view>
+
+      <view class="report-approver">
+        <text class="approver-label">批准人：</text>
+        <text class="approver-value">{{item.approver}}</text>
+      </view>
+
+      <view wx:if="{{item.content.performance}}" class="report-performance">
+        <text class="performance-label">绩效评价：</text>
+        <view wx:for="{{item.content.performance}}" wx:key="indicator" class="performance-item">
+          <text class="indicator">{{item.indicator}}</text>
+          <text class="target">目标：{{item.target}}</text>
+          <text class="actual">实际：{{item.actual}}</text>
+          <view class="status-badge {{item.status}}">
+            <text>{{item.status === 'exceed' ? '超额' : item.status === 'meet' ? '达标' : '部分达标'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{item.content.findings}}" class="report-findings">
+        <text class="findings-label">发现问题：</text>
+        <view wx:for="{{item.content.findings}}" wx:key="*this" class="finding-item">
+          <text class="finding-dot">•</text>
+          <text class="finding-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.content.recommendations}}" class="report-recommendations">
+        <text class="recommendations-label">改进建议：</text>
+        <view wx:for="{{item.content.recommendations}}" wx:key="*this" class="recommendation-item">
+          <text class="recommendation-dot">•</text>
+          <text class="recommendation-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="report-conclusion">
+        <text class="conclusion-label">评审结论：</text>
+        <text class="conclusion-value">{{item.content.conclusions}}</text>
+      </view>
+
+      <view class="report-distribution">
+        <text class="distribution-label">分发范围：</text>
+        <text class="distribution-value">{{item.distribution}}</text>
+      </view>
+
+      <view wx:if="{{item.implementationDeadline}}" class="report-deadline">
+        <text class="deadline-label">实施期限：</text>
+        <text class="deadline-value">{{item.implementationDeadline}}</text>
+      </view>
+
+      <view class="report-actions">
+        <button class="action-btn primary" data-id="{{item.id}}" bindtap="viewReportDetail">
+          查看报告
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 改进措施标签页 -->
+  <view wx:if="{{activeTab === 'improvements'}}" class="tab-content">
+    <view wx:for="{{improvementItems}}" wx:key="id" class="improvement-card">
+      <view class="improvement-header">
+        <view class="improvement-title">
+          <text class="improvement-type {{item.type}}">{{item.typeName}}</text>
+          <text class="improvement-name">{{item.title}}</text>
+        </view>
+        <view class="improvement-status {{item.currentStatus}} {{item.priority}}">
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="improvement-source">
+        <text class="source-label">来源：</text>
+        <text class="source-value">{{item.source}}</text>
+      </view>
+
+      <view class="improvement-date">
+        <text class="date-icon">📅</text>
+        <text class="date-text">{{item.discoveryDate}}</text>
+      </view>
+
+      <view class="improvement-responsible">
+        <text class="responsible-label">责任部门：</text>
+        <text class="responsible-value">{{item.responsibleDept}}</text>
+      </view>
+
+      <view class="improvement-person">
+        <text class="person-label">责任人：</text>
+        <text class="person-value">{{item.responsiblePerson}}</text>
+      </view>
+
+      <view class="improvement-priority" wx:if="{{item.priority}}">
+        <text class="priority-label">优先级：</text>
+        <text class="priority-value {{item.priority}}">{{item.priority === 'high' ? '高' : item.priority === 'medium' ? '中' : '低'}}</text>
+      </view>
+
+      <view class="improvement-description">
+        <text class="description-label">描述：</text>
+        <text class="description-value">{{item.description}}</text>
+      </view>
+
+      <view class="improvement-root-cause">
+        <text class="cause-label">根本原因：</text>
+        <text class="cause-value">{{item.rootCause}}</text>
+      </view>
+
+      <view wx:if="{{item.correctiveActions}}" class="improvement-actions">
+        <text class="actions-label">纠正/预防措施：</text>
+        <view wx:for="{{item.correctiveActions}}" wx:key="*this" class="action-item">
+          <text class="action-number">{{index + 1}}.</text>
+          <text class="action-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="improvement-criteria">
+        <text class="criteria-label">完成标准：</text>
+        <text class="criteria-value">{{item.completionCriteria}}</text>
+      </view>
+
+      <view class="improvement-deadline">
+        <text class="deadline-label">计划完成：</text>
+        <text class="deadline-value">{{item.plannedCompleteDate}}</text>
+      </view>
+
+      <view wx:if="{{item.actualCompleteDate}}" class="improvement-actual">
+        <text class="actual-label">实际完成：</text>
+        <text class="actual-value">{{item.actualCompleteDate}}</text>
+      </view>
+
+      <view wx:if="{{item.actualProgress}}" class="improvement-progress">
+        <text class="progress-label">进展情况：</text>
+        <text class="progress-value">{{item.actualProgress}}</text>
+      </view>
+
+      <view wx:if="item.verificationResult" class="improvement-verification">
+        <text class="verification-label">验证结果：</text>
+        <view class="verification-detail">
+          <text class="result">{{item.verificationResult}}</text>
+          <text class="person">验证人：{{item.verificationPerson}}</text>
+          <text class="date">验证日期：{{item.verificationDate}}</text>
+        </view>
+      </view>
+
+      <view class="improvement-actions-buttons">
+        <button class="action-btn secondary" data-id="{{item.id}}" bindtap="viewImprovementDetail">
+          查看详情
+        </button>
+        <button wx:if="{{item.currentStatus !== 'completed'}}" class="action-btn primary" data-id="{{item.id}}" bindtap="verifyEffectiveness">
+          有效性验证
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

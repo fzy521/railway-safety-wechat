@@ -1,0 +1,13 @@
+{
+  "name": "risk-assessment",
+  "version": "1.0.0",
+  "description": "MES风险评估云函数，根据M-E-S三要素计算风险等级R值",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "安全管理系统",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

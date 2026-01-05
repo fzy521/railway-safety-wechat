@@ -1,0 +1,64 @@
+<!-- incident.wxml -->
+<view class="container">
+  <view class="page-header">
+    <text class="page-title">事故管理</text>
+    <view class="stats-cards">
+      <view class="stat-card">
+        <text class="stat-number">{{statistics.total}}</text>
+        <text class="stat-label">总事故数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-number">{{statistics.thisMonth}}</text>
+        <text class="stat-label">本月新增</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-number">{{statistics.today}}</text>
+        <text class="stat-label">今日新增</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterStatus === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-status="all">
+      <text>全部</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'pending' ? 'active' : ''}}" bindtap="onFilterChange" data-status="pending">
+      <text>待处理</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'processing' ? 'active' : ''}}" bindtap="onFilterChange" data-status="processing">
+      <text>处理中</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'resolved' ? 'active' : ''}}" bindtap="onFilterChange" data-status="resolved">
+      <text>已处理</text>
+    </view>
+  </view>
+
+  <!-- 事故列表 -->
+  <scroll-view class="incident-list" scroll-y bindscrolltolower="onReachBottom">
+    <view class="incident-item" wx:for="{{incidentList}}" wx:key="id" bindtap="viewIncidentDetail" data-id="{{item.id}}">
+      <view class="incident-header">
+        <text class="incident-title">{{item.title}}</text>
+        <view class="incident-level level-{{item.level}}">
+          <text>{{item.levelName}}</text>
+        </view>
+      </view>
+      <view class="incident-meta">
+        <text class="incident-type">{{item.typeName}}</text>
+        <text class="incident-date">{{item.date}} {{item.time}}</text>
+      </view>
+      <view class="incident-location">
+        <text>{{item.location}}</text>
+      </view>
+      <view class="incident-status">
+        <view class="status-dot status-{{item.status}}"></view>
+        <text>{{item.statusName}}</text>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{hasMore && !isLoading}}" bindtap="loadMore">
+      <text>加载更多</text>
+    </view>
+  </scroll-view>
+</view>

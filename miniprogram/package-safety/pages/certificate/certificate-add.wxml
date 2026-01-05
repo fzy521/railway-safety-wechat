@@ -1,0 +1,130 @@
+<view class="container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="label">证书编号 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入证书编号" 
+        value="{{formData.certNo}}"
+        bindinput="onCertNoInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">员工姓名 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入员工姓名" 
+        value="{{formData.employeeName}}"
+        bindinput="onEmployeeNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">员工编号</text>
+      <input 
+        class="input" 
+        placeholder="请输入员工编号" 
+        value="{{formData.employeeId}}"
+        bindinput="onEmployeeIdInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">部门</text>
+      <input 
+        class="input" 
+        placeholder="请输入部门" 
+        value="{{formData.department}}"
+        bindinput="onDepartmentInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">职位</text>
+      <input 
+        class="input" 
+        placeholder="请输入职位" 
+        value="{{formData.position}}"
+        bindinput="onPositionInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">证书类型</text>
+      <picker mode="selector" range="{{typeOptions}}" range-key="label" bindchange="onTypeChange">
+        <view class="picker">
+          {{formData.typeName}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">证书名称 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入证书名称" 
+        value="{{formData.certName}}"
+        bindinput="onCertNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">发证机关</text>
+      <input 
+        class="input" 
+        placeholder="请输入发证机关" 
+        value="{{formData.issuingAuthority}}"
+        bindinput="onIssuingAuthorityInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">发证日期 *</text>
+      <picker mode="date" value="{{formData.issueDate}}" bindchange="onIssueDateChange">
+        <view class="picker">
+          {{formData.issueDate || '请选择日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">有效期至 *</text>
+      <picker mode="date" value="{{formData.expiryDate}}" bindchange="onExpiryDateChange">
+        <view class="picker">
+          {{formData.expiryDate || '请选择日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">从业年限（年）</text>
+      <input 
+        class="input" 
+        type="digit"
+        placeholder="请输入从业年限" 
+        value="{{formData.workingYears}}"
+        bindinput="onWorkingYearsInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">特种作业</text>
+      <switch checked="{{formData.isSpecialOperation}}" bindchange="onIsSpecialOperationChange" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">备注</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入备注信息"
+        value="{{formData.notes}}"
+        bindinput="onNotesInput"
+      />
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button class="submit-btn" bindtap="onSubmit">提交</button>
+  </view>
+</view>

@@ -1,0 +1,432 @@
+/* 图标样式定义 - 用于统一管理和使用图标 */
+@import "../styles/design-system.wxss";
+
+/* 通用图标容器 */
+.icon {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 图标尺寸 */
+.icon-sm {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.icon-md {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.icon-lg {
+  width: 96rpx;
+  height: 96rpx;
+}
+
+/* 菜单图标 - 待补充实际图标 */
+.icon-setting {
+  background-image: url('/images/icon-setting.png');
+}
+
+.icon-certificate {
+  background-image: url('/images/icon-certificate.png');
+}
+
+.icon-notification {
+  background-image: url('/images/icon-notification.png');
+}
+
+.icon-help {
+  background-image: url('/images/icon-help.png');
+}
+
+.icon-info {
+  background-image: url('/images/icon-info.png');
+}
+
+/* 状态图标 */
+.icon-status-success {
+  background-image: url('/images/status-success.png');
+}
+
+.icon-status-warning {
+  background-image: url('/images/status-warning.png');
+}
+
+.icon-status-error {
+  background-image: url('/images/status-error.png');
+}
+
+/* 风险等级图标 */
+.icon-risk-red {
+  background-image: url('/images/risk-red.png');
+}
+
+.icon-risk-orange {
+  background-image: url('/images/risk-orange.png');
+}
+
+.icon-risk-yellow {
+  background-image: url('/images/risk-yellow.png');
+}
+
+.icon-risk-blue {
+  background-image: url('/images/risk-blue.png');
+}
+
+/* 应急图标 */
+.icon-emergency-plan {
+  background-image: url('/images/emergency-plan.png');
+}
+
+.icon-emergency-drill {
+  background-image: url('/images/emergency-drill.png');
+}
+
+.icon-emergency-supplies {
+  background-image: url('/images/emergency-supplies.png');
+}
+
+/* 操作图标 */
+.icon-edit {
+  background-image: url('/images/icon-edit.png');
+}
+
+.icon-delete {
+  background-image: url('/images/icon-delete.png');
+}
+
+.icon-add {
+  background-image: url('/images/icon-add.png');
+}
+
+.icon-search {
+  background-image: url('/images/icon-search.png');
+}
+
+.icon-filter {
+  background-image: url('/images/icon-filter.png');
+}
+
+/* 导航图标 */
+.icon-back {
+  background-image: url('/images/icon-back.png');
+}
+
+.icon-forward {
+  background-image: url('/images/icon-forward.png');
+}
+
+.icon-close {
+  background-image: url('/images/icon-close.png');
+}
+
+/* 媒体图标 */
+.icon-photo {
+  background-image: url('/images/icon-photo.png');
+}
+
+.icon-camera {
+  background-image: url('/images/icon-camera.png');
+}
+
+.icon-video {
+  background-image: url('/images/icon-video.png');
+}
+
+/* 文件图标 */
+.icon-file {
+  background-image: url('/images/icon-file.png');
+}
+
+.icon-document {
+  background-image: url('/images/icon-document.png');
+}
+
+.icon-pdf {
+  background-image: url('/images/icon-pdf.png');
+}
+
+/* 用户图标 */
+.icon-user {
+  background-image: url('/images/icon-user.png');
+}
+
+.icon-users {
+  background-image: url('/images/icon-users.png');
+}
+
+.icon-avatar {
+  background-image: url('/images/avatar-default.png');
+}
+
+/* 设备图标 */
+.icon-device {
+  background-image: url('/images/icon-device.png');
+}
+
+.icon-equipment {
+  background-image: url('/images/icon-equipment.png');
+}
+
+/* 安全图标 */
+.icon-shield {
+  background-image: url('/images/icon-shield.png');
+}
+
+.icon-helmet {
+  background-image: url('/images/icon-helmet.png');
+}
+
+.icon-warning {
+  background-image: url('/images/icon-warning.png');
+}
+
+.icon-danger {
+  background-image: url('/images/icon-danger.png');
+}
+
+/* 加载动画图标 */
+.icon-loading {
+  background-image: url('/images/loading.png');
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 箭头图标 */
+.icon-arrow-up {
+  background-image: url('/images/icon-arrow-up.png');
+}
+
+.icon-arrow-down {
+  background-image: url('/images/icon-arrow-down.png');
+}
+
+.icon-arrow-left {
+  background-image: url('/images/icon-arrow-left.png');
+}
+
+.icon-arrow-right {
+  background-image: url('/images/icon-arrow-right.png');
+}
+
+/* 复选框和单选按钮 */
+.icon-checkbox-checked {
+  background-image: url('/images/icon-checkbox-checked.png');
+}
+
+.icon-checkbox-unchecked {
+  background-image: url('/images/icon-checkbox-unchecked.png');
+}
+
+.icon-radio-checked {
+  background-image: url('/images/icon-radio-checked.png');
+}
+
+.icon-radio-unchecked {
+  background-image: url('/images/icon-radio-unchecked.png');
+}
+
+/* 星级评分 */
+.icon-star-fill {
+  background-image: url('/images/icon-star-fill.png');
+}
+
+.icon-star-half {
+  background-image: url('/images/icon-star-half.png');
+}
+
+.icon-star-empty {
+  background-image: url('/images/icon-star-empty.png');
+}
+
+/* 时间日期 */
+.icon-calendar {
+  background-image: url('/images/icon-calendar.png');
+}
+
+.icon-clock {
+  background-image: url('/images/icon-clock.png');
+}
+
+.icon-time {
+  background-image: url('/images/icon-time.png');
+}
+
+/* 位置和地图 */
+.icon-location {
+  background-image: url('/images/icon-location.png');
+}
+
+.icon-map {
+  background-image: url('/images/icon-map.png');
+}
+
+.icon-navigation {
+  background-image: url('/images/icon-navigation.png');
+}
+
+/* 数据图表 */
+.icon-chart {
+  background-image: url('/images/icon-chart.png');
+}
+
+.icon-graph {
+  background-image: url('/images/icon-graph.png');
+}
+
+.icon-statistics {
+  background-image: url('/images/icon-statistics.png');
+}
+
+/* 消息和通知 */
+.icon-message {
+  background-image: url('/images/icon-message.png');
+}
+
+.icon-chat {
+  background-image: url('/images/icon-chat.png');
+}
+
+.icon-bell {
+  background-image: url('/images/icon-bell.png');
+}
+
+/* 下载和上传 */
+.icon-download {
+  background-image: url('/images/icon-download.png');
+}
+
+.icon-upload {
+  background-image: url('/images/icon-upload.png');
+}
+
+.icon-share {
+  background-image: url('/images/icon-share.png');
+}
+
+/* 收藏和点赞 */
+.icon-heart {
+  background-image: url('/images/icon-heart.png');
+}
+
+.icon-heart-fill {
+  background-image: url('/images/icon-heart-fill.png');
+}
+
+.icon-star {
+  background-image: url('/images/icon-star.png');
+}
+
+/* 眼睛图标 */
+.icon-eye {
+  background-image: url('/images/icon-eye.png');
+}
+
+.icon-eye-off {
+  background-image: url('/images/icon-eye-off.png');
+}
+
+/* 锁定和解锁 */
+.icon-lock {
+  background-image: url('/images/icon-lock.png');
+}
+
+.icon-unlock {
+  background-image: url('/images/icon-unlock.png');
+}
+
+/* 成功和错误 */
+.icon-success {
+  background-image: url('/images/icon-success.png');
+}
+
+.icon-error {
+  background-image: url('/images/icon-error.png');
+}
+
+/* 更多和菜单 */
+.icon-more {
+  background-image: url('/images/icon-more.png');
+}
+
+.icon-menu {
+  background-image: url('/images/icon-menu.png');
+}
+
+.icon-dots {
+  background-image: url('/images/icon-dots.png');
+}
+
+/* 刷新和同步 */
+.icon-refresh {
+  background-image: url('/images/icon-refresh.png');
+}
+
+.icon-sync {
+  background-image: url('/images/icon-sync.png');
+}
+
+/* 保存和收藏 */
+.icon-save {
+  background-image: url('/images/icon-save.png');
+}
+
+.icon-bookmark {
+  background-image: url('/images/icon-bookmark.png');
+}
+
+/* 打印 */
+.icon-print {
+  background-image: url('/images/icon-print.png');
+}
+
+/* 首页 */
+.icon-home {
+  background-image: url('/images/icon-home.png');
+}
+
+/* 设置 */
+.icon-settings {
+  background-image: url('/images/icon-settings.png');
+}
+
+/* 关于 */
+.icon-about {
+  background-image: url('/images/icon-about.png');
+}
+
+/* 退出 */
+.icon-logout {
+  background-image: url('/images/icon-logout.png');
+}
+
+/* 登录 */
+.icon-login {
+  background-image: url('/images/icon-login.png');
+}
+
+/* 注册 */
+.icon-register {
+  background-image: url('/images/icon-register.png');
+}
+
+/* 返回 */
+.icon-back {
+  background-image: url('/images/icon-back.png');
+}
+
+/* 前进 */
+.icon-forward {
+  background-image: url('/images/icon-forward.png');
+}

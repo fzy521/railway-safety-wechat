@@ -1,0 +1,156 @@
+<view class="container">
+  <view class="form-section">
+    <text class="section-title">基本信息</text>
+    
+    <view class="form-item">
+      <text class="label">风险名称 <text class="required">*</text></text>
+      <input class="input" placeholder="请输入风险名称" value="{{riskName}}" bindinput="onRiskNameChange" />
+    </view>
+    
+    <view class="form-item">
+      <text class="label">风险类别</text>
+      <picker class="picker" mode="selector" range="{{riskTypes}}" bindchange="onRiskTypeChange">
+        <view class="picker-value">{{riskType}}</view>
+      </picker>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">作业环节</text>
+      <input class="input" placeholder="请输入作业环节" value="{{operationLink}}" bindinput="onOperationLinkChange" />
+    </view>
+    
+    <view class="form-item">
+      <text class="label">风险地点 <text class="required">*</text></text>
+      <input class="input" placeholder="请输入风险地点" value="{{location}}" bindinput="onLocationChange" />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <text class="section-title">MES风险评估</text>
+    
+    <view class="form-item">
+      <text class="label">M - 控制措施状态</text>
+      <view class="picker-btn" bindtap="showPicker" data-type="m">
+        <text class="picker-value">{{mValue}}分</text>
+        <text class="arrow">›</text>
+      </view>
+      <text class="desc">{{mOptions[mValue === 5 ? 0 : mValue === 3 ? 1 : 2].desc}}</text>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">E1 - 人员暴露频次</text>
+      <view class="picker-btn" bindtap="showPicker" data-type="e1">
+        <text class="picker-value">{{e1Value}}分</text>
+        <text class="arrow">›</text>
+      </view>
+      <text class="desc">{{e1Options[e1Value === 10 ? 0 : e1Value === 6 ? 1 : e1Value === 3 ? 2 : e1Value === 2 ? 3 : e1Value === 1 ? 4 : 5].desc}}</text>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">E2 - 危险状态频次</text>
+      <view class="picker-btn" bindtap="showPicker" data-type="e2">
+        <text class="picker-value">{{e2Value}}分</text>
+        <text class="arrow">›</text>
+      </view>
+      <text class="desc">{{e2Options[e2Value === 10 ? 0 : e2Value === 6 ? 1 : e2Value === 3 ? 2 : e2Value === 2 ? 3 : e2Value === 1 ? 4 : 5].desc}}</text>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">S - 事故后果</text>
+      <view class="picker-btn" bindtap="showPicker" data-type="s">
+        <text class="picker-value">{{sValue}}分</text>
+        <text class="arrow">›</text>
+      </view>
+      <text class="desc">{{sOptions[sValue === 10 ? 0 : sValue === 8 ? 1 : sValue === 4 ? 2 : sValue === 2 ? 3 : 4].desc}}</text>
+    </view>
+  </view>
+
+  <view class="form-section result-section">
+    <text class="section-title">评估结果</text>
+    
+    <view class="result-card">
+      <view class="result-row">
+        <text class="result-label">风险值 R</text>
+        <text class="result-value">{{rValue}}</text>
+      </view>
+      <view class="result-row">
+        <text class="result-label">风险等级</text>
+        <text class="result-grade" style="color: {{riskColor === '红' ? '#ee0a24' : riskColor === '橙' ? '#ff976a' : riskColor === '黄' ? '#ffbe00' : '#07c160'}}">{{riskGrade}}</text>
+      </view>
+      <view class="result-row">
+        <text class="result-label">检查频次</text>
+        <text class="result-value">{{checkFrequency}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <text class="section-title">管控措施</text>
+    
+    <view class="form-item">
+      <text class="label">岗位控制措施 <text class="required">*</text></text>
+      <textarea class="textarea" placeholder="请输入岗位控制措施" value="{{controlMeasures}}" bindinput="onControlMeasuresChange" maxlength="500" />
+    </view>
+    
+    <view class="form-item">
+      <text class="label">控制人</text>
+      <input class="input" placeholder="请输入控制人" value="{{controlPerson}}" bindinput="onControlPersonChange" />
+    </view>
+    
+    <view class="form-item">
+      <text class="label">管控措施 <text class="required">*</text></text>
+      <textarea class="textarea" placeholder="请输入管控措施" value="{{manageMeasures}}" bindinput="onManageMeasuresChange" maxlength="500" />
+    </view>
+    
+    <view class="form-item">
+      <text class="label">管控责任部门 <text class="required">*</text></text>
+      <input class="input" placeholder="请输入管控责任部门" value="{{manageDept}}" bindinput="onManageDeptChange" />
+    </view>
+    
+    <view class="form-item">
+      <text class="label">管控责任人 <text class="required">*</text></text>
+      <input class="input" placeholder="请输入管控责任人" value="{{managePerson}}" bindinput="onManagePersonChange" />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <text class="section-title">辨识信息</text>
+    
+    <view class="form-item">
+      <text class="label">辨识方法</text>
+      <picker class="picker" mode="selector" range="{{identificationMethods}}" bindchange="onIdentificationMethodChange">
+        <view class="picker-value">{{identificationMethod}}</view>
+      </picker>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">辨识日期</text>
+      <text class="value">{{identificationDate}}</text>
+    </view>
+  </view>
+
+  <view class="btn-group">
+    <button class="btn-primary" bindtap="onSave">保存</button>
+    <button class="btn-secondary" bindtap="navigateBack">取消</button>
+  </view>
+
+  <!-- M值选择器 -->
+  <picker class="popup-picker" wx:if="{{showMPicker}}" mode="selector" range="{{mOptions}}" range-key="label" value="{{mValue === 5 ? 0 : mValue === 3 ? 1 : 2}}" bindchange="onMValueChange" bindcancel="hidePicker" data-type="m">
+    <view></view>
+  </picker>
+
+  <!-- E1值选择器 -->
+  <picker class="popup-picker" wx:if="{{showE1Picker}}" mode="selector" range="{{e1Options}}" range-key="label" value="{{e1Value === 10 ? 0 : e1Value === 6 ? 1 : e1Value === 3 ? 2 : e1Value === 2 ? 3 : e1Value === 1 ? 4 : 5}}" bindchange="onE1ValueChange" bindcancel="hidePicker" data-type="e1">
+    <view></view>
+  </picker>
+
+  <!-- E2值选择器 -->
+  <picker class="popup-picker" wx:if="{{showE2Picker}}" mode="selector" range="{{e2Options}}" range-key="label" value="{{e2Value === 10 ? 0 : e2Value === 6 ? 1 : e2Value === 3 ? 2 : e2Value === 2 ? 3 : e2Value === 1 ? 4 : 5}}" bindchange="onE2ValueChange" bindcancel="hidePicker" data-type="e2">
+    <view></view>
+  </picker>
+
+  <!-- S值选择器 -->
+  <picker class="popup-picker" wx:if="{{showSPicker}}" mode="selector" range="{{sOptions}}" range-key="label" value="{{sValue === 10 ? 0 : sValue === 8 ? 1 : sValue === 4 ? 2 : sValue === 2 ? 3 : 4}}" bindchange="onSValueChange" bindcancel="hidePicker" data-type="s">
+    <view></view>
+  </picker>
+</view>

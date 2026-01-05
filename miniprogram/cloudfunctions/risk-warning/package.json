@@ -1,0 +1,13 @@
+{
+  "name": "risk-warning",
+  "version": "1.0.0",
+  "description": "风险预警管理云函数",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "安全管理系统",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

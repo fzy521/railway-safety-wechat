@@ -4,9 +4,20 @@
     "pages/login/login",
     "pages/dashboard/dashboard",
     "pages/risk/risk",
+    "pages/risk/risk-identify",
+    "pages/risk/risk-assess",
+    "pages/risk/risk-control",
+    "pages/risk/risk-detail",
+    "pages/risk/risk-assessment",
+    "pages/risk/risk-warning",
     "pages/incident/incident",
     "pages/inspection/inspection",
-    "pages/profile/profile"
+    "pages/inspection/inspection-detail",
+    "pages/inspection/danger-supervision",
+    "pages/inspection/danger-add",
+    "pages/profile/profile",
+    "pages/emergency/emergency",
+    "pages/review/review"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -23,32 +34,22 @@
     "list": [
       {
         "pagePath": "pages/dashboard/dashboard",
-        "iconPath": "images/icon-dashboard.png",
-        "selectedIconPath": "images/icon-dashboard-active.png",
         "text": "监控"
       },
       {
         "pagePath": "pages/risk/risk",
-        "iconPath": "images/icon-risk.png",
-        "selectedIconPath": "images/icon-risk-active.png",
         "text": "风险"
       },
       {
-        "pagePath": "pages/incident/incident",
-        "iconPath": "images/icon-incident.png",
-        "selectedIconPath": "images/icon-incident-active.png",
-        "text": "事故"
+        "pagePath": "pages/inspection/inspection",
+        "text": "隐患"
       },
       {
-        "pagePath": "pages/inspection/inspection",
-        "iconPath": "images/icon-inspection.png",
-        "selectedIconPath": "images/icon-inspection-active.png",
-        "text": "巡检"
+        "pagePath": "pages/emergency/emergency",
+        "text": "应急"
       },
       {
         "pagePath": "pages/profile/profile",
-        "iconPath": "images/icon-profile.png",
-        "selectedIconPath": "images/icon-profile-active.png",
         "text": "我的"
       }
     ]

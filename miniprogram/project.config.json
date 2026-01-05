@@ -27,7 +27,6 @@
     "useMultiFrameRuntime": true,
     "useApiHook": true,
     "useApiHostProcess": true,
-    "showShadowRootInWxmlPanel": true,
     "packNpmManually": false,
     "enableEngineNative": false,
     "packNpmRelationList": [
@@ -36,11 +35,24 @@
         "miniprogramNpmDistDir": "./"
       }
     ],
-    "minifyWXSS": true
+    "minifyWXSS": true,
+    "compileWorklet": false,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
   },
   "compileType": "miniprogram",
   "libVersion": "2.19.4",
-  "appid": "wx1234567890abcdef",
+  "appid": "wx44d680a5026d9661",
   "projectname": "railway-safety",
   "condition": {},
   "editorSetting": {
@@ -49,6 +61,7 @@
   },
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
-  "cloudfunctionRoot": "./cloudfunctions/",
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate"
+  "cloudfunctionRoot": "cloudfunctions/",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
+  "cloudfunctionEnv": "cloud1-9gz3lqctb5e4f85d"
 }

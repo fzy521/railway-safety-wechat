@@ -1,0 +1,61 @@
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="avatar-section">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/avatar-default.png'}}" mode="aspectFill" />
+      <view class="user-info">
+        <text class="username">{{userInfo.nickName || '铁路巡检员'}}</text>
+        <text class="user-role">安全管理员</text>
+      </view>
+    </view>
+    <view class="edit-profile" bindtap="viewProfile">
+      <text class="edit-text">编辑资料</text>
+    </view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-section">
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.inspections}}</text>
+      <text class="stat-label">巡检次数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.incidents}}</text>
+      <text class="stat-label">上报事故</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.certificates}}</text>
+      <text class="stat-label">培训证书</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.experience}}年</text>
+      <text class="stat-label">工作经验</text>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-title">功能菜单</view>
+    <view class="menu-list">
+      <view class="menu-item" wx:for="{{menuItems}}" wx:key="title" bindtap="handleMenuTap" data-page="{{item.page}}">
+        <view class="menu-icon">
+          <image class="menu-icon-img" src="{{item.icon}}" mode="aspectFit" />
+        </view>
+        <view class="menu-content">
+          <text class="menu-title-text">{{item.title}}</text>
+          <text class="menu-desc">{{item.desc}}</text>
+        </view>
+        <view class="menu-arrow">
+          <image class="arrow-icon" src="/images/icon-arrow-right.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="logout">
+      <text class="logout-text">退出登录</text>
+    </button>
+  </view>
+</view>

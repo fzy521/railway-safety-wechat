@@ -1,8 +1,8 @@
 App({
   // 全局数据
   globalData: {
-    // 你的云开发环境ID需要在这里配置
-    cloudEnv: 'railway-safety-prod-123456',
+    // 云开发环境ID
+    cloudEnv: 'cloud1-9gz3lqctb5e4f85d',
     userInfo: null,
     hasUserInfo: false,
     systemInfo: {}

@@ -1,0 +1,174 @@
+.container {
+  padding: 20rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.filter-bar {
+  margin-bottom: 20rpx;
+}
+
+.filter-picker {
+  width: 100%;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80rpx;
+  padding: 0 30rpx;
+  background: white;
+  border-radius: 40rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.filter-text {
+  font-size: 28rpx;
+  color: #323233;
+}
+
+.arrow {
+  font-size: 40rpx;
+  color: #c8c9cc;
+}
+
+.supervision-list {
+  min-height: 400rpx;
+}
+
+.empty-state,
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-text,
+.loading-text {
+  font-size: 28rpx;
+  color: #969799;
+}
+
+.supervision-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.danger-level {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.danger-level.major {
+  background: #ffecec;
+  color: #ee0a24;
+}
+
+.danger-level.general {
+  background: #fff8e0;
+  color: #ff976a;
+}
+
+.danger-location {
+  font-size: 28rpx;
+  color: #646566;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.card-body {
+  margin-bottom: 20rpx;
+}
+
+.danger-description {
+  display: block;
+  font-size: 30rpx;
+  color: #323233;
+  line-height: 1.6;
+}
+
+.card-info {
+  display: flex;
+  gap: 40rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-item {
+  flex: 1;
+}
+
+.info-label {
+  display: block;
+  font-size: 24rpx;
+  color: #969799;
+  margin-bottom: 8rpx;
+}
+
+.info-value {
+  display: block;
+  font-size: 28rpx;
+  color: #323233;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f8f9fa;
+}
+
+.deadline-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.deadline-label {
+  font-size: 24rpx;
+  color: #969799;
+}
+
+.deadline-date {
+  font-size: 28rpx;
+  color: #323233;
+}
+
+.deadline-date.overdue {
+  color: #ee0a24;
+  font-weight: 500;
+}
+
+.remaining-days {
+  font-size: 24rpx;
+  color: #07c160;
+}
+
+.remaining-days.overdue {
+  color: #ee0a24;
+}

@@ -1,0 +1,185 @@
+<view class="container" wx:if="{{riskInfo}}">
+  <view class="info-section">
+    <view class="info-title">风险信息</view>
+    <view class="info-row">
+      <text class="info-label">风险名称</text>
+      <text class="info-value">{{riskInfo.riskName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">风险等级</text>
+      <view class="risk-badge risk-{{riskLevelClass}}">{{riskInfo.riskGrade}}</view>
+    </view>
+    <view class="info-row">
+      <text class="info-label">风险值</text>
+      <text class="info-value">{{riskInfo.rValue}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">检查频次</text>
+      <text class="info-value">{{riskInfo.checkFrequency}}</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">岗位控制措施</view>
+    
+    <view class="form-item vertical">
+      <text class="label required">控制措施 *</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入岗位控制措施"
+        value="{{controlMeasures}}"
+        bindinput="onControlMeasuresChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label required">控制人 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入岗位控制人" 
+        value="{{controlPerson}}"
+        bindinput="onControlPersonChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label required">控制部门 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入岗位控制部门" 
+        value="{{controlDept}}"
+        bindinput="onControlDeptChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">管控措施</view>
+    
+    <view class="form-item vertical">
+      <text class="label required">管控措施 *</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入管控措施"
+        value="{{manageMeasures}}"
+        bindinput="onManageMeasuresChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label required">责任部门 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入管控责任部门" 
+        value="{{manageDept}}"
+        bindinput="onManageDeptChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label required">责任人 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入管控责任人" 
+        value="{{managePerson}}"
+        bindinput="onManagePersonChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">应急措施</view>
+    
+    <view class="form-item vertical">
+      <text class="label">应急措施</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入应急措施"
+        value="{{emergencyMeasures}}"
+        bindinput="onEmergencyMeasuresChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">应急联系人</text>
+      <input 
+        class="input" 
+        placeholder="请输入应急联系人" 
+        value="{{emergencyContact}}"
+        bindinput="onEmergencyContactChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">应急电话</text>
+      <input 
+        class="input" 
+        type="number"
+        placeholder="请输入应急电话" 
+        value="{{emergencyPhone}}"
+        bindinput="onEmergencyPhoneChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">管控信息</view>
+    
+    <view class="form-item">
+      <text class="label">管控日期</text>
+      <picker mode="date" value="{{controlDate}}" bindchange="onControlDateChange">
+        <view class="picker">
+          {{controlDate}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">管控人</text>
+      <input 
+        class="input" 
+        placeholder="请输入管控人" 
+        value="{{controller}}"
+        bindinput="onControllerChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">管控部门</text>
+      <input 
+        class="input" 
+        placeholder="请输入管控部门" 
+        value="{{controllerDept}}"
+        bindinput="onControllerDeptChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label required">下次检查日期 *</text>
+      <picker mode="date" value="{{nextCheckDate}}" bindchange="onNextCheckDateChange">
+        <view class="picker">
+          {{nextCheckDate}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item vertical">
+      <text class="label">管控备注</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入管控备注"
+        value="{{controlNotes}}"
+        bindinput="onControlNotesChange"
+      />
+    </view>
+  </view>
+
+  <view class="button-section">
+    <button class="btn btn-secondary" bindtap="onSaveDraft">保存草稿</button>
+    <button class="btn btn-primary" bindtap="onSubmit">提交生效</button>
+  </view>
+</view>
+
+<view class="loading-container" wx:else>
+  <text class="loading-text">加载中...</text>
+</view>

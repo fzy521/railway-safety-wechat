@@ -1,0 +1,219 @@
+@import "../../styles/design-system.wxss";
+
+.container {
+  padding: 30rpx;
+  background: var(--color-bg-page);
+  min-height: 100vh;
+}
+
+/* 状态卡片 */
+.status-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.status-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: white;
+  flex: 1;
+}
+
+.risk-badge {
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: white;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.status-meta {
+  display: flex;
+  gap: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-item {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.status-footer {
+  display: flex;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.status-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+  background: white;
+}
+
+.status-text {
+  font-size: 26rpx;
+  color: white;
+  font-weight: 500;
+}
+
+.status-dot.status-pending-assess {
+  background: #ff976a !important;
+}
+
+.status-dot.status-pending-control {
+  background: #ffbe00 !important;
+}
+
+.status-dot.status-controlling {
+  background: #1989fa !important;
+}
+
+.status-dot.status-effective {
+  background: #07c160 !important;
+}
+
+/* 区块 */
+.section {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #e0e0e0;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 20rpx;
+  line-height: 1.6;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-row.vertical {
+  flex-direction: column;
+}
+
+.info-label {
+  width: 180rpx;
+  color: #666;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.info-row.vertical .info-label {
+  width: 100%;
+  margin-bottom: 12rpx;
+}
+
+.info-value {
+  flex: 1;
+  color: #333;
+  font-size: 28rpx;
+  word-break: break-all;
+}
+
+/* MES网格 */
+.mes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.mes-item {
+  background: #f5f5f5;
+  border-radius: 12rpx;
+  padding: 24rpx 16rpx;
+  text-align: center;
+}
+
+.mes-label {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.mes-value {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1989fa;
+}
+
+/* 操作按钮 */
+.action-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 30rpx;
+}
+
+.action-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: white;
+  color: #1989fa;
+  border: 2rpx solid #1989fa;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.action-btn:active {
+  background: #e8f8f0;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.loading-text {
+  color: #999;
+  font-size: 30rpx;
+}
+
+.risk-red {
+  background: #ee0a24 !important;
+}
+
+.risk-orange {
+  background: #ff976a !important;
+}
+
+.risk-yellow {
+  background: #ffbe00 !important;
+}
+
+.risk-blue {
+  background: #1989fa !important;
+}

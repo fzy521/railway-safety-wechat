@@ -1,0 +1,114 @@
+<!--package-safety/pages/certificate/certificate.wxml-->
+<view class="container">
+  <!-- 标题区域 -->
+  <view class="header">
+    <text class="title">证书管理</text>
+    <text class="subtitle">GBT 33000-2025 人员资质与持证上岗</text>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.total}}</text>
+      <text class="stat-label">证书总数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.valid}}</text>
+      <text class="stat-label">有效证书</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.expiring}}</text>
+      <text class="stat-label">即将到期</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{statistics.expired}}</text>
+      <text class="stat-label">已过期</text>
+    </view>
+  </view>
+
+  <!-- 筛选标签 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterStatus === 'all' ? 'active' : ''}}" data-status="all" bindtap="onFilterChange">
+      <text>全部</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'valid' ? 'active' : ''}}" data-status="valid" bindtap="onFilterChange">
+      <text>有效</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'expiring' ? 'active' : ''}}" data-status="expiring" bindtap="onFilterChange">
+      <text>即将到期</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'expired' ? 'active' : ''}}" data-status="expired" bindtap="onFilterChange">
+      <text>已过期</text>
+    </view>
+  </view>
+
+  <!-- 证书列表 -->
+  <view class="certificate-list">
+    <view wx:for="{{certificates}}" wx:key="id" wx:if="{{filterStatus === 'all' || (filterStatus === 'valid' && item.status === 'valid') || (filterStatus === 'expiring' && item.reviewStatus === 'due-soon') || (filterStatus === 'expired' && item.status === 'expired')}}" class="certificate-card {{item.status}}">
+      <view class="certificate-header">
+        <view class="certificate-title">
+          <text class="certificate-id">{{item.certNo}}</text>
+          <view class="certificate-status {{item.status}} {{item.reviewStatus}}">
+            <text>{{item.statusText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="certificate-employee">
+        <text class="employee-label">持证人员：</text>
+        <text class="employee-name">{{item.employeeName}}</text>
+        <text class="employee-dept">（{{item.department}}）</text>
+      </view>
+
+      <view class="certificate-position">
+        <text class="position-label">岗位：</text>
+        <text class="position-value">{{item.position}}</text>
+      </view>
+
+      <view class="certificate-type">
+        <text class="type-label">证书类型：</text>
+        <text class="type-value">{{item.certType}}</text>
+      </view>
+
+      <view class="certificate-name">
+        <text class="name-label">证书名称：</text>
+        <text class="name-value">{{item.certName}}</text>
+      </view>
+
+      <view class="certificate-dates">
+        <view class="date-item">
+          <text class="date-label">发证日期：</text>
+          <text class="date-value">{{item.issueDate}}</text>
+        </view>
+        <view class="date-item">
+          <text class="date-label">到期日期：</text>
+          <text class="date-value expiry">{{item.expiryDate}}</text>
+        </view>
+        <view class="date-item" wx:if="item.nextReviewDate">
+          <text class="date-label">复审日期：</text>
+          <text class="date-value review">{{item.nextReviewDate}}</text>
+        </view>
+      </view>
+
+      <view class="certificate-authority">
+        <text class="authority-label">发证机关：</text>
+        <text class="authority-value">{{item.issuingAuthority}}</text>
+      </view>
+
+      <view class="certificate-experience">
+        <text class="experience-label">从业年限：</text>
+        <text class="experience-value">{{item.workingYears}}年</text>
+      </view>
+
+      <view wx:if="{{item.notes}}" class="certificate-notes">
+        <text class="notes-label">备注：</text>
+        <text class="notes-value">{{item.notes}}</text>
+      </view>
+
+      <view class="certificate-actions">
+        <button class="action-btn secondary" data-id="{{item.id}}" bindtap="viewCertificateDetail">查看详情</button>
+        <button wx:if="{{item.reviewStatus === 'due-soon' || item.reviewStatus === 'overdue'}}" class="action-btn primary" data-id="{{item.id}}" bindtap="applyReview">申请复审</button>
+      </view>
+    </view>
+  </view>
+</view>

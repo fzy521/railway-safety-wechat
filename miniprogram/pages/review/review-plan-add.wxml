@@ -1,0 +1,105 @@
+<view class="container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="label">评审名称 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入评审名称" 
+        value="{{formData.name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">评审类型</text>
+      <picker mode="selector" range="{{typeOptions}}" range-key="label" bindchange="onTypeChange">
+        <view class="picker">
+          {{formData.typeName}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">计划日期 *</text>
+      <picker mode="date" value="{{formData.plannedDate}}" bindchange="onPlannedDateChange">
+        <view class="picker">
+          {{formData.plannedDate || '请选择日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">责任部门 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入责任部门" 
+        value="{{formData.responsibleDept}}"
+        bindinput="onResponsibleDeptInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">责任人 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入责任人" 
+        value="{{formData.responsiblePerson}}"
+        bindinput="onResponsiblePersonInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">参与人员</text>
+      <input 
+        class="input" 
+        placeholder="请输入参与人员" 
+        value="{{formData.participants}}"
+        bindinput="onParticipantsInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">评审范围</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入评审范围"
+        value="{{formData.reviewScope}}"
+        bindinput="onReviewScopeInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">评审依据</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入评审依据"
+        value="{{formData.reviewBasis}}"
+        bindinput="onReviewBasisInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">评审重点</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入评审重点（每行一个）"
+        value="{{formData.reviewFocus}}"
+        bindinput="onReviewFocusInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">备注</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入备注信息"
+        value="{{formData.notes}}"
+        bindinput="onNotesInput"
+      />
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button class="submit-btn" bindtap="onSubmit">提交</button>
+  </view>
+</view>

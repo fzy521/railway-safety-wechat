@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="filter-bar">
+    <picker class="filter-picker" mode="selector" range="{{statusOptions}}" range-key="label" bindchange="onFilterChange">
+      <view class="filter-btn">
+        <text class="filter-text">{{currentFilterLabel}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <view class="supervision-list">
+    <view class="empty-state" wx:if="{{!loading && supervisionList.length === 0}}">
+      <text class="empty-text">暂无督办记录</text>
+    </view>
+
+    <view class="supervision-card" wx:for="{{supervisionList}}" wx:key="_id" bindtap="onDetailTap" data-id="{{item._id}}">
+      <view class="card-header">
+        <view class="header-left">
+          <text class="danger-level {{item.dangerLevel === '重大隐患' ? 'major' : 'general'}}">{{item.dangerLevel}}</text>
+          <text class="danger-location">{{item.dangerLocation}}</text>
+        </view>
+        <view class="header-right">
+          <text class="status-badge" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}}">{{item.supervisionStatus}}</text>
+        </view>
+      </view>
+
+      <view class="card-body">
+        <text class="danger-description">{{item.dangerDescription}}</text>
+      </view>
+
+      <view class="card-info">
+        <view class="info-item">
+          <text class="info-label">责任单位</text>
+          <text class="info-value">{{item.responsibleDept}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">责任人</text>
+          <text class="info-value">{{item.responsiblePerson}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <view class="deadline-info">
+          <text class="deadline-label">计划完成</text>
+          <text class="deadline-date {{item.isOverdue ? 'overdue' : ''}}">{{item.plannedCompleteDate}}</text>
+          <text class="remaining-days {{item.isOverdue ? 'overdue' : ''}}" wx:if="{{item.status !== '已销号'}}">
+            {{item.isOverdue ? '已超期' : '剩余' + item.remainingDays + '天'}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <view class="loading-state" wx:if="{{loading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,88 @@
+<view class="container" wx:if="{{!loading}}">
+  <view class="detail-header">
+    <view class="status-badge status-{{inspection.status}}">{{inspection.statusName}}</view>
+    <view class="level-badge level-{{inspection.levelClass}}">{{inspection.level}}</view>
+  </view>
+
+  <view class="detail-section">
+    <text class="section-title">基本信息</text>
+    <view class="info-row">
+      <text class="label">隐患编号</text>
+      <text class="value">{{inspection.id}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">隐患标题</text>
+      <text class="value">{{inspection.title}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">隐患类型</text>
+      <text class="value">{{inspection.typeName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">严重程度</text>
+      <text class="value">{{inspection.severity}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">所在区域</text>
+      <text class="value">{{inspection.zone}}</text>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <text class="section-title">发现信息</text>
+    <view class="info-row">
+      <text class="label">发现人</text>
+      <text class="value">{{inspection.finder}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">发现时间</text>
+      <text class="value">{{inspection.findDate}} {{inspection.findTime}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">隐患描述</text>
+      <text class="value">{{inspection.description}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">应急处置</text>
+      <text class="value">{{inspection.immediateMeasure}}</text>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <text class="section-title">整改信息</text>
+    <view class="info-row">
+      <text class="label">整改措施</text>
+      <text class="value">{{inspection.treatmentMeasures}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">整改期限</text>
+      <text class="value">{{inspection.treatmentDeadline}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">责任部门</text>
+      <text class="value">{{inspection.responsibleDept}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">责任人</text>
+      <text class="value">{{inspection.responsiblePerson}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">监督人</text>
+      <text class="value">{{inspection.supervisionPerson}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">整改状态</text>
+      <text class="value">{{inspection.treatmentStatusText}}</text>
+    </view>
+  </view>
+
+  <view class="action-buttons">
+    <button class="action-btn primary" bindtap="onStartTreatment" wx:if="{{inspection.treatmentStatus === 'treating'}}">开始整改</button>
+    <button class="action-btn success" bindtap="onSubmitVerification" wx:if="{{inspection.treatmentStatus === 'treating'}}">提交验证</button>
+    <button class="action-btn" bindtap="onAddPhoto">添加照片</button>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>

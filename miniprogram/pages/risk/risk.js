@@ -5,6 +5,27 @@ Page({
    * 页面的初始数据
    */
   data: {
+    // 状态筛选
+    activeTab: 'all',
+    statusTabs: [
+      { label: '全部', value: 'all' },
+      { label: '待评估', value: '待评估' },
+      { label: '待管控', value: '待管控' },
+      { label: '管控中', value: '管控中' }
+    ],
+    
+    // 风险清单
+    riskList: [],
+    filteredList: [],
+    
+    // 统计数据
+    statistics: {
+      total: 0,
+      pendingAssess: 0,
+      pendingControl: 0,
+      controlling: 0
+    },
+    
     // 风险矩阵数据
     riskMatrix: [
       {
@@ -69,8 +90,16 @@ Page({
       severity: -1
     },
 
-    // 风险清单
-    riskList: []
+    // GBT 33000-2025 Standard Compliant Risk Classification
+    riskAssessmentCriteria: {
+      // 风险等级矩阵 - 基于GBT 33000-2025表D.1
+      riskMatrix: [
+        { likelihood: '不可能', severity: '一般', risk: '蓝', level: '低风险', controlNeeded: '一般控制' },
+        { likelihood: '不太可能', severity: '较大', risk: '黄', level: '一般风险', controlNeeded: '监测与审查' },
+        { likelihood: '可能发生', severity: '重大', risk: '橙', level: '较大风险', controlNeeded: '管控措施' },
+        { likelihood: '很可能', severity: '特大', risk: '红', level: '重大风险', controlNeeded: '立即整改' }
+      ]
+    }
   },
 
   /**
@@ -97,59 +126,112 @@ Page({
   loadRiskData() {
     wx.showLoading({ title: '加载中...' })
 
-    // 模拟数据
-    const mockRiskData = [
-      {
-        id: 1,
-        name: '轨道老化磨损',
-        description: '部分区段轨道使用年限较长，存在磨损过度的风险',
-        assessment: 'B级(中风险)',
-        levelColor: 'yellow',
-        responder: '张工程师',
-        date: '2024-12-20',
-        status: 'processing',
-        statusText: '整改中'
-      },
-      {
-        id: 2,
-        name: '信号系统故障风险',
-        description: '恶劣天气下信号显示可能受影响',
-        assessment: 'D级(中风险)',
-        levelColor: 'yellow',
-        responder: '李维护员',
-        date: '2024-12-19',
-        status: 'pending',
-        statusText: '待处理'
-      },
-      {
-        id: 3,
-        name: '电气化设备检测',
-        description: '接触网除冰装置需要定期检修',
-        assessment: 'F级(高风险)',
-        levelColor: 'red',
-        responder: '王班长',
-        date: '2024-12-18',
-        status: 'processing',
-        statusText: '保养中'
-      },
-      {
-        id: 4,
-        name: '防碰撞系统测试',
-        description: '最新安装的防碰撞系统需要全面测试',
-        assessment: 'A级(低风险)',
-        levelColor: 'green',
-        responder: '赵技术员',
-        date: '2024-12-17',
-        status: 'completed',
-        statusText: '已完成'
-      }
-    ]
+    wx.cloud.database().collection('risk_library')
+      .orderBy('createdAt', 'desc')
+      .get({
+        success: res => {
+          const riskList = res.data.map(item => ({
+            id: item._id,
+            name: item.riskName,
+            description: item.riskDescription,
+            riskLevel: this.getRiskLevelClass(item.riskColor),
+            levelName: item.riskGrade,
+            controlMeasures: item.controlMeasures,
+            assessment: `M:${item.mValue} E:${Math.max(item.e1Value, item.e2Value)} S:${item.sValue}`,
+            responder: item.managePerson,
+            date: this.formatDate(new Date(item.identificationDate)),
+            nextReviewDate: item.nextCheckDate ? this.formatDate(new Date(item.nextCheckDate)) : '',
+            status: item.status,
+            statusText: this.getStatusText(item.status),
+            statusClass: this.getStatusClass(item.status),
+            effectiveness: item.controlNotes || '',
+            rValue: item.rValue
+          }))
 
-    this.setData({
-      riskList: mockRiskData
+          // 统计各状态数量
+          const statistics = {
+            total: riskList.length,
+            pendingAssess: riskList.filter(r => r.status === '待评估').length,
+            pendingControl: riskList.filter(r => r.status === '待管控').length,
+            controlling: riskList.filter(r => r.status === '管控中').length
+          }
+
+          this.setData({
+            riskList: riskList,
+            statistics: statistics
+          })
+
+          // 应用筛选
+          this.applyFilter()
+        },
+        fail: err => {
+          console.error('加载风险数据失败:', err)
+          app.showError('加载失败')
+        },
+        complete: () => {
+          wx.hideLoading()
+        }
+      })
+  },
+
+  /**
+   * 应用状态筛选
+   */
+  applyFilter() {
+    const { activeTab, riskList } = this.data
+    
+    let filteredList = riskList
+    
+    if (activeTab !== 'all') {
+      filteredList = riskList.filter(item => item.status === activeTab)
+    }
+
+    // 按风险等级排序（红>橙>黄>蓝）
+    const sortedRisks = filteredList.sort((a, b) => {
+      const riskOrder = { '红': 4, '橙': 3, '黄': 2, '蓝': 1 }
+      return riskOrder[b.riskLevel] - riskOrder[a.riskLevel]
     })
 
-    wx.hideLoading()
+    this.setData({
+      filteredList: sortedRisks
+    })
+  },
+
+  /**
+   * 切换状态Tab
+   */
+  onTabChange(e) {
+    const tab = e.currentTarget.dataset.tab
+    this.setData({
+      activeTab: tab
+    })
+    this.applyFilter()
+  },
+
+  /**
+   * 获取状态文本
+   */
+  getStatusText(status) {
+    const statusMap = {
+      '已辨识': '已辨识',
+      '待评估': '待评估',
+      '已评估': '已评估',
+      '待管控': '待管控',
+      '管控中': '管控中',
+      '管控有效': '管控有效',
+      '已销号': '已销号'
+    }
+    return statusMap[status] || status
+  },
+
+  /**
+   * 格式化日期
+   */
+  formatDate(date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
   },
 
   /**
@@ -201,10 +283,34 @@ Page({
    * 添加新风险
    */
   addRisk() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/risk/risk-identify'
     })
+  },
+
+  /**
+   * 查看风险详情
+   */
+  viewRiskDetail(e) {
+    const riskId = e.currentTarget.dataset.id
+    const risk = this.data.riskList.find(r => r.id === riskId)
+    
+    if (!risk) return
+
+    // 根据状态跳转到不同页面
+    if (risk.status === '待评估') {
+      wx.navigateTo({
+        url: `/pages/risk/risk-assess?riskId=${riskId}`
+      })
+    } else if (risk.status === '待管控') {
+      wx.navigateTo({
+        url: `/pages/risk/risk-control?riskId=${riskId}`
+      })
+    } else {
+      wx.navigateTo({
+        url: `/pages/risk/risk-detail?riskId=${riskId}`
+      })
+    }
   },
 
   /**
@@ -225,5 +331,31 @@ Page({
       title: '风险评估 - 铁路安全监控',
       path: '/pages/risk/risk'
     }
+  },
+
+  /**
+   * 获取风险等级对应的CSS类名
+   */
+  getRiskLevelClass(riskColor) {
+    const colorMap = {
+      '红': 'red',
+      '橙': 'orange',
+      '黄': 'yellow',
+      '蓝': 'blue'
+    }
+    return colorMap[riskColor] || 'blue'
+  },
+
+  /**
+   * 获取状态对应的CSS类名
+   */
+  getStatusClass(status) {
+    const statusMap = {
+      '待评估': 'pending-assess',
+      '待管控': 'pending-control',
+      '管控中': 'controlling',
+      '管控有效': 'effective'
+    }
+    return statusMap[status] || ''
   }
 })

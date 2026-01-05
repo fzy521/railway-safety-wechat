@@ -1,0 +1,136 @@
+<view class="container" wx:if="{{riskInfo && !loading}}">
+  <!-- 风险状态卡片 -->
+  <view class="status-section">
+    <view class="status-header">
+      <text class="status-title">{{riskInfo.riskName}}</text>
+      <view class="risk-badge risk-{{riskLevelClass}}">{{riskInfo.riskGrade}}</view>
+    </view>
+    <view class="status-meta">
+      <text class="status-item">风险值: {{riskInfo.rValue}}</text>
+      <text class="status-item">检查频次: {{riskInfo.checkFrequency}}</text>
+    </view>
+    <view class="status-footer">
+      <view class="status-dot status-{{statusClass}}"></view>
+      <text class="status-text">{{riskInfo.status}}</text>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="section">
+    <view class="section-title">基本信息</view>
+    <view class="info-row">
+      <text class="info-label">风险类别</text>
+      <text class="info-value">{{riskInfo.riskType}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">作业环节</text>
+      <text class="info-value">{{riskInfo.operationLink}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">风险地点</text>
+      <text class="info-value">{{riskInfo.location}}</text>
+    </view>
+    <view class="info-row vertical">
+      <text class="info-label">风险描述</text>
+      <text class="info-value">{{riskInfo.riskDescription}}</text>
+    </view>
+  </view>
+
+  <!-- 辨识信息 -->
+  <view class="section">
+    <view class="section-title">辨识信息</view>
+    <view class="info-row">
+      <text class="info-label">辨识方法</text>
+      <text class="info-value">{{riskInfo.identificationMethod}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">辨识日期</text>
+      <text class="info-value">{{formatDate(riskInfo.identificationDate)}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">发现人</text>
+      <text class="info-value">{{riskInfo.discoverer}}（{{riskInfo.discovererDept}}）</text>
+    </view>
+  </view>
+
+  <!-- MES评估信息 -->
+  <view class="section" wx:if="{{riskInfo.rValue > 0}}">
+    <view class="section-title">MES评估结果</view>
+    <view class="mes-grid">
+      <view class="mes-item">
+        <text class="mes-label">M值</text>
+        <text class="mes-value">{{riskInfo.mValue}}</text>
+      </view>
+      <view class="mes-item">
+        <text class="mes-label">E1值</text>
+        <text class="mes-value">{{riskInfo.e1Value}}</text>
+      </view>
+      <view class="mes-item">
+        <text class="mes-label">E2值</text>
+        <text class="mes-value">{{riskInfo.e2Value}}</text>
+      </view>
+      <view class="mes-item">
+        <text class="mes-label">S值</text>
+        <text class="mes-value">{{riskInfo.sValue}}</text>
+      </view>
+    </view>
+    <view class="info-row" wx:if="{{riskInfo.assessor}}">
+      <text class="info-label">评估人</text>
+      <text class="info-value">{{riskInfo.assessor}}（{{riskInfo.assessorDept}}）</text>
+    </view>
+    <view class="info-row" wx:if="{{riskInfo.assessmentDate}}">
+      <text class="info-label">评估日期</text>
+      <text class="info-value">{{formatDate(riskInfo.assessmentDate)}}</text>
+    </view>
+  </view>
+
+  <!-- 管控措施 -->
+  <view class="section" wx:if="{{riskInfo.controlMeasures}}">
+    <view class="section-title">岗位控制措施</view>
+    <view class="info-row vertical">
+      <text class="info-label">控制措施</text>
+      <text class="info-value">{{riskInfo.controlMeasures}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">控制人</text>
+      <text class="info-value">{{riskInfo.controlPerson}}（{{riskInfo.controlDept}}）</text>
+    </view>
+  </view>
+
+  <!-- 管理措施 -->
+  <view class="section" wx:if="{{riskInfo.manageMeasures}}">
+    <view class="section-title">管理措施</view>
+    <view class="info-row vertical">
+      <text class="info-label">管控措施</text>
+      <text class="info-value">{{riskInfo.manageMeasures}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">责任人</text>
+      <text class="info-value">{{riskInfo.managePerson}}（{{riskInfo.manageDept}}）</text>
+    </view>
+  </view>
+
+  <!-- 应急措施 -->
+  <view class="section" wx:if="{{riskInfo.emergencyMeasures}}">
+    <view class="section-title">应急措施</view>
+    <view class="info-row vertical">
+      <text class="info-label">应急措施</text>
+      <text class="info-value">{{riskInfo.emergencyMeasures}}</text>
+    </view>
+    <view class="info-row" wx:if="{{riskInfo.emergencyContact}}">
+      <text class="info-label">应急联系人</text>
+      <text class="info-value">{{riskInfo.emergencyContact}}（{{riskInfo.emergencyPhone}}）</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-section">
+    <button class="action-btn" bindtap="onEditRisk">修改辨识信息</button>
+    <button class="action-btn" bindtap="onReAssess" wx:if="{{riskInfo.status === '待评估' || riskInfo.status === '已评估'}}">重新评估</button>
+    <button class="action-btn" bindtap="onReControl" wx:if="{{riskInfo.status === '待管控' || riskInfo.status === '管控中'}}">调整管控措施</button>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>

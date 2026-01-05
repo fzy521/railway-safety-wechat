@@ -1,0 +1,142 @@
+<view class="container" wx:if="{{riskInfo}}">
+  <view class="info-section">
+    <view class="info-title">风险信息</view>
+    <view class="info-row">
+      <text class="info-label">风险名称</text>
+      <text class="info-value">{{riskInfo.riskName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">风险地点</text>
+      <text class="info-value">{{riskInfo.location}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">风险描述</text>
+      <text class="info-value">{{riskInfo.riskDescription}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">发现人</text>
+      <text class="info-value">{{riskInfo.discoverer}}（{{riskInfo.discovererDept}}）</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">MES风险评估</view>
+    
+    <view class="mes-item">
+      <view class="mes-label">M - 控制措施状态</view>
+      <picker mode="selector" range="{{mOptions}}" range-key="label" bindchange="onMValueChange">
+        <view class="mes-picker">
+          <text class="mes-value">{{mLabel}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+      <view class="mes-desc">{{mDesc}}</view>
+    </view>
+
+    <view class="mes-item">
+      <view class="mes-label">E1 - 人员暴露频次</view>
+      <picker mode="selector" range="{{e1Options}}" range-key="label" bindchange="onE1ValueChange">
+        <view class="mes-picker">
+          <text class="mes-value">{{e1Label}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+      <view class="mes-desc">{{e1Desc}}</view>
+    </view>
+
+    <view class="mes-item">
+      <view class="mes-label">E2 - 危险状态频次</view>
+      <picker mode="selector" range="{{e2Options}}" range-key="label" bindchange="onE2ValueChange">
+        <view class="mes-picker">
+          <text class="mes-value">{{e2Label}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+      <view class="mes-desc">{{e2Desc}}</view>
+    </view>
+
+    <view class="mes-item">
+      <view class="mes-label">S - 事故后果</view>
+      <picker mode="selector" range="{{sOptions}}" range-key="label" bindchange="onSValueChange">
+        <view class="mes-picker">
+          <text class="mes-value">{{sLabel}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+      <view class="mes-desc">{{sDesc}}</view>
+    </view>
+  </view>
+
+  <view class="result-section">
+    <view class="section-title">评估结果</view>
+    
+    <view class="result-card">
+      <view class="result-item">
+        <text class="result-label">风险值 R</text>
+        <text class="result-value">{{rValue}}</text>
+      </view>
+      <view class="result-divider"></view>
+      <view class="result-item">
+        <text class="result-label">风险等级</text>
+        <view class="risk-badge risk-{{riskLevelClass}}">{{riskGrade}}</view>
+      </view>
+      <view class="result-divider"></view>
+      <view class="result-item">
+        <text class="result-label">检查频次</text>
+        <text class="result-value">{{checkFrequency}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">评估信息</view>
+    
+    <view class="form-item">
+      <text class="label">评估人</text>
+      <input 
+        class="input" 
+        placeholder="请输入评估人" 
+        value="{{assessor}}"
+        bindinput="onAssessorChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">评估部门</text>
+      <input 
+        class="input" 
+        placeholder="请输入评估部门" 
+        value="{{assessorDept}}"
+        bindinput="onAssessorDeptChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">评估日期</text>
+      <picker mode="date" value="{{assessmentDate}}" bindchange="onAssessmentDateChange">
+        <view class="picker">
+          {{assessmentDate}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item vertical">
+      <text class="label">评估备注</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入评估备注"
+        value="{{assessmentNotes}}"
+        bindinput="onAssessmentNotesChange"
+      />
+    </view>
+  </view>
+
+  <view class="button-section">
+    <button class="btn btn-secondary" bindtap="onSaveDraft">保存草稿</button>
+    <button class="btn btn-primary" bindtap="onSubmitForControl">提交管控</button>
+  </view>
+</view>
+
+<view class="loading-container" wx:else>
+  <text class="loading-text">加载中...</text>
+</view>

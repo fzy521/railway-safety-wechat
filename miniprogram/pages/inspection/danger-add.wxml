@@ -1,0 +1,148 @@
+<view class="container">
+  <view class="form-section">
+    <view class="section-title">基本信息</view>
+    
+    <view class="form-item">
+      <text class="label">隐患地点 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入隐患地点" 
+        value="{{dangerLocation}}"
+        bindinput="onDangerLocationChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">隐患部位 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入隐患部位" 
+        value="{{dangerPart}}"
+        bindinput="onDangerPartChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">隐患等级</text>
+      <picker mode="selector" range="{{dangerLevels}}" bindchange="onDangerLevelChange">
+        <view class="picker">
+          {{dangerLevel}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">隐患类别</text>
+      <picker mode="selector" range="{{dangerCategories}}" bindchange="onDangerCategoryChange">
+        <view class="picker">
+          {{dangerCategory}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item vertical">
+      <text class="label">隐患描述 *</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请详细描述隐患情况"
+        value="{{dangerDescription}}"
+        bindinput="onDangerDescriptionChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">发现信息</view>
+    
+    <view class="form-item">
+      <text class="label">发现日期</text>
+      <picker mode="date" value="{{discoveryDate}}" bindchange="onDiscoveryDateChange">
+        <view class="picker">
+          {{discoveryDate}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">发现人</text>
+      <input 
+        class="input" 
+        placeholder="请输入发现人" 
+        value="{{discoverer}}"
+        bindinput="onDiscovererChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">发现部门</text>
+      <input 
+        class="input" 
+        placeholder="请输入发现部门" 
+        value="{{discovererDept}}"
+        bindinput="onDiscovererDeptChange"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">整改信息</view>
+    
+    <view class="form-item vertical">
+      <text class="label">整改措施</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入整改措施"
+        value="{{treatmentMeasures}}"
+        bindinput="onTreatmentMeasuresChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">责任部门 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入责任部门" 
+        value="{{responsibleDept}}"
+        bindinput="onResponsibleDeptChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">责任人 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入责任人" 
+        value="{{responsiblePerson}}"
+        bindinput="onResponsiblePersonChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">完成期限</text>
+      <picker mode="date" value="{{plannedCompleteDate}}" bindchange="onPlannedCompleteDateChange">
+        <view class="picker">
+          {{plannedCompleteDate}}
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">现场照片</view>
+    
+    <view class="photo-list">
+      <view class="photo-item" wx:for="{{photos}}" wx:key="*this" bindtap="onPreviewImage" data-url="{{item}}">
+        <image class="photo" src="{{item}}" mode="aspectFill" />
+        <view class="photo-remove" catchtap="onRemovePhoto" data-index="{{index}}">×</view>
+      </view>
+      <view class="photo-add" wx:if="{{photos.length < 9}}" bindtap="onChooseImage">
+        <text class="photo-add-icon">+</text>
+        <text class="photo-add-text">添加照片</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="button-section">
+    <button class="btn btn-primary" bindtap="onSubmit">提交</button>
+  </view>
+</view>

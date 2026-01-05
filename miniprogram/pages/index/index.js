@@ -51,9 +51,17 @@ Page({
 
   // 登录按钮点击
   onLogin() {
-    wx.navigateTo({
-      url: '/pages/login/login'
-    })
+    if (app.globalData.hasUserInfo) {
+      // 已登录，直接进入监控页面
+      wx.switchTab({
+        url: '/pages/dashboard/dashboard'
+      })
+    } else {
+      // 未登录，跳转到登录页面
+      wx.navigateTo({
+        url: '/pages/login/login'
+      })
+    }
   },
 
   // 加载快览数据
@@ -144,7 +152,7 @@ Page({
   // 分享到微信
   onShareAppMessage() {
     return {
-      title: '梁邹铁路安全监控系统',
+      title: '邹平货运铁路安全监控系统',
       path: '/pages/index/index',
       imageUrl: '/images/share-cover.png'
     }

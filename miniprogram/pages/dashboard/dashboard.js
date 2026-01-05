@@ -1,6 +1,5 @@
-import * as echarts from '../../utils/ec-canvas/echarts';
-
-let chartInstance = null;
+let chartInstance = null
+const app = getApp()
 
 Page({
   /**
@@ -14,10 +13,15 @@ Page({
     lowRisks: 12,
     mediumRisks: 3,
     highRisks: 1,
+    // 隐患统计数据
+    totalHazards: 28,
+    pendingHazards: 8,
+    inProgressHazards: 5,
+    completedHazards: 15,
     zones: [
       {
         id: 1,
-        name: '梁邹站场',
+        name: '邹平站场',
         status: 'safe',
         statusText: '安全',
         incidents: 0,
@@ -73,7 +77,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
-    this.initChart();
+    // 图表已删除，改为隐患统计数据
   },
 
   /**
@@ -91,7 +95,9 @@ Page({
         }
       });
 
-      if (result.result.success) {
+      console.log('云函数返回结果:', result);
+
+      if (result.result && result.result.success) {
         const data = result.result.data;
         this.setData({
           todayIncidents: data.todayIncidents || 0,
@@ -101,11 +107,14 @@ Page({
           lowRisks: data.riskCounts?.low || 12,
           mediumRisks: data.riskCounts?.medium || 3,
           highRisks: data.riskCounts?.high || 1,
-          zones: data.zones || this.data.zones
+          zones: data.zones && data.zones.length > 0 ? data.zones : this.data.zones
         });
 
         // 更新图表
         this.updateChart(data.trendData || []);
+      } else {
+        console.warn('云函数返回success为false，使用模拟数据');
+        this.useMockData();
       }
     } catch (error) {
       console.error('获取仪表板数据失败:', error);
@@ -122,6 +131,16 @@ Page({
    * 使用模拟数据
    */
   useMockData() {
+    this.setData({
+      todayIncidents: 0,
+      riskLevel: '正常',
+      safetyRate: 95,
+      completionRate: 98,
+      lowRisks: 12,
+      mediumRisks: 3,
+      highRisks: 1
+    });
+
     // 模拟事故趋势数据
     const trendData = [
       { date: '周一', incidents: 2 },
@@ -255,7 +274,7 @@ Page({
    */
   onShareAppMessage() {
     return {
-      title: '梁邹铁路安全监控 - 实时数据',
+      title: '邹平货运铁路安全监控 - 实时数据',
       path: '/pages/dashboard/dashboard'
     };
   }

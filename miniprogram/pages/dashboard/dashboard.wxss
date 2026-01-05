@@ -1,0 +1,217 @@
+/* dashboard.wxss */
+@import "../../styles/design-system.wxss";
+
+.container {
+  padding: var(--spacing-lg);
+  background-color: var(--color-bg-page);
+  min-height: 100vh;
+}
+
+/* 安全概况 */
+.section-title {
+  display: block;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xl);
+  padding: 0 var(--spacing-xs);
+}
+
+/* 指标卡片 */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xxxl);
+}
+
+.metric-card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base);
+}
+
+.metric-card:active {
+  transform: scale(0.98);
+}
+
+.metric-value {
+  font-size: var(--font-size-xxxl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-sm);
+}
+
+.metric-value.status-safe {
+  color: var(--color-success);
+}
+
+.metric-value.status-warning {
+  color: var(--color-warning);
+}
+
+.metric-value.status-danger {
+  color: var(--color-danger);
+}
+
+.metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* 图表区域 */
+.chart-section {
+  margin-bottom: var(--spacing-xxxl);
+}
+
+.chart-container {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxxl) var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  height: 300rpx;
+  position: relative;
+}
+
+#incidentChart {
+  width: 100%;
+  height: 100%;
+}
+
+.chart-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-base);
+}
+
+/* 风险分布 */
+.risk-section {
+  margin-bottom: var(--spacing-xxxl);
+}
+
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.risk-item {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+}
+
+.risk-item.risk-low {
+  background: linear-gradient(135deg, var(--color-success-light), #d4f0e3);
+}
+
+.risk-item.risk-medium {
+  background: linear-gradient(135deg, var(--color-warning-light), #fff0c7);
+}
+
+.risk-item.risk-high {
+  background: linear-gradient(135deg, var(--color-danger-light), #ffd6d9);
+}
+
+.risk-count {
+  font-size: var(--font-size-xxxl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-sm);
+}
+
+.risk-item.risk-low .risk-count {
+  color: var(--color-success);
+}
+
+.risk-item.risk-medium .risk-count {
+  color: var(--color-warning);
+}
+
+.risk-item.risk-high .risk-count {
+  color: var(--color-danger);
+}
+
+.risk-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 区域状态 */
+.zone-list {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxl);
+  box-shadow: var(--shadow-md);
+}
+
+.zone-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xl) 0;
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.zone-item:last-child {
+  border-bottom: none;
+}
+
+.zone-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.zone-status {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  display: inline-block;
+}
+
+.zone-status.safe {
+  background: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.zone-status.warning {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+}
+
+.zone-status.danger {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.zone-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.zone-incidents,
+.zone-risks {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-xs);
+}

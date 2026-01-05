@@ -1,0 +1,94 @@
+<view class="container" wx:if="{{!loading}}">
+  <view class="record-header">
+    <text class="record-title">{{record.planName}}</text>
+    <view class="result-badge result-{{record.result}}">{{record.resultText}}</view>
+  </view>
+
+  <view class="detail-section">
+    <text class="section-title">基本信息</text>
+    <view class="info-row">
+      <text class="label">员工姓名</text>
+      <text class="value">{{record.employeeName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">员工编号</text>
+      <text class="value">{{record.employeeId}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">部门</text>
+      <text class="value">{{record.department}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">职位</text>
+      <text class="value">{{record.position}}</text>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <text class="section-title">培训信息</text>
+    <view class="info-row">
+      <text class="label">培训日期</text>
+      <text class="value">{{record.trainingDate}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">培训时长</text>
+      <text class="value">{{record.hours}}小时</text>
+    </view>
+    <view class="info-row">
+      <text class="label">培训讲师</text>
+      <text class="value">{{record.trainer}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">培训方式</text>
+      <text class="value">{{record.trainingMethod}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">培训内容</text>
+      <text class="value">{{record.content}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">培训目标</text>
+      <text class="value">{{record.objectives}}</text>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <text class="section-title">考核结果</text>
+    <view class="info-row">
+      <text class="label">考核成绩</text>
+      <text class="value score">{{record.score}}分</text>
+    </view>
+    <view class="info-row">
+      <text class="label">考核结果</text>
+      <text class="value">{{record.resultText}}</text>
+    </view>
+  </view>
+
+  <view class="detail-section" wx:if="{{record.certificateNo}}">
+    <text class="section-title">证书信息</text>
+    <view class="info-row">
+      <text class="label">证书编号</text>
+      <text class="value">{{record.certificateNo}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">发证日期</text>
+      <text class="value">{{record.issueDate}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">有效期至</text>
+      <text class="value">{{record.expiryDate}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">下次复审</text>
+      <text class="value">{{record.nextTrainingDate}}</text>
+    </view>
+  </view>
+
+  <view class="action-buttons">
+    <button class="action-btn" bindtap="onDownloadCertificate" wx:if="{{record.certificateNo}}">下载证书</button>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>

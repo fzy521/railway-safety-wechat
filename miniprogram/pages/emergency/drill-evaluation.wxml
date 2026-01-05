@@ -1,0 +1,82 @@
+<view class="container" wx:if="{{!loading}}">
+  <view class="drill-info">
+    <text class="info-title">{{drill.planName}}</text>
+    <view class="info-row">
+      <text class="label">演练时间</text>
+      <text class="value">{{drill.date}} {{drill.startTime}} - {{drill.endTime}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">演练类型</text>
+      <text class="value">{{drill.typeName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">参与人数</text>
+      <text class="value">{{drill.participants}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">演练场景</text>
+      <text class="value">{{drill.scenario}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">演练目标</text>
+      <text class="value">{{drill.objectives}}</text>
+    </view>
+  </view>
+
+  <view class="evaluation-form">
+    <view class="form-section">
+      <text class="section-title">演练效果评估</text>
+      <picker mode="selector" range="{{effectivenessOptions}}" range-key="label" bindchange="onEffectivenessChange">
+        <view class="picker">
+          {{evaluation.effectiveness ? effectivenessOptions.find(item => item.value === evaluation.effectiveness).label : '请选择演练效果'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-section">
+      <text class="section-title">演练评分</text>
+      <slider min="0" max="100" step="1" value="{{evaluation.score}}" bindchange="onScoreChange" show-value />
+    </view>
+
+    <view class="form-section">
+      <text class="section-title">存在问题</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请描述演练过程中发现的问题"
+        value="{{evaluation.issues}}"
+        bindinput="onIssuesInput"
+        maxlength="500"
+      />
+    </view>
+
+    <view class="form-section">
+      <text class="section-title">改进措施</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请提出具体的改进措施"
+        value="{{evaluation.improvements}}"
+        bindinput="onImprovementsInput"
+        maxlength="500"
+      />
+    </view>
+
+    <view class="form-section">
+      <text class="section-title">建议意见</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请填写其他建议或意见"
+        value="{{evaluation.suggestions}}"
+        bindinput="onSuggestionsInput"
+        maxlength="500"
+      />
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button class="submit-btn" bindtap="onSubmit">提交评估</button>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>

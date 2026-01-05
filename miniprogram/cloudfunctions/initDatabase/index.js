@@ -32,6 +32,18 @@ exports.main = async (event, context) => {
     console.log('创建巡检记录集合...')
     await db.createCollection('inspections')
 
+    // 创建风险库集合
+    console.log('创建风险库集合...')
+    await db.createCollection('risk_library')
+
+    // 创建隐患库集合
+    console.log('创建隐患库集合...')
+    await db.createCollection('hidden_danger_library')
+
+    // 创建检查记录集合
+    console.log('创建检查记录集合...')
+    await db.createCollection('check_records')
+
     // 创建系统配置集合
     console.log('创建系统配置集合...')
     await db.createCollection('system_config')

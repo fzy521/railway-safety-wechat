@@ -1,0 +1,107 @@
+<view class="container">
+  <!-- 统计卡片 -->
+  <view class="stats-cards">
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.total}}</text>
+      <text class="stat-label">总巡检</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.pending}}</text>
+      <text class="stat-label">待巡检</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.inProgress}}</text>
+      <text class="stat-label">进行中</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-number">{{statistics.completed}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterStatus === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-status="all">
+      <text>全部</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'pending' ? 'active' : ''}}" bindtap="onFilterChange" data-status="pending">
+      <text>待巡检</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'in-progress' ? 'active' : ''}}" bindtap="onFilterChange" data-status="in-progress">
+      <text>进行中</text>
+    </view>
+    <view class="filter-item {{filterStatus === 'completed' ? 'active' : ''}}" bindtap="onFilterChange" data-status="completed">
+      <text>已完成</text>
+    </view>
+  </view>
+
+  <!-- 检查类型选择器 -->
+  <view class="check-type-selector">
+    <view class="type-item {{selectedCheckType === 'daily' ? 'active' : ''}}" bindtap="selectCheckType" data-type="daily">
+      <image class="type-icon" src="/images/icon-clipboard.png" mode="aspectFit" />
+      <text class="type-label">日常排查</text>
+      <text class="type-desc">每班/每日</text>
+    </view>
+    <view class="type-item {{selectedCheckType === 'regular' ? 'active' : ''}}" bindtap="selectCheckType" data-type="regular">
+      <image class="type-icon" src="/images/icon-calendar.png" mode="aspectFit" />
+      <text class="type-label">定期排查</text>
+      <text class="type-desc">每月/每季</text>
+    </view>
+    <view class="type-item {{selectedCheckType === 'special' ? 'active' : ''}}" bindtap="selectCheckType" data-type="special">
+      <image class="type-icon" src="/images/icon-search.png" mode="aspectFit" />
+      <text class="type-label">专项排查</text>
+      <text class="type-desc">特定领域</text>
+    </view>
+  </view>
+
+  <!-- 巡检列表 -->
+  <scroll-view class="inspection-list" scroll-y bindscrolltolower="onReachBottom">
+    <view class="inspection-item" wx:for="{{inspectionList}}" wx:key="id">
+      <view class="inspection-header">
+        <text class="inspection-title">{{item.title}}</text>
+        <view class="priority-tag priority-{{item.priority}}">{{item.priorityName}}</view>
+      </view>
+
+      <view class="inspection-meta">
+        <text class="inspection-type">{{item.typeName}}</text>
+        <text class="inspection-zone">{{item.zone}}</text>
+      </view>
+
+      <view class="inspection-schedule">
+        <text class="label">计划时间:</text>
+        <text class="value">{{item.plannedDate}} {{item.plannedTime}}</text>
+      </view>
+
+      <view class="inspection-inspector">
+        <text class="label">巡检员:</text>
+        <text class="value">{{item.inspector}}</text>
+      </view>
+
+      <view class="inspection-description">
+        <text class="label">描述:</text>
+        <text class="value">{{item.description}}</text>
+      </view>
+
+      <view class="inspection-footer">
+        <view class="inspection-status">
+          <view class="status-dot status-{{item.status}}"></view>
+          <text class="status-text">{{item.statusName}}</text>
+        </view>
+        <view class="actions">
+          <button wx:if="{{item.status === 'pending'}}" class="action-btn start-btn" bindtap="startInspection" data-id="{{item.id}}">开始</button>
+          <button class="action-btn detail-btn" bindtap="viewInspectionDetail" data-id="{{item.id}}">详情</button>
+        </view>
+      </view>
+
+      <view wx:if="{{item.findings}}" class="inspection-findings">
+        <text class="label">巡检结果:</text>
+        <text class="value">{{item.findings}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 添加按钮 -->
+  <view class="add-button" bindtap="addInspection">
+    <text class="add-icon">+</text>
+  </view>
+</view>

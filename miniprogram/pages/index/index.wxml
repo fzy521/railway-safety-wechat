@@ -2,7 +2,7 @@
   <view class="header">
     <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
     <text class="title">铁路安全监控系统</text>
-    <text class="subtitle">梁邹铁路专用线</text>
+    <text class="subtitle">邹平货运铁路专用线</text>
   </view>
 
   <view class="login-prompt" wx:if="{{!hasUserInfo}}">
@@ -29,19 +29,19 @@
 
     <view class="action-grid">
       <view class="action-item" bindtap="goToDashboard">
-        <image src="/images/icon-dashboard.png" class="action-icon"></image>
+        <image class="action-icon" src="/images/icon-dashboard.png" mode="aspectFit" />
         <text class="action-text">安全监控</text>
       </view>
       <view class="action-item" bindtap="goToRisk">
-        <image src="/images/icon-risk.png" class="action-icon"></image>
+        <image class="action-icon" src="/images/icon-risk.png" mode="aspectFit" />
         <text class="action-text">风险评估</text>
       </view>
       <view class="action-item" bindtap="goToIncident">
-        <image src="/images/icon-incident.png" class="action-icon"></image>
+        <image class="action-icon" src="/images/icon-emergency.png" mode="aspectFit" />
         <text class="action-text">事故报告</text>
       </view>
       <view class="action-item" bindtap="goToInspection">
-        <image src="/images/icon-inspection.png" class="action-icon"></image>
+        <image class="action-icon" src="/images/icon-inspection.png" mode="aspectFit" />
         <text class="action-text">巡检管理</text>
       </view>
     </view>

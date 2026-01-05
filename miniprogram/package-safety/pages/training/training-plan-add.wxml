@@ -1,0 +1,142 @@
+<view class="container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="label">培训名称 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入培训名称" 
+        value="{{formData.name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训类型</text>
+      <picker mode="selector" range="{{typeOptions}}" range-key="label" bindchange="onTypeChange">
+        <view class="picker">
+          {{formData.typeName}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训对象 *</text>
+      <input 
+        class="input" 
+        placeholder="请输入培训对象" 
+        value="{{formData.target}}"
+        bindinput="onTargetInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">预计人数</text>
+      <input 
+        class="input" 
+        type="number"
+        placeholder="请输入预计人数" 
+        value="{{formData.participants}}"
+        bindinput="onParticipantsInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">计划日期 *</text>
+      <picker mode="date" value="{{formData.plannedDate}}" bindchange="onPlannedDateChange">
+        <view class="picker">
+          {{formData.plannedDate || '请选择日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训时长（小时）</text>
+      <input 
+        class="input" 
+        type="number"
+        placeholder="请输入培训时长" 
+        value="{{formData.plannedHours}}"
+        bindinput="onPlannedHoursInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训讲师</text>
+      <input 
+        class="input" 
+        placeholder="请输入培训讲师" 
+        value="{{formData.trainer}}"
+        bindinput="onTrainerInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">主办部门</text>
+      <input 
+        class="input" 
+        placeholder="请输入主办部门" 
+        value="{{formData.department}}"
+        bindinput="onDepartmentInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训内容</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入培训内容"
+        value="{{formData.content}}"
+        bindinput="onContentInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训方式</text>
+      <input 
+        class="input" 
+        placeholder="请输入培训方式" 
+        value="{{formData.trainingMethod}}"
+        bindinput="onTrainingMethodInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">培训目标</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入培训目标"
+        value="{{formData.objectives}}"
+        bindinput="onObjectivesInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">考核方式</text>
+      <input 
+        class="input" 
+        placeholder="请输入考核方式" 
+        value="{{formData.assessmentMethod}}"
+        bindinput="onAssessmentMethodInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">法律法规要求</text>
+      <switch checked="{{formData.requiredByLaw}}" bindchange="onRequiredByLawChange" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">备注</text>
+      <textarea 
+        class="textarea" 
+        placeholder="请输入备注信息"
+        value="{{formData.notes}}"
+        bindinput="onNotesInput"
+      />
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button class="submit-btn" bindtap="onSubmit">提交</button>
+  </view>
+</view>

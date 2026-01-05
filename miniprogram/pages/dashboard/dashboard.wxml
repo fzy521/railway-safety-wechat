@@ -21,13 +21,6 @@
     </view>
   </view>
 
-  <view class="chart-section">
-    <text class="section-title">事故趋势</text>
-    <view class="chart-container">
-      <canvas canvas-id="incidentChart" type="2d" style="width: 100%; height: 300rpx;"></canvas>
-    </view>
-  </view>
-
   <view class="risk-section">
     <text class="section-title">风险评估</text>
     <view class="risk-grid">
@@ -42,6 +35,28 @@
       <view class="risk-item risk-high">
         <text class="risk-count">{{highRisks}}</text>
         <text class="risk-label">高风险</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="hazard-section">
+    <text class="section-title">隐患排查</text>
+    <view class="metrics-grid">
+      <view class="metric-card">
+        <text class="metric-value">{{totalHazards}}</text>
+        <text class="metric-label">隐患总数</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-value">{{pendingHazards}}</text>
+        <text class="metric-label">待整改</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-value">{{inProgressHazards}}</text>
+        <text class="metric-label">整改中</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-value">{{completedHazards}}</text>
+        <text class="metric-label">已整改</text>
       </view>
     </view>
   </view>
