@@ -77,13 +77,41 @@ Page({
       })
     }
 
-    // 加载统计数据（使用模拟数据）
-    this.setData({
-      statistics: {
-        inspections: 156,
-        incidents: 23,
-        certificates: 8,
-        experience: 5
+    // 从数据库加载统计数据
+    this.loadStatistics()
+  },
+
+  /**
+   * 从数据库加载用户统计数据
+   */
+  loadStatistics() {
+    wx.showLoading({ title: '加载中...' })
+
+    wx.cloud.callFunction({
+      name: 'updateUserInfo',
+      data: {
+        action: 'getStatistics'
+      },
+      success: res => {
+        wx.hideLoading()
+        if (res.result.success) {
+          this.setData({
+            statistics: res.result.statistics
+          })
+        }
+      },
+      fail: err => {
+        wx.hideLoading()
+        console.error('加载统计数据失败:', err)
+        // 使用默认数据
+        this.setData({
+          statistics: {
+            inspections: 0,
+            incidents: 0,
+            certificates: 0,
+            experience: 0
+          }
+        })
       }
     })
   },

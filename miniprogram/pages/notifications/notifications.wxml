@@ -1,0 +1,58 @@
+<view class="container">
+  <view class="header">
+    <text class="title">消息通知</text>
+    <text class="mark-read" bindtap="markAllRead" wx:if="{{hasUnread}}">全部已读</text>
+  </view>
+
+  <!-- 通知分类 -->
+  <view class="tabs">
+    <view class="tab-item {{activeTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">
+      <text>全部</text>
+      <view class="tab-badge" wx:if="{{unreadCount > 0}}">{{unreadCount}}</view>
+    </view>
+    <view class="tab-item {{activeTab === 'risk' ? 'active' : ''}}" bindtap="switchTab" data-tab="risk">
+      <text>风险预警</text>
+    </view>
+    <view class="tab-item {{activeTab === 'danger' ? 'active' : ''}}" bindtap="switchTab" data-tab="danger">
+      <text>隐患提醒</text>
+    </view>
+    <view class="tab-item {{activeTab === 'system' ? 'active' : ''}}" bindtap="switchTab" data-tab="system">
+      <text>系统通知</text>
+    </view>
+  </view>
+
+  <!-- 通知列表 -->
+  <view class="notification-list" wx:if="{{filteredNotifications.length > 0}}">
+    <view class="notification-item {{item.read ? 'read' : 'unread'}}"
+          wx:for="{{filteredNotifications}}"
+          wx:key="id"
+          bindtap="viewNotification"
+          data-id="{{item.id}}">
+      <view class="notification-icon">
+        <image src="{{item.icon}}" mode="aspectFit" />
+      </view>
+      <view class="notification-content">
+        <view class="notification-header">
+          <text class="notification-title">{{item.title}}</text>
+          <text class="notification-time">{{item.time}}</text>
+        </view>
+        <text class="notification-desc">{{item.desc}}</text>
+        <view class="notification-tag" wx:if="{{item.tag}}">
+          <text>{{item.tag}}</text>
+        </view>
+      </view>
+      <view class="unread-dot" wx:if="{{!item.read}}"></view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredNotifications.length === 0 && !loading}}">
+    <image class="empty-icon" src="/images/icon-notification.png" mode="aspectFit" />
+    <text class="empty-text">暂无通知</text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

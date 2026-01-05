@@ -1,0 +1,75 @@
+<view class="container">
+  <view class="header">
+    <text class="title">关于系统</text>
+  </view>
+
+  <!-- 系统信息 -->
+  <view class="info-card">
+    <image class="logo" src="/images/logo.png" mode="aspectFit" />
+    <text class="app-name">铁路安全监控系统</text>
+    <text class="app-version">版本 {{version}}</text>
+    <view class="update-btn" bindtap="checkUpdate">
+      <text>检查更新</text>
+    </view>
+  </view>
+
+  <!-- 功能介绍 -->
+  <view class="section">
+    <view class="section-title">功能介绍</view>
+    <view class="feature-list">
+      <view class="feature-item" wx:for="{{features}}" wx:key="id">
+        <image class="feature-icon" src="{{item.icon}}" mode="aspectFit" />
+        <text class="feature-title">{{item.title}}</text>
+        <text class="feature-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 系统信息 -->
+  <view class="section">
+    <view class="section-title">系统信息</view>
+    <view class="info-list">
+      <view class="info-item">
+        <text class="info-label">开发单位</text>
+        <text class="info-value">铁路安全管理中心</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">技术支持</text>
+        <text class="info-value">400-123-4567</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">官方网站</text>
+        <text class="info-value">www.railway-safety.com</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">更新日期</text>
+        <text class="info-value">2025-01-05</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 法律信息 -->
+  <view class="section">
+    <view class="section-title">法律信息</view>
+    <view class="legal-list">
+      <view class="legal-item" bindtap="viewAgreement">
+        <text>用户协议</text>
+        <image class="arrow-icon" src="/images/exchange-fill.png" mode="aspectFit" />
+      </view>
+      <view class="legal-item" bindtap="viewPrivacy">
+        <text>隐私政策</text>
+        <image class="arrow-icon" src="/images/exchange-fill.png" mode="aspectFit" />
+      </view>
+      <view class="legal-item" bindtap="viewLicense">
+        <text>开源许可</text>
+        <image class="arrow-icon" src="/images/exchange-fill.png" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 版权信息 -->
+  <view class="footer">
+    <text class="copyright">Copyright © 2025 铁路安全监控系统</text>
+    <text class="copyright">All Rights Reserved</text>
+  </view>
+</view>

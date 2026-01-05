@@ -1,0 +1,75 @@
+@import "../../styles/design-system.wxss";
+
+.container {
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.header {
+  background: var(--color-primary);
+  padding: 40rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.section {
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 26rpx;
+  color: #969799;
+  padding: 20rpx 30rpx 10rpx;
+}
+
+.menu-list {
+  background: white;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f8f9fa;
+  position: relative;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-label {
+  flex: 1;
+  font-size: 30rpx;
+  color: #323233;
+  font-weight: 500;
+}
+
+.menu-value {
+  font-size: 28rpx;
+  color: #969799;
+  margin-right: 16rpx;
+}
+
+.arrow-icon {
+  width: 32rpx;
+  height: 32rpx;
+  opacity: 0.3;
+}
+
+.avatar-preview {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  margin-right: 16rpx;
+}
+
+switch {
+  transform: scale(0.9);
+}

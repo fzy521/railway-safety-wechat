@@ -6,10 +6,10 @@
   <form bindsubmit="handleSubmit">
     <view style="margin-bottom: 32rpx;">
       <text style="display: block; font-size: 28rpx; margin-bottom: 16rpx;">预案名称 *</text>
-      <input 
-        style="width: 100%; padding: 24rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box;"
-        name="name" 
-        placeholder="请输入预案名称" 
+      <input
+        style="width: 100%; height: 88rpx; padding: 0 32rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box; font-size: 28rpx;"
+        name="name"
+        placeholder="请输入预案名称"
         value="{{formData.name}}"
         bindinput="onInputChange"
         data-field="name"
@@ -18,11 +18,11 @@
     
     <view style="margin-bottom: 32rpx;">
       <text style="display: block; font-size: 28rpx; margin-bottom: 16rpx;">预案类型 *</text>
-      <picker 
-        style="width: 100%; padding: 24rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box;"
-        mode="selector" 
-        range="{{planTypes}}" 
-        range-key="label" 
+      <picker
+        style="width: 100%; height: 88rpx; padding: 0 32rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box; font-size: 28rpx;"
+        mode="selector"
+        range="{{planTypes}}"
+        range-key="label"
         value="{{formData.typeIndex}}"
         bindchange="onTypeChange"
       >
