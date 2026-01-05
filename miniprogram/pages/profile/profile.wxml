@@ -46,7 +46,7 @@
           <text class="menu-desc">{{item.desc}}</text>
         </view>
         <view class="menu-arrow">
-          <image class="arrow-icon" src="/images/icon-arrow-right.png" mode="aspectFit" />
+          <image class="arrow-icon" src="/images/exchange-fill.png" mode="aspectFit" />
         </view>
       </view>
     </view>

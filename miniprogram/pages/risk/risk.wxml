@@ -1,21 +1,21 @@
 <view class="container">
-  <!-- 统计卡片 -->
+  <!-- 统计卡片 - 按风险等级统计 -->
   <view class="statistics-section">
-    <view class="stat-card stat-total">
-      <text class="stat-value">{{statistics.total}}</text>
-      <text class="stat-label">全部风险</text>
+    <view class="stat-card stat-major">
+      <text class="stat-value">{{statistics.majorRisks}}</text>
+      <text class="stat-label">重大风险</text>
     </view>
-    <view class="stat-card stat-pending">
-      <text class="stat-value">{{statistics.pendingAssess}}</text>
-      <text class="stat-label">待评估</text>
+    <view class="stat-card stat-large">
+      <text class="stat-value">{{statistics.largeRisks}}</text>
+      <text class="stat-label">较大风险</text>
     </view>
-    <view class="stat-card stat-control">
-      <text class="stat-value">{{statistics.pendingControl}}</text>
-      <text class="stat-label">待管控</text>
+    <view class="stat-card stat-general">
+      <text class="stat-value">{{statistics.generalRisks}}</text>
+      <text class="stat-label">一般风险</text>
     </view>
-    <view class="stat-card stat-active">
-      <text class="stat-value">{{statistics.controlling}}</text>
-      <text class="stat-label">管控中</text>
+    <view class="stat-card stat-minor">
+      <text class="stat-value">{{statistics.minorRisks}}</text>
+      <text class="stat-label">低风险</text>
     </view>
   </view>
 
@@ -48,7 +48,7 @@
         <text class="risk-description">{{item.description}}</text>
         
         <view class="risk-meta">
-          <text class="risk-assessment">风险值: {{item.rValue}}</text>
+          <text class="risk-assessment">风险等级: {{item.levelName}}</text>
           <text class="risk-responder">责任人: {{item.responder}}</text>
         </view>
         

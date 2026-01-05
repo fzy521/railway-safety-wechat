@@ -24,17 +24,21 @@
   <view class="risk-section">
     <text class="section-title">风险评估</text>
     <view class="risk-grid">
-      <view class="risk-item risk-low">
-        <text class="risk-count">{{lowRisks}}</text>
+      <view class="risk-item risk-minor">
+        <text class="risk-count">{{minorRisks}}</text>
         <text class="risk-label">低风险</text>
       </view>
-      <view class="risk-item risk-medium">
-        <text class="risk-count">{{mediumRisks}}</text>
-        <text class="risk-label">中风险</text>
+      <view class="risk-item risk-general">
+        <text class="risk-count">{{generalRisks}}</text>
+        <text class="risk-label">一般风险</text>
       </view>
-      <view class="risk-item risk-high">
-        <text class="risk-count">{{highRisks}}</text>
-        <text class="risk-label">高风险</text>
+      <view class="risk-item risk-large">
+        <text class="risk-count">{{largeRisks}}</text>
+        <text class="risk-label">较大风险</text>
+      </view>
+      <view class="risk-item risk-major">
+        <text class="risk-count">{{majorRisks}}</text>
+        <text class="risk-label">重大风险</text>
       </view>
     </view>
   </view>

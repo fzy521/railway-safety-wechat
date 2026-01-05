@@ -10,29 +10,13 @@
 
 /* 用户信息卡片 */
 .user-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary);
   border-radius: 24rpx;
   padding: 40rpx 30rpx;
   margin-bottom: 30rpx;
   box-shadow: 0 8rpx 32rpx rgba(102, 126, 234, 0.3);
   position: relative;
   overflow: hidden;
-}
-
-.user-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  animation: shimmer 3s infinite linear;
-}
-
-@keyframes shimmer {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .avatar-section {

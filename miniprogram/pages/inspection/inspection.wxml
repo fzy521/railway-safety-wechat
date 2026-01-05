@@ -38,17 +38,17 @@
   <!-- 检查类型选择器 -->
   <view class="check-type-selector">
     <view class="type-item {{selectedCheckType === 'daily' ? 'active' : ''}}" bindtap="selectCheckType" data-type="daily">
-      <image class="type-icon" src="/images/icon-clipboard.png" mode="aspectFit" />
+      <image class="type-icon" src="/images/file-fill.png" mode="aspectFit" />
       <text class="type-label">日常排查</text>
       <text class="type-desc">每班/每日</text>
     </view>
     <view class="type-item {{selectedCheckType === 'regular' ? 'active' : ''}}" bindtap="selectCheckType" data-type="regular">
-      <image class="type-icon" src="/images/icon-calendar.png" mode="aspectFit" />
+      <image class="type-icon" src="/images/calendaralt-fill.png" mode="aspectFit" />
       <text class="type-label">定期排查</text>
       <text class="type-desc">每月/每季</text>
     </view>
     <view class="type-item {{selectedCheckType === 'special' ? 'active' : ''}}" bindtap="selectCheckType" data-type="special">
-      <image class="type-icon" src="/images/icon-search.png" mode="aspectFit" />
+      <image class="type-icon" src="/images/filter-fill.png" mode="aspectFit" />
       <text class="type-label">专项排查</text>
       <text class="type-desc">特定领域</text>
     </view>

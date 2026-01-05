@@ -10,9 +10,11 @@ Page({
     riskLevel: '正常',
     safetyRate: 95,
     completionRate: 98,
-    lowRisks: 12,
-    mediumRisks: 3,
-    highRisks: 1,
+    // 风险等级统计 - 符合GBT 33000-2025标准（4级）
+    majorRisks: 1,      // 重大风险（红色）
+    largeRisks: 3,      // 较大风险（橙色）
+    generalRisks: 8,    // 一般风险（黄色）
+    minorRisks: 12,     // 低风险（蓝色）
     // 隐患统计数据
     totalHazards: 28,
     pendingHazards: 8,
@@ -50,6 +52,13 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
+    // 检查登录状态
+    if (!app.globalData.hasUserInfo) {
+      wx.redirectTo({
+        url: '/pages/login/login'
+      })
+      return
+    }
     this.loadDashboardData();
   },
 
@@ -57,6 +66,14 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
+    // 每次显示时检查登录状态
+    if (!app.globalData.hasUserInfo) {
+      wx.redirectTo({
+        url: '/pages/login/login'
+      })
+      return
+    }
+
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({
         selected: 0
@@ -104,9 +121,10 @@ Page({
           riskLevel: data.riskLevel || '正常',
           safetyRate: data.safetyRate || 95,
           completionRate: data.completionRate || 98,
-          lowRisks: data.riskCounts?.low || 12,
-          mediumRisks: data.riskCounts?.medium || 3,
-          highRisks: data.riskCounts?.high || 1,
+          majorRisks: data.riskCounts?.major || 1,
+          largeRisks: data.riskCounts?.large || 3,
+          generalRisks: data.riskCounts?.general || 8,
+          minorRisks: data.riskCounts?.minor || 12,
           zones: data.zones && data.zones.length > 0 ? data.zones : this.data.zones
         });
 
@@ -136,9 +154,10 @@ Page({
       riskLevel: '正常',
       safetyRate: 95,
       completionRate: 98,
-      lowRisks: 12,
-      mediumRisks: 3,
-      highRisks: 1
+      majorRisks: 1,      // 重大风险（红色）
+      largeRisks: 3,      // 较大风险（橙色）
+      generalRisks: 8,    // 一般风险（黄色）
+      minorRisks: 12      // 低风险（蓝色）
     });
 
     // 模拟事故趋势数据

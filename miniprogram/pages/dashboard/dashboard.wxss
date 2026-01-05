@@ -98,54 +98,67 @@
 
 .risk-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
 }
 
 .risk-item {
   background: var(--color-bg-card);
   border-radius: var(--radius-xl);
-  padding: var(--spacing-xxl);
+  padding: var(--spacing-xl);
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: var(--shadow-md);
 }
 
-.risk-item.risk-low {
-  background: linear-gradient(135deg, var(--color-success-light), #d4f0e3);
+/* 低风险（蓝色） */
+.risk-item.risk-minor {
+  background: var(--color-risk-minor-light);
 }
 
-.risk-item.risk-medium {
-  background: linear-gradient(135deg, var(--color-warning-light), #fff0c7);
+/* 一般风险（黄色） */
+.risk-item.risk-general {
+  background: var(--color-risk-low-light);
 }
 
-.risk-item.risk-high {
-  background: linear-gradient(135deg, var(--color-danger-light), #ffd6d9);
+/* 较大风险（橙色） */
+.risk-item.risk-large {
+  background: var(--color-risk-medium-light);
+}
+
+/* 重大风险（红色） */
+.risk-item.risk-major {
+  background: var(--color-risk-high-light);
 }
 
 .risk-count {
-  font-size: var(--font-size-xxxl);
+  font-size: var(--font-size-xxl);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--spacing-sm);
 }
 
-.risk-item.risk-low .risk-count {
-  color: var(--color-success);
+.risk-item.risk-minor .risk-count {
+  color: var(--color-risk-minor);
 }
 
-.risk-item.risk-medium .risk-count {
-  color: var(--color-warning);
+.risk-item.risk-general .risk-count {
+  color: var(--color-risk-low);
 }
 
-.risk-item.risk-high .risk-count {
-  color: var(--color-danger);
+.risk-item.risk-large .risk-count {
+  color: var(--color-risk-medium);
+}
+
+.risk-item.risk-major .risk-count {
+  color: var(--color-risk-high);
 }
 
 .risk-label {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
+  text-align: center;
 }
 
 /* 区域状态 */

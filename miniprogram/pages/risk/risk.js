@@ -148,12 +148,13 @@ Page({
             rValue: item.rValue
           }))
 
-          // 统计各状态数量
+          // 统计各风险等级数量 - 符合GBT 33000-2025标准
           const statistics = {
             total: riskList.length,
-            pendingAssess: riskList.filter(r => r.status === '待评估').length,
-            pendingControl: riskList.filter(r => r.status === '待管控').length,
-            controlling: riskList.filter(r => r.status === '管控中').length
+            majorRisks: riskList.filter(r => r.levelName === '重大风险').length,
+            largeRisks: riskList.filter(r => r.levelName === '较大风险').length,
+            generalRisks: riskList.filter(r => r.levelName === '一般风险').length,
+            minorRisks: riskList.filter(r => r.levelName === '低风险').length
           }
 
           this.setData({
@@ -186,9 +187,9 @@ Page({
       filteredList = riskList.filter(item => item.status === activeTab)
     }
 
-    // 按风险等级排序（红>橙>黄>蓝）
+    // 按风险等级排序（重大>较大>一般>低）
     const sortedRisks = filteredList.sort((a, b) => {
-      const riskOrder = { '红': 4, '橙': 3, '黄': 2, '蓝': 1 }
+      const riskOrder = { 'major': 4, 'large': 3, 'general': 2, 'minor': 1 }
       return riskOrder[b.riskLevel] - riskOrder[a.riskLevel]
     })
 
@@ -254,15 +255,15 @@ Page({
     }
 
     const riskColors = {
-      'A': { color: 'green', text: '低风险' },
-      'B': { color: 'green', text: '低风险' },
-      'C': { color: 'yellow', text: '中风险' },
-      'D': { color: 'yellow', text: '中风险' },
-      'E': { color: 'orange', text: '高风险' },
-      'F': { color: 'red', text: '极高风险' },
-      'G': { color: 'red', text: '极高风险' },
-      'H': { color: 'red', text: '极高风险' },
-      'I': { color: 'red', text: '极高风险' }
+      'A': { color: 'minor', text: '低风险' },
+      'B': { color: 'minor', text: '低风险' },
+      'C': { color: 'general', text: '一般风险' },
+      'D': { color: 'general', text: '一般风险' },
+      'E': { color: 'large', text: '较大风险' },
+      'F': { color: 'major', text: '重大风险' },
+      'G': { color: 'major', text: '重大风险' },
+      'H': { color: 'major', text: '重大风险' },
+      'I': { color: 'major', text: '重大风险' }
     }
 
     const riskInfo = riskColors[level]
@@ -338,12 +339,12 @@ Page({
    */
   getRiskLevelClass(riskColor) {
     const colorMap = {
-      '红': 'red',
-      '橙': 'orange',
-      '黄': 'yellow',
-      '蓝': 'blue'
+      '红': 'major',    // 重大风险
+      '橙': 'large',    // 较大风险
+      '黄': 'general',  // 一般风险
+      '蓝': 'minor'     // 低风险
     }
-    return colorMap[riskColor] || 'blue'
+    return colorMap[riskColor] || 'minor'
   },
 
   /**
@@ -351,10 +352,13 @@ Page({
    */
   getStatusClass(status) {
     const statusMap = {
+      '已辨识': 'identified',
       '待评估': 'pending-assess',
+      '已评估': 'assessed',
       '待管控': 'pending-control',
       '管控中': 'controlling',
-      '管控有效': 'effective'
+      '管控有效': 'effective',
+      '已销号': 'closed'
     }
     return statusMap[status] || ''
   }

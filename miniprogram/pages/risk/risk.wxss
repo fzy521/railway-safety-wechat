@@ -25,20 +25,24 @@
   box-shadow: var(--shadow-md);
 }
 
-.stat-total {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* 重大风险（红色） */
+.stat-major {
+  background: var(--color-risk-high);
 }
 
-.stat-pending {
-  background: linear-gradient(135deg, #ff976a 0%, #ff6b6b 100%);
+/* 较大风险（橙色） */
+.stat-large {
+  background: var(--color-risk-medium);
 }
 
-.stat-control {
-  background: linear-gradient(135deg, #ffbe00 0%, #ff8f1f 100%);
+/* 一般风险（黄色） */
+.stat-general {
+  background: var(--color-risk-low);
 }
 
-.stat-active {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #00c6fb 100%);
+/* 低风险（蓝色） */
+.stat-minor {
+  background: var(--color-risk-minor);
 }
 
 .stat-value {
@@ -152,24 +156,28 @@
   white-space: nowrap;
 }
 
-.risk-level-badge.risk-red {
-  background: var(--color-danger-light);
-  color: var(--color-danger);
+/* 重大风险（红色） */
+.risk-level-badge.risk-major {
+  background: var(--color-risk-high-light);
+  color: var(--color-risk-high);
 }
 
-.risk-level-badge.risk-orange {
-  background: #fff0e6;
-  color: #ff976a;
+/* 较大风险（橙色） */
+.risk-level-badge.risk-large {
+  background: var(--color-risk-medium-light);
+  color: var(--color-risk-medium);
 }
 
-.risk-level-badge.risk-yellow {
-  background: var(--color-warning-light);
-  color: var(--color-warning);
+/* 一般风险（黄色） */
+.risk-level-badge.risk-general {
+  background: var(--color-risk-low-light);
+  color: var(--color-risk-low);
 }
 
-.risk-level-badge.risk-blue {
-  background: var(--color-success-light);
-  color: var(--color-success);
+/* 低风险（蓝色） */
+.risk-level-badge.risk-minor {
+  background: var(--color-risk-minor-light);
+  color: var(--color-risk-minor);
 }
 
 .risk-description {
@@ -224,11 +232,11 @@
 }
 
 .status-dot.status-pending-assess {
-  background: #ff976a;
+  background: var(--color-risk-medium);
 }
 
 .status-dot.status-pending-control {
-  background: #ffbe00;
+  background: var(--color-risk-low);
 }
 
 .status-dot.status-controlling {
@@ -237,6 +245,10 @@
 
 .status-dot.status-effective {
   background: var(--color-success);
+}
+
+.status-dot.status-identified {
+  background: var(--color-text-tertiary);
 }
 
 .status-text {

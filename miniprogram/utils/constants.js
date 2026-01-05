@@ -1,24 +1,35 @@
 // 系统常量定义
 
-// 风险等级
+// 风险等级 - 符合GBT 33000-2025标准
 const RISK_LEVELS = {
-  LOW: 'low',
-  MEDIUM: 'medium',
-  HIGH: 'high'
+  MAJOR: 4,      // 重大风险（红色）
+  LARGE: 3,      // 较大风险（橙色）
+  GENERAL: 2,    // 一般风险（黄色）
+  MINOR: 1       // 低风险（蓝色）
 }
 
 // 风险等级中文映射
 const RISK_LEVEL_NAMES = {
-  [RISK_LEVELS.LOW]: '低风险',
-  [RISK_LEVELS.MEDIUM]: '中风险',
-  [RISK_LEVELS.HIGH]: '高风险'
+  [RISK_LEVELS.MAJOR]: '重大风险',
+  [RISK_LEVELS.LARGE]: '较大风险',
+  [RISK_LEVELS.GENERAL]: '一般风险',
+  [RISK_LEVELS.MINOR]: '低风险'
 }
 
-// 风险等级颜色
+// 风险等级颜色 - 四色标准
 const RISK_LEVEL_COLORS = {
-  [RISK_LEVELS.LOW]: '#07c160',
-  [RISK_LEVELS.MEDIUM]: '#ffbe00',
-  [RISK_LEVELS.HIGH]: '#ee0a24'
+  [RISK_LEVELS.MAJOR]: '#d32f2f',   // 红色
+  [RISK_LEVELS.LARGE]: '#f57c00',   // 橙色
+  [RISK_LEVELS.GENERAL]: '#fbc02d', // 黄色
+  [RISK_LEVELS.MINOR]: '#388e3c'    // 蓝色
+}
+
+// 风险等级颜色代码
+const RISK_LEVEL_CODES = {
+  [RISK_LEVELS.MAJOR]: 'red',
+  [RISK_LEVELS.LARGE]: 'orange',
+  [RISK_LEVELS.GENERAL]: 'yellow',
+  [RISK_LEVELS.MINOR]: 'blue'
 }
 
 // 安全状态
@@ -108,6 +119,7 @@ module.exports = {
   RISK_LEVELS,
   RISK_LEVEL_NAMES,
   RISK_LEVEL_COLORS,
+  RISK_LEVEL_CODES,
   SAFETY_STATUS,
   SAFETY_STATUS_NAMES,
   INCIDENT_TYPES,

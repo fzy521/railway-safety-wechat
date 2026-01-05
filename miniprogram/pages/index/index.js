@@ -42,11 +42,7 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        selected: 0
-      })
-    }
+    // index页面不在TabBar中，无需设置TabBar状态
   },
 
   // 登录按钮点击

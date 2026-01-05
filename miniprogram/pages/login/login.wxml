@@ -7,7 +7,6 @@
 
   <view class="login-form">
     <button class="btn-primary wechat-login-btn" bindtap="onWechatLogin">
-      <image src="/images/wechat-logo.png" class="wechat-icon"></image>
       <text>微信授权登录</text>
     </button>
 
