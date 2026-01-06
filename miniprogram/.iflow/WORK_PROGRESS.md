@@ -68,6 +68,18 @@
 - [x] 创建用户信息云函数（updateUserInfo）
   - 支持用户信息更新、查询、统计数据获取
   - 与小程序端共享数据库
+- [x] 增强登录系统以捕获用户微信头像和昵称
+  - 修改 login.js 前端代码，将 userInfo 传递给云函数
+  - 修改 login 云函数，保存用户头像和昵称到数据库
+  - 修复 TypeScript 语法错误（移除 `: any` 类型注解）
+  - 个人中心页面添加 onShow 生命周期以重新加载用户数据
+  - 添加图片加载/错误事件处理器
+- [x] 修复应急页面样式问题
+  - 移除应急模块页面的蓝色导航栏，统一使用全局白色导航
+  - 修复 supply-add 页面输入框高度（设置为 88rpx）
+  - 修复 drill-evaluation 页面编译错误
+  - 清理重复的 drill-evaluation 文件结构（保留文件夹结构，删除独立文件）
+  - 修复 emergency.js 中的导航路径
 
 ### 2. 新增页面 ✅
 - [x] 账号设置页面（pages/settings/）
@@ -179,15 +191,23 @@
 ## Git 提交记录
 
 ### 最新提交
-- **Commit**: 981bb9e1f0bf38ff54c55e8b2f1bf6c117fff085
-- **日期**: 2026-01-06 00:45:42
-- **描述**: 完善个人中心功能和Web端架构设计
-- **更改**: 29个文件，+3509行，-17行
+- **Commit**: 6e3115e
+- **日期**: 2026-01-06
+- **描述**: fix: enhance login system to capture user avatar and nickname, fix emergency page styling and drill-evaluation structure
+- **更改**: 10277个文件，+1920745行，-385行
+- **主要变更**:
+  - 增强登录系统，捕获并保存用户微信头像和昵称
+  - 修复应急模块页面样式（移除蓝色导航栏，统一白色导航）
+  - 修复应急物资添加页面输入框高度
+  - 修复 drill-evaluation 页面编译错误
+  - 清理重复的 drill-evaluation 文件结构
+  - 添加 danger-supervision 云函数的 npm 依赖
 
 ### 分支状态
 - **当前分支**: master
-- **状态**: 领先远程仓库 1 个提交
-- **工作区**: 干净
+- **状态**: 领先远程仓库 4 个提交
+- **工作区**: 有未暂存的文件（父目录的 .gitignore、README.md、project.config.json 被删除）
+- **未跟踪文件**: ../nul、../web-admin/
 
 ## 重要文件清单
 
@@ -239,15 +259,30 @@
 ### 新增文档
 - `web-admin-architecture.md` - Web端管理后台架构方案（828行）
 - `weixin-cloud-deployment.md` - 微信云开发部署方案（763行）
+- `web-admin-development-guide.md` - Web端开发指南（供其他AI使用）
+- `web-api-documentation.md` - Web后台API接口文档（34+ API端点）
 
 ### 修改文件
-- `app.json` - 修复 BOM 字符问题
-- `pages/emergency/plan-add/plan-add.wxml` - 增加输入框高度
-- `pages/profile/profile.js` - 从数据库读取统计数据
+- `app.json` - 修复 BOM 字符问题，注册 drill-evaluation 页面
+- `pages/emergency/plan-add/plan-add.json` - 移除蓝色导航栏
+- `pages/emergency/drill-add/drill-add.json` - 移除蓝色导航栏
+- `pages/emergency/emergency.json` - 移除蓝色导航栏
+- `pages/emergency/emergency.js` - 修复 drill-evaluation 导航路径
+- `pages/emergency/supply-add/supply-add.json` - 移除蓝色导航栏
+- `pages/emergency/supply-add/supply-add.wxss` - 修复输入框高度（88rpx）
+- `pages/login/login.js` - 将 userInfo 传递给云函数
+- `pages/profile/profile.js` - 添加 onShow 生命周期，添加图片事件处理器
+- `pages/profile/profile.wxml` - 添加图片加载/错误事件处理器
+- `cloudfunctions/login/index.js` - 保存用户头像和昵称到数据库
 
 ### 删除文件
 - `45a2dec0299939099ee6b48dc6d05208.png` - 未使用的图片
 - `65b6ee6086bf853dd1d7fded62ed64d5.png` - 未使用的图片
+- `pages/emergency/drill-evaluation.js` - 重复文件（保留文件夹结构）
+- `pages/emergency/drill-evaluation.json` - 重复文件（保留文件夹结构）
+- `pages/emergency/drill-evaluation.wxml` - 重复文件（保留文件夹结构）
+- `pages/emergency/drill-evaluation.wxss` - 重复文件（保留文件夹结构）
+- `image.png` - 临时文件
 
 ## 下一步计划
 
@@ -298,11 +333,19 @@
 1. ✅ app.json 文件解析错误（BOM字符问题）
 2. ✅ 应急预案输入框高度不够
 3. ✅ 个人中心统计数据使用模拟数据
+4. ✅ 应急模块导航栏颜色不统一（移除蓝色导航栏）
+5. ✅ drill-evaluation 页面编译错误（页面未注册）
+6. ✅ drill-evaluation 文件结构重复（清理独立文件，保留文件夹结构）
+7. ✅ login 云函数 TypeScript 语法错误（移除类型注解）
+8. ✅ 用户微信头像和昵称未保存到数据库（修改登录流程）
 
 ### 待解决问题
 - [ ] 云函数部署后测试
 - [ ] 跨域问题处理
 - [ ] 性能优化
+- [ ] 用户头像在个人中心页面未显示（数据正确，可能是域名白名单配置问题）
+  - 已确认数据正确：avatarUrl 和 nickName 都存在
+  - 需要在微信小程序后台配置 `thirdwx.qlogo.cn` 域名到 downloadFile 合法域名
 
 ## 联系方式
 - **开发者**: fanzhiyi
@@ -311,6 +354,11 @@
 
 ---
 
-**最后更新时间**: 2026-01-06 14:30
-**文档版本**: v1.1
-**更新内容**: 完成双控机制核心功能（MES评估、风险预警、重大隐患督办）
+**最后更新时间**: 2026-01-06
+**文档版本**: v1.2
+**更新内容**:
+- 完成登录系统增强（捕获用户头像和昵称）
+- 修复应急模块页面样式问题
+- 修复 drill-evaluation 页面编译错误
+- 清理重复文件结构
+- 提交代码到本地仓库（10277个文件修改）
