@@ -1,0 +1,24 @@
+<view class="scan-login">
+  <view class="header">
+    <text class="title">Web端扫码登录</text>
+    <text class="subtitle">请扫描Web端显示的二维码</text>
+  </view>
+
+  <view class="content">
+    <view class="scan-area">
+      <view class="scan-frame">
+        <view class="scan-line"></view>
+      </view>
+      <text class="scan-tip">将二维码放入框内即可自动扫描</text>
+    </view>
+
+    <view class="status" wx:if="{{status}}">
+      <text class="status-text">{{status}}</text>
+    </view>
+  </view>
+
+  <view class="actions">
+    <button class="btn-scan" bindtap="handleScanCode">开始扫码</button>
+    <button class="btn-cancel" bindtap="handleCancel">取消</button>
+  </view>
+</view>

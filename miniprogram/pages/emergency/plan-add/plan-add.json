@@ -1,5 +1,4 @@
-﻿{
+{
   "navigationBarTitleText": "添加应急预案",
-  "navigationBarBackgroundColor": "#1976d2",
-  "navigationBarTextStyle": "white"
+  "backgroundColor": "#f5f7fa"
 }

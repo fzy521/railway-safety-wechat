@@ -16,6 +16,12 @@ Page({
     menuItems: [
       {
         icon: '/images/icon-setting.png',
+        title: 'Web端扫码登录',
+        desc: '扫描二维码登录Web管理后台',
+        page: '/pages/scan-login/scan-login'
+      },
+      {
+        icon: '/images/icon-setting.png',
         title: '账号设置',
         desc: '修改密码和个人信息',
         page: '/pages/settings/settings'
@@ -63,6 +69,9 @@ Page({
         selected: 4
       })
     }
+    
+    // 每次显示页面时都重新加载用户数据
+    this.loadUserData()
   },
 
   /**
@@ -182,5 +191,19 @@ Page({
       title: '个人中心 - 铁路安全监控',
       path: '/pages/profile/profile'
     }
+  },
+
+  /**
+   * 头像加载成功
+   */
+  onAvatarLoad(e) {
+    console.log('头像加载成功:', e.detail)
+  },
+
+  /**
+   * 头像加载失败
+   */
+  onAvatarError(e) {
+    console.error('头像加载失败:', e.detail)
   }
 })

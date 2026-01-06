@@ -5,10 +5,63 @@
 - **项目类型**: 微信小程序 + Web管理后台
 - **技术栈**: 微信云开发、Vue 3、Node.js
 - **最后更新**: 2026-01-06
+- **当前阶段**: 双控机制功能完善完成，准备开发Web后台
+
+## 双控机制功能状态
+- **MES风险评估**: ✅ 已完成（云函数 + 小程序页面）
+- **风险预警管理**: ✅ 已完成（云函数 + 小程序页面）
+- **重大隐患督办**: ✅ 已完成（云函数 + 小程序页面）
+- **数据库结构**: ✅ 已完善（MES字段、督办字段、新集合）
+- **检查记录管理**: 🔄 待开发
+- **统计分析报表**: 🔄 待开发
 
 ## 已完成任务
 
-### 1. 个人中心功能完善 ✅
+### 1. 双控机制功能完善 ✅
+- [x] 完善数据库结构
+  - risk_library 集合增加 MES 评估字段（mValue, e1Value, e2Value, sValue, rValue, riskLevel, riskGrade, riskColor, checkFrequency等）
+  - hidden_danger_library 集合增加督办字段（isMajorDanger, isSupervised, supervisionLevel, supervisionStatus等）
+  - 创建新集合：risk_warnings（风险预警）、check_records（检查记录）、supervision_records（督办记录）
+  - 优化数据库索引，提升查询性能
+  - 准备测试数据
+
+- [x] 开发 MES 评估云函数
+  - 云函数：risk-assessment
+  - 完整的 MES 计算逻辑：R = M × max(E1, E2) × S
+  - 风险等级自动判定（红/橙/黄/蓝）
+  - 检查频次自动生成（每周/每月/每季度/每半年）
+  - 支持更新现有风险数据
+  - 自动计算下次检查日期
+
+- [x] 实现风险预警功能
+  - 云函数：risk-warning
+  - 支持创建预警、更新整改、提交验收、验证闭环
+  - 自动触发预警功能（根据风险趋势）
+  - 四级预警（红/橙/黄/蓝）及对应时限（7/15/30/60天）
+  - 小程序页面：risk-warning.wxml（预警列表、筛选、详情）
+
+- [x] 实现重大隐患督办
+  - 云函数：danger-supervision
+  - 重大隐患自动识别和挂牌督办
+  - 治理进展跟踪
+  - 验证流程（合格/不合格）
+  - 超期检查和提醒
+  - 小程序页面：danger-supervision.wxml（督办列表、筛选、详情）
+
+- [x] 开发 MES 评估页面
+  - 小程序页面：risk-assessment.wxml
+  - 完整的表单界面（基本信息、MES评估、管控措施、辨识信息）
+  - 实时计算和显示评估结果
+  - 参数选择器和说明文字
+  - 风险等级可视化展示
+
+- [x] 创建数据库初始化脚本
+  - 云函数：initDatabase
+  - 自动创建所需集合和索引
+  - 提供测试数据插入功能
+  - 支持风险库和隐患库的测试数据
+
+### 2. 个人中心功能完善 ✅
 - [x] 修复 app.json 的 BOM 字符问题，解决 JSON 解析错误
 - [x] 增加应急预案输入框高度（从默认高度改为 88rpx）
 - [x] 完善个人中心统计数据从数据库读取
@@ -77,17 +130,32 @@
 ## 待完成任务
 
 ### 短期任务（1-2周）
-- [ ] 部署 updateUserInfo 云函数到微信云开发
+- [ ] 部署双控机制相关云函数到微信云开发
+  - [ ] initDatabase（数据库初始化）
+  - [ ] risk-assessment（MES评估）
+  - [ ] risk-warning（风险预警）
+  - [ ] danger-supervision（隐患督办）
+- [ ] 测试双控机制功能
+  - [ ] MES评估流程测试
+  - [ ] 风险预警流程测试
+  - [ ] 重大隐患督办流程测试
+- [ ] 部署 updateUserInfo 云函数
 - [ ] 测试新增页面的功能
 - [ ] 完善个人中心的数据展示
 - [ ] 优化页面交互体验
 
 ### 中期任务（1-2个月）
+- [ ] 双控机制功能优化
+  - [ ] 消息推送集成（预警通知、督办通知、验收通知）
+  - [ ] 检查表生成功能（generateChecklist云函数）
+  - [ ] 统计分析功能（generateMonthlyReport云函数）
+  - [ ] 页面交互优化（预警详情页、督办详情页）
 - [ ] 开始 Web 端管理后台开发
-  - [ ] 搭建 Vue 3 项目框架
-  - [ ] 实现用户登录功能
-  - [ ] 实现风险管理模块
-  - [ ] 实现隐患管理模块
+  - [ ] 在 railway-safety/ 根目录创建 web-admin/ 目录
+  - [ ] 搭建 Vue 3 + TypeScript 项目框架
+  - [ ] 实现用户登录功能（调用小程序云函数）
+  - [ ] 实现风险管理模块（调用 risk-assessment 云函数）
+  - [ ] 实现隐患管理模块（调用 danger-supervision 云函数）
 - [ ] 部署 Web 端到微信云开发静态托管
 - [ ] 部署云函数作为后端 API
 
@@ -123,11 +191,45 @@
 
 ## 重要文件清单
 
-### 新增云函数
+### 新增云函数（双控机制）
+- `cloudfunctions/initDatabase/index.js` - 数据库初始化脚本
+  - 创建风险库、隐患库、预警表、检查记录表、督办记录表
+  - 创建数据库索引
+  - 提供测试数据插入功能
+- `cloudfunctions/risk-assessment/index.js` - MES风险评估云函数
+  - 计算 R = M × max(E1, E2) × S
+  - 自动判定风险等级和检查频次
+  - 更新风险库数据
+- `cloudfunctions/risk-warning/index.js` - 风险预警管理云函数
+  - 创建预警、更新整改、提交验收、验证闭环
+  - 自动触发预警
+  - 预警列表和详情查询
+- `cloudfunctions/danger-supervision/index.js` - 重大隐患督办云函数
+  - 重大隐患识别和挂牌督办
+  - 治理进展跟踪
+  - 验证流程和超期检查
+- `cloudfunctions/checklist-gen/index.js` - 检查表生成云函数
+
+### 新增页面（双控机制）
+- `pages/risk/risk-assessment.wxml` - MES风险评估页面
+  - 基本信息表单
+  - MES参数选择（M/E1/E2/S）
+  - 实时计算和结果展示
+  - 管控措施录入
+- `pages/risk/risk-warning.wxml` - 风险预警管理页面
+  - 预警列表展示
+  - 状态筛选
+  - 自动触发预警功能
+- `pages/inspection/danger-supervision.wxml` - 重大隐患督办页面
+  - 督办列表展示
+  - 状态筛选
+  - 超期提醒
+
+### 新增云函数（个人中心）
 - `cloudfunctions/updateUserInfo/index.js` - 用户信息管理云函数
 - `cloudfunctions/updateUserInfo/package.json` - 云函数配置
 
-### 新增页面
+### 新增页面（个人中心）
 - `pages/settings/` - 账号设置页面（4个文件）
 - `pages/certificates/` - 我的证书页面（4个文件）
 - `pages/notifications/` - 消息通知页面（4个文件）
@@ -151,19 +253,26 @@
 
 1. **立即执行**（今天）
    - [ ] 推送当前代码到远程仓库
-   - [ ] 在微信开发者工具中测试新增页面
-   - [ ] 部署 updateUserInfo 云函数
+   - [ ] 在微信开发者工具中测试双控机制功能
+   - [ ] 部署双控机制云函数（initDatabase, risk-assessment, risk-warning, danger-supervision）
+   - [ ] 运行数据库初始化脚本，创建测试数据
 
 2. **本周完成**
+   - [ ] 测试 MES 评估功能完整流程
+   - [ ] 测试风险预警功能完整流程
+   - [ ] 测试重大隐患督办功能完整流程
    - [ ] 创建账号设置的子页面（修改密码、绑定手机、绑定邮箱）
    - [ ] 创建证书详情页面
    - [ ] 创建通知详情页面
    - [ ] 完善所有页面的数据交互
 
 3. **下周开始**
-   - [ ] 搭建 Web 端 Vue 3 项目
+   - [ ] 在 railway-safety/ 根目录创建 web-admin/ 目录
+   - [ ] 搭建 Web 端 Vue 3 + TypeScript 项目
    - [ ] 实现基础框架和路由
-   - [ ] 实现用户登录功能
+   - [ ] 实现用户登录功能（调用小程序云函数）
+   - [ ] 实现风险管理模块（调用 risk-assessment 云函数）
+   - [ ] 实现隐患管理模块（调用 danger-supervision 云函数）
 
 ## 注意事项
 
@@ -202,5 +311,6 @@
 
 ---
 
-**最后更新时间**: 2026-01-06 00:50
-**文档版本**: v1.0
+**最后更新时间**: 2026-01-06 14:30
+**文档版本**: v1.1
+**更新内容**: 完成双控机制核心功能（MES评估、风险预警、重大隐患督办）

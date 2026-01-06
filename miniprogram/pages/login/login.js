@@ -24,20 +24,28 @@ Page({
       success: (res) => {
         console.log('获取用户信息成功:', res)
 
-        // 保存用户信息
+        // 保存用户信息（包含头像和昵称）
         app.globalData.userInfo = res.userInfo
         app.globalData.hasUserInfo = true
 
-        // 调用云函数获取openid
+        // 调用云函数获取openid，并传递用户信息
         wx.cloud.callFunction({
           name: 'login',
-          data: {},
+          data: {
+            userInfo: res.userInfo
+          },
           success: loginResult => {
             console.log('登录云函数调用成功:', loginResult)
 
             if (loginResult.result.success) {
               // 保存openid
               app.globalData.openid = loginResult.result.data.openid
+
+              // 更新用户信息（包含数据库中的完整信息）
+              app.globalData.userInfo = {
+                ...res.userInfo,
+                ...loginResult.result.data.userInfo
+              }
 
               wx.hideLoading()
 

@@ -26,7 +26,9 @@
     "pages/emergency/plan-add/plan-add",
     "pages/emergency/supply-add/supply-add",
     "pages/emergency/drill-add/drill-add",
-    "pages/review/review"
+    "pages/emergency/drill-evaluation/drill-evaluation",
+    "pages/review/review",
+    "pages/scan-login/scan-login"
   ],
   "window": {
     "backgroundTextStyle": "light",

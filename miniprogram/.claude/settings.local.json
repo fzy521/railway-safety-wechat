@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s /-c package-safety:*)",
+      "Bash(curl:*)",
+      "Bash(dir cloudfunctions:*)",
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(if:*)",
+      "Bash(then echo \"node_modules exists\")",
+      "Bash(else echo \"node_modules not found\":*)",
+      "Bash(fi:*)",
+      "Bash(done)"
+    ]
+  }
+}

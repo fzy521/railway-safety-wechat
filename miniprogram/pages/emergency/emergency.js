@@ -505,7 +505,7 @@ Page({
   evaluateDrill(event) {
     const drillId = event.currentTarget.dataset.id
     wx.navigateTo({
-      url: `/pages/emergency/drill-evaluation?id=${drillId}`
+      url: `/pages/emergency/drill-evaluation/drill-evaluation?id=${drillId}`
     })
   },
 

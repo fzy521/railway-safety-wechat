@@ -2,7 +2,13 @@
   <!-- 用户信息卡片 -->
   <view class="user-card">
     <view class="avatar-section">
-      <image class="avatar" src="{{userInfo.avatarUrl || '/images/avatar-default.png'}}" mode="aspectFill" />
+      <image 
+        class="avatar" 
+        src="{{userInfo.avatarUrl || '/images/avatar-default.png'}}" 
+        mode="aspectFill" 
+        bindload="onAvatarLoad"
+        binderror="onAvatarError"
+      />
       <view class="user-info">
         <text class="username">{{userInfo.nickName || '铁路巡检员'}}</text>
         <text class="user-role">安全管理员</text>

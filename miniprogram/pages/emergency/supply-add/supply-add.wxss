@@ -70,13 +70,15 @@
 
 .form-input {
   width: 100%;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  height: 88rpx;
   background: var(--color-bg-hover);
   border: 1rpx solid var(--color-border);
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
   box-sizing: border-box;
+  line-height: 1.5;
 }
 
 .form-input::placeholder {
@@ -85,7 +87,8 @@
 
 .form-picker {
   width: 100%;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  height: 88rpx;
   background: var(--color-bg-hover);
   border: 1rpx solid var(--color-border);
   border-radius: var(--radius-md);
@@ -95,6 +98,9 @@
 .picker-value {
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .form-textarea {
