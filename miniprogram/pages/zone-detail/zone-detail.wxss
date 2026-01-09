@@ -1,0 +1,342 @@
+/* 区域详情页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20rpx;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-more {
+  font-size: 24rpx;
+  color: #07c160;
+}
+
+/* 区域基本信息卡片 */
+.zone-card {
+  padding: 24rpx;
+  background-color: #fafafa;
+  border-radius: 12rpx;
+}
+
+.zone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.zone-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.zone-status-badge {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.zone-status-badge.safe {
+  background-color: #e8f5e8;
+  color: #07c160;
+}
+
+.zone-status-badge.warning {
+  background-color: #fff8e8;
+  color: #ffbe00;
+}
+
+.zone-status-badge.danger {
+  background-color: #fff0f0;
+  color: #ee0a24;
+}
+
+.zone-description {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+  line-height: 1.5;
+}
+
+.zone-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.metric-label {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.metric-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.metric-value.score {
+  color: #07c160;
+  font-weight: 600;
+}
+
+/* 安全概况 */
+.safety-overview {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.overview-item {
+  flex: 1;
+  min-width: 140rpx;
+  background-color: #fafafa;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  text-align: center;
+}
+
+.overview-value {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.overview-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 设备状态 */
+.device-status {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx;
+  background-color: #fafafa;
+  border-radius: 12rpx;
+  flex: 1;
+  min-width: 120rpx;
+}
+
+.status-circle {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+}
+
+.status-circle.success {
+  background-color: #07c160;
+}
+
+.status-circle.danger {
+  background-color: #ee0a24;
+}
+
+.status-circle.warning {
+  background-color: #ffbe00;
+}
+
+.status-circle.info {
+  background-color: #1989fa;
+}
+
+.status-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.status-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 风险等级分布 */
+.risk-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.risk-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.risk-label {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  width: 120rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.risk-color {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 3rpx;
+}
+
+.risk-bar {
+  flex: 1;
+  height: 16rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.risk-bar-fill {
+  height: 100%;
+  border-radius: 8rpx;
+}
+
+.risk-count {
+  width: 60rpx;
+  font-size: 26rpx;
+  color: #333;
+  text-align: right;
+}
+
+/* 隐患统计 */
+.hazard-stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.stat-item {
+  flex: 1;
+  min-width: 140rpx;
+  background-color: #fafafa;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 检查记录 */
+.inspection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.inspection-item {
+  padding: 20rpx;
+  background-color: #fafafa;
+  border-radius: 12rpx;
+  border-left: 6rpx solid #07c160;
+}
+
+.inspection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.inspector {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.inspection-result {
+  font-size: 24rpx;
+  font-weight: 500;
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+.inspection-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.inspection-issues {
+  font-size: 26rpx;
+}
+
+.issues-text {
+  color: #ee0a24;
+}
+
+.no-issues {
+  color: #07c160;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40rpx;
+  color: #999;
+  font-size: 26rpx;
+}
+
+/* 状态颜色 */
+.status-success {
+  color: #07c160;
+}
+
+.status-warning {
+  color: #ffbe00;
+}
+
+.status-danger {
+  color: #ee0a24;
+}
+
+.status-info {
+  color: #1989fa;
+}

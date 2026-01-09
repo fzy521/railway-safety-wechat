@@ -1,0 +1,257 @@
+@import "../../common.wxss";
+
+/* 页面容器 */
+.container {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+
+/* 加载容器 */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loading-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+/* 内容区域 */
+.content {
+  padding-bottom: var(--spacing-xxl);
+}
+
+/* 顶部导航 */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-back {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.nav-back:active {
+  background: var(--color-bg-hover);
+}
+
+.back-icon {
+  font-size: 48rpx;
+  color: var(--color-text-primary);
+  font-weight: 300;
+}
+
+.nav-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.nav-placeholder {
+  width: 80rpx;
+}
+
+/* 区块 */
+.section {
+  margin: var(--spacing-xl);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxl);
+  box-shadow: var(--shadow-md);
+}
+
+/* 区块头部 */
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* 信息卡片 */
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-hover);
+  border-radius: var(--radius-md);
+}
+
+.info-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  min-width: 160rpx;
+}
+
+.info-value {
+  flex: 1;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  text-align: right;
+  word-break: break-all;
+}
+
+.info-value.expiry {
+  color: var(--color-warning);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 状态徽章 */
+.status-badge {
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.status-badge.normal {
+  background: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.status-badge.warning {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+}
+
+.status-badge.expiring {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+/* 数量显示 */
+.quantity-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-hover);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.quantity-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.quantity-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.quantity-value {
+  font-size: var(--font-size-xxxl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success);
+}
+
+.quantity-value.warning {
+  color: var(--color-warning);
+}
+
+.quantity-value.expiring {
+  color: var(--color-danger);
+}
+
+.quantity-value.minimum {
+  font-size: var(--font-size-xxl);
+  color: var(--color-text-secondary);
+}
+
+.quantity-divider {
+  width: 1rpx;
+  height: 80rpx;
+  background: var(--color-border);
+}
+
+/* 库存进度 */
+.stock-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 16rpx;
+  background: var(--color-bg-page);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-success);
+  transition: all var(--transition-base);
+}
+
+.progress-fill.warning {
+  background: var(--color-warning);
+}
+
+.progress-fill.expiring {
+  background: var(--color-danger);
+}
+
+.progress-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  margin: var(--spacing-xl);
+}
+
+.action-btn {
+  width: 100%;
+  height: 88rpx;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-base);
+}
+
+.action-btn:active {
+  background: var(--color-primary-dark);
+}

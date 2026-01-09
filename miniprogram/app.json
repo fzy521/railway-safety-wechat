@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/dashboard/dashboard",
+    "pages/zone-detail/zone-detail",
     "pages/login/login",
     "pages/index/index",
     "pages/risk/risk",
@@ -15,6 +16,7 @@
     "pages/inspection/inspection-detail",
     "pages/inspection/danger-supervision",
     "pages/inspection/danger-add",
+    "pages/inspection/danger-detail",
     "pages/hazard/hazard",
     "pages/profile/profile",
     "pages/settings/settings",
@@ -23,6 +25,9 @@
     "pages/help/help",
     "pages/about/about",
     "pages/emergency/emergency",
+    "pages/emergency/plan-detail/plan-detail",
+    "pages/emergency/drill-detail/drill-detail",
+    "pages/emergency/supply-detail/supply-detail",
     "pages/emergency/plan-add/plan-add",
     "pages/emergency/supply-add/supply-add",
     "pages/emergency/drill-add/drill-add",

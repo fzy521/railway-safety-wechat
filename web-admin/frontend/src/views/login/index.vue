@@ -105,11 +105,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { reactive, ref, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { User, Lock, Loading, CircleCheck, Refresh } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
+import { callCloudFunction } from '@/api/cloud'
 import QRCode from 'qrcode'
 
 const router = useRouter()

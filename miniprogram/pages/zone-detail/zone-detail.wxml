@@ -1,0 +1,157 @@
+<view class="container">
+  <!-- 区域基本信息 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">区域基本信息</text>
+    </view>
+    <view class="zone-card">
+      <view class="zone-header">
+        <view class="zone-name">{{zoneInfo.name}}</view>
+        <view class="zone-status-badge {{zoneInfo.status}}">{{zoneInfo.statusText}}</view>
+      </view>
+      <view class="zone-description">{{zoneInfo.description}}</view>
+      <view class="zone-metrics">
+        <view class="metric-item">
+          <text class="metric-label">面积:</text>
+          <text class="metric-value">{{zoneInfo.area}}</text>
+        </view>
+        <view class="metric-item">
+          <text class="metric-label">人员:</text>
+          <text class="metric-value">{{zoneInfo.personnel}}人</text>
+        </view>
+        <view class="metric-item">
+          <text class="metric-label">安全评分:</text>
+          <text class="metric-value score">{{zoneInfo.safetyScore}}分</text>
+        </view>
+        <view class="metric-item">
+          <text class="metric-label">最后检查:</text>
+          <text class="metric-value">{{zoneInfo.lastInspection}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 安全概况 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">安全概况</text>
+    </view>
+    <view class="safety-overview">
+      <view class="overview-item">
+        <view class="overview-value status-danger">{{zoneInfo.incidents}}件</view>
+        <view class="overview-label">事故记录</view>
+      </view>
+      <view class="overview-item">
+        <view class="overview-value status-warning">{{zoneInfo.risks}}个</view>
+        <view class="overview-label">风险隐患</view>
+      </view>
+      <view class="overview-item">
+        <view class="overview-value status-success">{{deviceStatus.online}}台</view>
+        <view class="overview-label">设备在线</view>
+      </view>
+      <view class="overview-item">
+        <view class="overview-value status-danger">{{deviceStatus.warning}}台</view>
+        <view class="overview-label">设备告警</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备状态 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">设备状态</text>
+      <text class="section-more" bindtap="viewDeviceDetail">查看全部</text>
+    </view>
+    <view class="device-status">
+      <view class="status-item">
+        <view class="status-circle success"></view>
+        <text class="status-text">在线</text>
+        <text class="status-value">{{deviceStatus.online}}</text>
+      </view>
+      <view class="status-item">
+        <view class="status-circle danger"></view>
+        <text class="status-text">离线</text>
+        <text class="status-value">{{deviceStatus.offline}}</text>
+      </view>
+      <view class="status-item">
+        <view class="status-circle warning"></view>
+        <text class="status-text">告警</text>
+        <text class="status-value">{{deviceStatus.warning}}</text>
+      </view>
+      <view class="status-item">
+        <view class="status-circle info"></view>
+        <text class="status-text">总数</text>
+        <text class="status-value">{{deviceStatus.total}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 风险等级分布 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">风险等级分布</text>
+    </view>
+    <view class="risk-distribution">
+      <view class="risk-item" wx:for="{{riskDistribution}}" wx:key="label">
+        <view class="risk-label">
+          <view class="risk-color" style="background-color: {{item.color}}"></view>
+          <text>{{item.label}}</text>
+        </view>
+        <view class="risk-bar">
+          <view class="risk-bar-fill" style="width: {{item.value > 0 ? (item.value / 20) * 100 : 0}}%; background-color: {{item.color}}"></view>
+        </view>
+        <view class="risk-count">{{item.value}}个</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 隐患统计 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">隐患统计</text>
+      <text class="section-more" bindtap="viewHazardDetail">查看全部</text>
+    </view>
+    <view class="hazard-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{hazardStats.total}}</text>
+        <text class="stat-label">隐患总数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value status-danger">{{hazardStats.pending}}</text>
+        <text class="stat-label">待整改</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value status-warning">{{hazardStats.inProgress}}</text>
+        <text class="stat-label">整改中</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value status-success">{{hazardStats.completed}}</text>
+        <text class="stat-label">已整改</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近检查记录 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">最近检查记录</text>
+      <text class="section-more" bindtap="viewInspectionDetail">查看全部</text>
+    </view>
+    <view class="inspection-list">
+      <view class="inspection-item" wx:for="{{recentInspections}}" wx:key="id">
+        <view class="inspection-header">
+          <text class="inspector">{{item.inspector}}</text>
+          <text class="inspection-result {{item.result === '正常' ? 'status-success' : 'status-danger'}}">{{item.result}}</text>
+        </view>
+        <view class="inspection-time">{{item.time}}</view>
+        <view class="inspection-issues">
+          <text wx:if="{{item.issues > 0}}" class="issues-text">发现{{item.issues}}个问题</text>
+          <text wx:else class="no-issues">未发现问题</text>
+        </view>
+      </view>
+      <view wx:if="{{recentInspections.length === 0}}" class="no-data">
+        <text>暂无检查记录</text>
+      </view>
+    </view>
+  </view>
+</view>

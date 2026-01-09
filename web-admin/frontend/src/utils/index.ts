@@ -62,6 +62,14 @@ export function getWarningLevelColor(level: string): string {
   return colors[level] || '#909399'
 }
 
+// 获取进度条颜色
+export function getProgressColor(percentage: number): string {
+  if (percentage >= 100) return '#67c23a'
+  if (percentage >= 80) return '#409eff'
+  if (percentage >= 60) return '#e6a23c'
+  return '#f56c6c'
+}
+
 // 计算剩余天数
 export function getRemainingDays(deadline: string): number {
   const now = new Date()

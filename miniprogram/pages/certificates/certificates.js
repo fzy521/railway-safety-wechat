@@ -68,7 +68,7 @@ Page({
   viewCertificate(event) {
     const id = event.currentTarget.dataset.id
     wx.navigateTo({
-      url: `/pages/certificates/certificate-detail?id=${id}`
+      url: '/pages/certificate/certificate?id=' + id
     })
   }
 })

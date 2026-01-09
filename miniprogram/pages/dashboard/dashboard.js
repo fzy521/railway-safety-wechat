@@ -1,300 +1,1141 @@
-let chartInstance = null
-const app = getApp()
+// pages/dashboard/dashboard.js
+const chartUtils = require('../../utils/chart.js');
+const app = getApp();
 
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
-    todayIncidents: 0,
-    riskLevel: '正常',
-    safetyRate: 95,
-    completionRate: 98,
-    // 风险等级统计 - 符合GBT 33000-2025标准（4级）
-    majorRisks: 1,      // 重大风险（红色）
-    largeRisks: 3,      // 较大风险（橙色）
-    generalRisks: 8,    // 一般风险（黄色）
-    minorRisks: 12,     // 低风险（蓝色）
-    // 隐患统计数据
-    totalHazards: 28,
-    pendingHazards: 8,
-    inProgressHazards: 5,
-    completedHazards: 15,
-    zones: [
-      {
-        id: 1,
-        name: '邹平站场',
-        status: 'safe',
-        statusText: '安全',
-        incidents: 0,
-        risks: 2
-      },
-      {
-        id: 2,
-        name: '专用线区间',
-        status: 'warning',
-        statusText: '注意',
-        incidents: 1,
-        risks: 3
-      },
-      {
-        id: 3,
-        name: '货场线',
-        status: 'safe',
-        statusText: '安全',
-        incidents: 0,
-        risks: 1
-      }
-    ]
+    safetyOverview: {
+      todayIncidents: 0,
+      recentIncidents: 0,
+      totalRisks: 0,
+      majorRisks: 0,
+      safetyScore: 0,
+      riskLevel: '低风险',
+      safetyRate: 0,
+      totalInspections: 0,
+      passedInspections: 0,
+      pendingInspections: 0,
+      inspectionCompletionRate: 0
+    },
+    onlineDevices: 0,
+    offlineDevices: 0,
+    recentAlerts: [],
+    riskLevels: {
+      low: 0,
+      moderate: 0,
+      critical: 0,
+      major: 0
+    },
+    hazardData: {
+      totalHazards: 0,
+      resolvedHazards: 0,
+      pendingHazards: 0,
+      closureRate: 0
+    },
+    zoneStatus: [],
+    filteredZoneStatus: [],
+    // 区域排序和筛选配置
+    zoneSortIndex: 0,
+    zoneSortOptions: [
+      { name: '默认', value: 'default' },
+      { name: '按安全系数', value: 'safetyScore' },
+      { name: '按事故数量', value: 'incidents' },
+      { name: '按隐患数量', value: 'hazards' }
+    ],
+    zoneFilterIndex: 0,
+    zoneFilterOptions: [
+      { name: '全部', value: 'all' },
+      { name: '安全', value: '安全' },
+      { name: '警告', value: '警告' },
+      { name: '危险', value: '危险' }
+    ],
+    trendChartData: {},
+    riskChartData: {},
+    hazardChartData: {},
+    updateTime: '',
+    loading: false,
+    // WebSocket相关状态
+    wsConnected: false,
+    wsUrl: 'wss://your-websocket-server.com/dashboard' // 替换为实际的WebSocket服务器地址
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad() {
+  onLoad(options) {
+    console.log('数据看板页面加载');
     // 检查登录状态
     if (!app.globalData.hasUserInfo) {
-      wx.redirectTo({
-        url: '/pages/login/login'
-      })
-      return
+      wx.redirectTo({ url: '/pages/login/login' });
+      return;
     }
     this.loadDashboardData();
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-    // 每次显示时检查登录状态
-    if (!app.globalData.hasUserInfo) {
-      wx.redirectTo({
-        url: '/pages/login/login'
-      })
-      return
-    }
-
+    this.setupRealtimeUpdates();
+    
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        selected: 0
-      })
+      this.getTabBar().setData({ selected: 0 });
     }
   },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
+  onShow() {
+    console.log('数据看板页面显示');
+    if (!app.globalData.hasUserInfo) {
+      wx.redirectTo({ url: '/pages/login/login' });
+      return;
+    }
+    this.setupRealtimeUpdates();
+  },
+
+  onHide() {
+    console.log('数据看板页面隐藏');
+    this.stopRealtimeUpdates();
+  },
+
+  onUnload() {
+    console.log('数据看板页面卸载');
+    this.stopRealtimeUpdates();
+    this.stopPolling();
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+  },
+
   onPullDownRefresh() {
     this.loadDashboardData().then(() => {
       wx.stopPullDownRefresh();
     });
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-    // 图表已删除，改为隐患统计数据
+  // 云函数调用封装
+  async callCloudFunction(name, data = {}) {
+    try {
+      console.log(`调用云函数 ${name}, 数据:`, data);
+      const result = await wx.cloud.callFunction({
+        name: name,
+        data: data
+      });
+      console.log(`云函数 ${name} 返回结果:`, result);
+      
+      if (result.result && result.result.success) {
+        return result.result;
+      } else {
+        throw new Error(result.result?.message || `调用云函数 ${name} 失败`);
+      }
+    } catch (error) {
+      console.error(`调用云函数 ${name} 出错:`, error);
+      throw error;
+    }
   },
 
-  /**
-   * 加载仪表板数据
-   */
+  // 加载仪表板数据
   async loadDashboardData() {
-    wx.showLoading({ title: '加载中...' });
-
     try {
-      // 调用云函数获取数据
-      const result = await wx.cloud.callFunction({
-        name: 'getSafetyMetrics',
-        data: {
-          date: new Date().toISOString().split('T')[0]
+      console.log('开始加载仪表板数据');
+      this.setData({ loading: true });
+
+      // 生成安全概览数据
+      const safetyScore = this.randomInt(80, 100);
+      const totalInspections = this.randomInt(50, 200);
+      const passedInspections = this.randomInt(45, totalInspections);
+      const pendingInspections = this.randomInt(0, Math.max(0, totalInspections - passedInspections));
+      
+      const safetyOverview = {
+        todayIncidents: this.randomInt(0, 5),
+        recentIncidents: this.randomInt(0, 15),
+        totalRisks: this.randomInt(10, 100),
+        majorRisks: this.randomInt(0, 10),
+        safetyScore: safetyScore,
+        riskLevel: this.getRiskLevelText(this.randomInt(1, 4)),
+        safetyRate: this.randomInt(85, 100),
+        totalInspections: totalInspections,
+        passedInspections: passedInspections,
+        pendingInspections: pendingInspections,
+        inspectionCompletionRate: Math.round((passedInspections / totalInspections) * 100)
+      };
+
+      // 生成风险等级数据
+      const riskLevels = {
+        low: this.randomInt(10, 50),
+        moderate: this.randomInt(5, 30),
+        critical: this.randomInt(2, 15),
+        major: this.randomInt(0, 5)
+      };
+
+      // 生成隐患数据
+      const totalHazards = this.randomInt(20, 80);
+      const resolvedHazards = this.randomInt(15, totalHazards - 5);
+      const pendingHazards = totalHazards - resolvedHazards;
+      
+      const hazardData = {
+        totalHazards: totalHazards,
+        resolvedHazards: resolvedHazards,
+        pendingHazards: pendingHazards,
+        closureRate: Math.round((resolvedHazards / totalHazards) * 100)
+      };
+
+      // 生成设备状态数据
+      const totalDevices = this.randomInt(10, 55);
+      const onlineDevices = this.randomInt(10, totalDevices);
+      const offlineDevices = totalDevices - onlineDevices;
+
+      // 处理告警数据并添加动画
+      const mockAlerts = this.generateMockAlerts();
+      const recentAlerts = this.processAlerts(mockAlerts);
+      
+      // 生成区域状态数据
+      const zoneStatus = this.generateMockZones();
+      
+      // 初始化筛选和排序后的区域数据
+      const filteredZoneStatus = this.filterAndSortZones(zoneStatus);
+      
+      this.setData({
+        safetyOverview: safetyOverview,
+        onlineDevices: onlineDevices,
+        offlineDevices: offlineDevices,
+        riskLevels: riskLevels,
+        hazardData: hazardData,
+        zoneStatus: zoneStatus,
+        filteredZoneStatus: filteredZoneStatus,
+        recentAlerts: recentAlerts,
+        updateTime: this.formatTime(new Date()),
+        loading: false
+      });
+
+      // 生成并绘制图表数据
+      this.generateChartData();
+
+    } catch (error) {
+      console.error('加载数据失败:', error);
+      this.setData({ loading: false });
+      wx.showToast({
+        title: '数据加载失败',
+        icon: 'error',
+        duration: 2000
+      });
+    }
+  },
+
+  // 生成所有图表数据
+  generateChartData() {
+    try {
+      console.log('开始生成图表数据...');
+      
+      // 生成趋势图数据
+      const trendData = this.generateTrendData();
+      // 生成风险分布数据
+      const riskDistData = this.generateRiskDistributionData(this.data.riskLevels);
+      // 生成隐患状态数据
+      const hazardStatusData = this.generateHazardStatusData(this.data.hazardData);
+      
+      this.setData({
+        trendChartData: trendData,
+        riskChartData: riskDistData,
+        hazardChartData: hazardStatusData
+      });
+      
+      // 绘制所有图表
+      this.updateCharts();
+      console.log('图表数据生成完成');
+    } catch (error) {
+      console.error('生成图表数据失败:', error);
+    }
+  },
+
+  // 更新所有图表
+  updateCharts() {
+    try {
+      this.updateTrendChart();
+      this.updateRiskChart();
+      this.updateHazardChart();
+      console.log('所有图表更新完成');
+    } catch (error) {
+      console.error('更新图表失败:', error);
+    }
+  },
+
+  // 生成趋势图数据
+  generateTrendData() {
+    const labels = [];
+    const incidentsData = [];
+    const hazardsData = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      labels.push(`${date.getMonth() + 1}/${date.getDate()}`);
+      incidentsData.push(this.randomInt(0, 5));
+      hazardsData.push(this.randomInt(2, 10));
+    }
+    
+    return {
+      labels: labels,
+      datasets: [
+        { color: '#F56C6C', data: incidentsData },
+        { color: '#E6A23C', data: hazardsData }
+      ]
+    };
+  },
+
+  // 生成风险分布数据
+  generateRiskDistributionData(riskLevels) {
+    return {
+      labels: ['低风险', '一般风险', '较大风险', '重大风险'],
+      datasets: [
+        {
+          data: [riskLevels.low, riskLevels.moderate, riskLevels.critical, riskLevels.major],
+          colors: ['#909399', '#E6A23C', '#F56C6C', '#9013FE']
+        }
+      ]
+    };
+  },
+
+  // 生成隐患状态数据
+  generateHazardStatusData(hazardData) {
+    return {
+      labels: ['待处理', '处理中', '已解决'],
+      datasets: [
+        {
+          data: [hazardData.pendingHazards, this.randomInt(5, 15), hazardData.resolvedHazards],
+          colors: ['#F56C6C', '#E6A23C', '#67C23A']
+        }
+      ]
+    };
+  },
+
+  // 生成模拟区域数据
+  generateMockZones() {
+    const zones = ['车间A', '车间B', '仓库区域', '设备维护区', '办公区', '物资存储区'];
+    const statusOptions = ['危险', '警告', '安全'];
+    
+    return zones.map((zone, index) => {
+      const status = statusOptions[this.randomInt(0, 2)];
+      // 根据状态生成合理的安全系数
+      let safetyScore;
+      if (status === '危险') {
+        safetyScore = this.randomInt(0, 60);
+      } else if (status === '警告') {
+        safetyScore = this.randomInt(61, 80);
+      } else {
+        safetyScore = this.randomInt(81, 100);
+      }
+      
+      return {
+        id: index + 1,
+        name: zone,
+        status: status,
+        incidents: this.randomInt(0, 3),
+        hazards: this.randomInt(0, 10),
+        devices: this.randomInt(5, 50),
+        safetyScore: safetyScore,
+        lastInspection: this.formatTime(new Date(Date.now() - this.randomInt(0, 7 * 24 * 60 * 60 * 1000)))
+      };
+    });
+  },
+
+  // 生成模拟告警数据
+  generateMockAlerts() {
+    const alertTitles = [
+      '设备温度异常',
+      '安全检查逾期',
+      '人员未按规定操作',
+      '消防设备状态异常',
+      '区域风险等级上升',
+      '巡检记录缺失'
+    ];
+    
+    const alerts = [];
+    const alertCount = this.randomInt(0, 5);
+    const types = ['danger', 'warning', 'info'];
+    
+    for (let i = 0; i < alertCount; i++) {
+      alerts.push({
+        id: i + 1,
+        title: alertTitles[this.randomInt(0, alertTitles.length - 1)],
+        description: '请立即处理该安全隐患',
+        type: types[this.randomInt(0, types.length - 1)],
+        time: this.formatTime(new Date(Date.now() - this.randomInt(0, 24 * 60 * 60 * 1000)))
+      });
+    }
+    
+    return alerts;
+  },
+
+  // 处理告警数据并添加动画
+  processAlerts(alerts) {
+    return alerts.map((alert, index) => {
+      const animation = wx.createAnimation({
+        duration: 300,
+        timingFunction: 'ease-out',
+        delay: index * 100
+      });
+      
+      animation.translateX(0).opacity(1).step();
+      
+      return {
+        ...alert,
+        animation: animation.export()
+      };
+    });
+  },
+
+  // 更新趋势图
+  updateTrendChart() {
+    try {
+      if (this.data.trendChartData && this.data.trendChartData.labels && this.data.trendChartData.datasets) {
+        const query = wx.createSelectorQuery().in(this);
+        query.select('#trendChart')
+          .boundingClientRect((rect) => {
+            if (rect) {
+              chartUtils.drawLineChart({
+                canvasId: 'trendChart',
+                data: this.data.trendChartData,
+                width: rect.width,
+                height: rect.height
+              });
+              console.log('趋势图绘制完成');
+            }
+          })
+          .exec();
+      }
+    } catch (error) {
+      console.error('更新趋势图失败:', error);
+    }
+  },
+
+  // 更新风险图
+  updateRiskChart() {
+    try {
+      if (this.data.riskChartData && this.data.riskChartData.labels && this.data.riskChartData.datasets) {
+        const query = wx.createSelectorQuery().in(this);
+        query.select('#riskChart')
+          .boundingClientRect((rect) => {
+            if (rect) {
+              chartUtils.drawPieChart({
+                canvasId: 'riskChart',
+                data: this.data.riskChartData,
+                width: rect.width,
+                height: rect.height
+              });
+              console.log('风险分布图绘制完成');
+            }
+          })
+          .exec();
+      }
+    } catch (error) {
+      console.error('更新风险图失败:', error);
+    }
+  },
+
+  // 更新隐患图
+  updateHazardChart() {
+    try {
+      if (this.data.hazardChartData && this.data.hazardChartData.labels && this.data.hazardChartData.datasets) {
+        const query = wx.createSelectorQuery().in(this);
+        query.select('#hazardChart')
+          .boundingClientRect((rect) => {
+            if (rect) {
+              chartUtils.drawBarChart({
+                canvasId: 'hazardChart',
+                data: this.data.hazardChartData,
+                width: rect.width,
+                height: rect.height
+              });
+              console.log('隐患处理进度图绘制完成');
+            }
+          })
+          .exec();
+      }
+    } catch (error) {
+      console.error('更新隐患图失败:', error);
+    }
+  },
+
+  // 设置实时更新（WebSocket实现）
+  setupRealtimeUpdates() {
+    console.log('启动WebSocket实时数据更新');
+    // 建立WebSocket连接
+    this.connectWebSocket();
+  },
+
+  // 停止实时更新
+  stopRealtimeUpdates() {
+    this.closeWebSocket();
+  },
+
+  // 建立WebSocket连接
+  connectWebSocket() {
+    try {
+      // 确保关闭现有连接
+      this.closeWebSocket();
+      
+      // 创建WebSocket连接
+      this.socketTask = wx.connectSocket({
+        url: this.data.wsUrl,
+        header: {
+          'content-type': 'application/json'
+        },
+        protocols: ['protocol1'],
+        success: () => {
+          console.log('WebSocket连接请求成功');
+        },
+        fail: (error) => {
+          console.error('WebSocket连接请求失败:', error);
+          // 连接失败时回退到轮询
+          this.fallbackToPolling();
         }
       });
 
-      console.log('云函数返回结果:', result);
+      // 监听WebSocket连接打开
+      this.socketTask.onOpen(() => {
+        console.log('WebSocket连接已打开');
+        this.setData({ wsConnected: true });
+        // 连接成功后可以发送初始化请求
+        this.sendWebSocketMessage({ action: 'subscribe', data: { channel: 'dashboard' } });
+      });
 
-      if (result.result && result.result.success) {
-        const data = result.result.data;
-        this.setData({
-          todayIncidents: data.todayIncidents || 0,
-          riskLevel: data.riskLevel || '正常',
-          safetyRate: data.safetyRate || 95,
-          completionRate: data.completionRate || 98,
-          majorRisks: data.riskCounts?.major || 1,
-          largeRisks: data.riskCounts?.large || 3,
-          generalRisks: data.riskCounts?.general || 8,
-          minorRisks: data.riskCounts?.minor || 12,
-          zones: data.zones && data.zones.length > 0 ? data.zones : this.data.zones
+      // 监听WebSocket接收消息
+      this.socketTask.onMessage((res) => {
+        console.log('收到WebSocket消息:', res.data);
+        try {
+          const data = JSON.parse(res.data);
+          this.handleWebSocketMessage(data);
+        } catch (error) {
+          console.error('解析WebSocket消息失败:', error);
+        }
+      });
+
+      // 监听WebSocket连接关闭
+      this.socketTask.onClose((res) => {
+        console.log('WebSocket连接已关闭:', res);
+        this.setData({ wsConnected: false });
+        // 尝试重新连接
+        this.reconnectWebSocket();
+      });
+
+      // 监听WebSocket错误
+      this.socketTask.onError((error) => {
+        console.error('WebSocket错误:', error);
+        this.setData({ wsConnected: false });
+        // 错误时回退到轮询
+        this.fallbackToPolling();
+      });
+    } catch (error) {
+      console.error('建立WebSocket连接失败:', error);
+      // 连接失败时回退到轮询
+      this.fallbackToPolling();
+    }
+  },
+
+  // 关闭WebSocket连接
+  closeWebSocket() {
+    if (this.socketTask) {
+      this.socketTask.close({
+        code: 1000,
+        reason: '主动关闭连接'
+      });
+      this.socketTask = null;
+      console.log('WebSocket连接已关闭');
+    }
+  },
+
+  // 发送WebSocket消息
+  sendWebSocketMessage(message) {
+    if (this.socketTask && this.data.wsConnected) {
+      this.socketTask.send({
+        data: JSON.stringify(message),
+        success: () => {
+          console.log('WebSocket消息发送成功:', message);
+        },
+        fail: (error) => {
+          console.error('WebSocket消息发送失败:', error);
+        }
+      });
+    } else {
+      console.warn('WebSocket未连接，无法发送消息');
+    }
+  },
+
+  // 处理WebSocket消息
+  handleWebSocketMessage(data) {
+    if (!data || !data.type) {
+      console.error('无效的WebSocket消息:', data);
+      return;
+    }
+
+    switch (data.type) {
+      case 'dashboard_update':
+        // 处理仪表盘数据更新
+        this.updateDashboardData(data.payload);
+        break;
+      case 'alert':
+        // 处理告警消息
+        this.handleAlertMessage(data.payload);
+        break;
+      case 'status':
+        // 处理状态消息
+        console.log('WebSocket状态消息:', data.payload);
+        break;
+      default:
+        console.log('未知的WebSocket消息类型:', data.type);
+        break;
+    }
+  },
+
+  // 重新连接WebSocket
+  reconnectWebSocket() {
+    // 避免频繁重连
+    if (!this.reconnectTimer) {
+      this.reconnectTimer = setTimeout(() => {
+        console.log('尝试重新连接WebSocket');
+        this.connectWebSocket();
+        this.reconnectTimer = null;
+      }, 5000); // 5秒后尝试重新连接
+    }
+  },
+
+  // 回退到轮询（当WebSocket不可用时）
+  fallbackToPolling() {
+    console.log('回退到轮询更新');
+    if (!this.pollingTimer) {
+      this.pollingTimer = setInterval(() => {
+        this.updateRealtimeData();
+      }, 30000); // 30秒轮询一次
+    }
+  },
+
+  // 停止轮询
+  stopPolling() {
+    if (this.pollingTimer) {
+      clearInterval(this.pollingTimer);
+      this.pollingTimer = null;
+      console.log('停止轮询更新');
+    }
+  },
+
+  // 实时数据更新函数（轮询回退时使用）
+  updateRealtimeData() {
+    try {
+      console.log('开始实时数据更新');
+      
+      // 从当前数据中获取基础值
+      const currentSafetyOverview = this.data.safetyOverview;
+      const currentRiskLevels = this.data.riskLevels;
+      const currentHazardData = this.data.hazardData;
+      
+      // 更新安全概览（保持数据一致性）
+      const todayIncidents = this.randomInt(0, 5);
+      const riskLevel = this.getRiskLevelText(this.randomInt(1, 4));
+      const safetyRate = this.randomInt(85, 100);
+      
+      // 更新设备状态（保持数据一致性）
+      const totalDevices = this.data.onlineDevices + this.data.offlineDevices;
+      const onlineDevices = this.randomInt(Math.max(10, totalDevices - 10), totalDevices);
+      const offlineDevices = totalDevices - onlineDevices;
+      
+      // 更新风险等级（保持数据结构一致）
+      const riskLevels = {
+        low: this.randomInt(10, 50),
+        moderate: this.randomInt(5, 30),
+        critical: this.randomInt(2, 15),
+        major: this.randomInt(0, 5)
+      };
+      
+      // 更新隐患数据（保持数据一致性）
+      const totalHazards = currentHazardData.totalHazards;
+      const resolvedHazards = this.randomInt(15, totalHazards - 5);
+      const pendingHazards = totalHazards - resolvedHazards;
+      const closureRate = Math.round((resolvedHazards / totalHazards) * 100);
+      
+      const hazardData = {
+        totalHazards: totalHazards,
+        resolvedHazards: resolvedHazards,
+        pendingHazards: pendingHazards,
+        closureRate: closureRate
+      };
+      
+      // 更新区域状态
+      const zoneStatus = this.generateMockZones();
+      
+      // 更新最近告警
+      const mockAlerts = this.generateMockAlerts();
+      const recentAlerts = this.processAlerts(mockAlerts);
+      
+      // 筛选和排序后的区域数据
+      const filteredZoneStatus = this.filterAndSortZones(zoneStatus);
+      
+      // 只更新变化较快的数据
+      const updatedData = {
+        // 更新安全概览（只更新关键指标）
+        'safetyOverview.todayIncidents': todayIncidents,
+        'safetyOverview.riskLevel': riskLevel,
+        'safetyOverview.safetyRate': safetyRate,
+        
+        // 更新设备状态
+        onlineDevices: onlineDevices,
+        offlineDevices: offlineDevices,
+        
+        // 更新风险等级
+        riskLevels: riskLevels,
+        
+        // 更新隐患数据
+        hazardData: hazardData,
+        
+        // 更新区域状态
+        zoneStatus: zoneStatus,
+        filteredZoneStatus: filteredZoneStatus,
+        
+        // 更新最近告警
+        recentAlerts: recentAlerts,
+        
+        // 更新时间
+        updateTime: this.formatTime(new Date())
+      };
+      
+      // 应用更新
+      this.setData(updatedData);
+      
+      // 更新受影响的图表数据
+      const updatedChartData = {
+        // 更新趋势图数据
+        trendChartData: this.generateTrendData(),
+        
+        // 更新风险分布数据
+        riskChartData: this.generateRiskDistributionData(riskLevels),
+        
+        // 更新隐患状态数据
+        hazardChartData: this.generateHazardStatusData(hazardData)
+      };
+      
+      // 应用图表数据更新
+      this.setData(updatedChartData);
+      
+      // 只更新变化的图表
+      this.updateCharts();
+      
+      console.log('实时数据更新完成');
+    } catch (error) {
+      console.error('实时数据更新失败:', error);
+      // 添加用户可见的错误提示
+      wx.showToast({
+        title: '数据更新失败',
+        icon: 'error',
+        duration: 1500
+      });
+    }
+  },
+  
+  // 辅助函数
+  randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  },
+
+  // 获取风险等级文本
+  getRiskLevelText(level) {
+    switch(level) {
+      case 1: return '低风险';
+      case 2: return '一般风险';
+      case 3: return '较大风险';
+      case 4: return '重大风险';
+      default: return '低风险';
+    }
+  },
+
+  randomFloat(min, max, decimalPlaces = 2) {
+    const random = Math.random() * (max - min) + min;
+    return Number(random.toFixed(decimalPlaces));
+  },
+
+  formatTime(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    const second = date.getSeconds().toString().padStart(2, '0');
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  },
+
+  // 快速操作处理
+  onQuickActionTap(event) {
+    try {
+      const actionType = event.currentTarget.dataset.type;
+      if (!actionType) {
+        throw new Error('未获取到操作类型');
+      }
+      console.log('快速操作:', actionType);
+      wx.showToast({ 
+        title: actionType + ' 功能', 
+        icon: 'success',
+        fail: (error) => {
+          console.error('显示操作提示失败:', error);
+        }
+      });
+    } catch (error) {
+      console.error('快速操作处理失败:', error);
+      wx.showToast({ 
+        title: '操作处理失败', 
+        icon: 'error' 
+      });
+    }
+  },
+
+  // 更新仪表盘数据（处理WebSocket消息）
+  updateDashboardData(data) {
+    try {
+      if (!data) {
+        console.error('更新数据为空');
+        return;
+      }
+      
+      console.log('开始更新仪表盘数据:', data);
+      const updatedData = {};
+      
+      // 更新安全概览
+      if (data.safetyOverview) {
+        Object.keys(data.safetyOverview).forEach(key => {
+          updatedData[`safetyOverview.${key}`] = data.safetyOverview[key];
         });
-
-        // 更新图表
-        this.updateChart(data.trendData || []);
+      }
+      
+      // 更新设备状态
+      if (data.onlineDevices !== undefined) {
+        updatedData.onlineDevices = data.onlineDevices;
+      }
+      if (data.offlineDevices !== undefined) {
+        updatedData.offlineDevices = data.offlineDevices;
+      }
+      
+      // 更新风险等级
+      if (data.riskLevels) {
+        updatedData.riskLevels = data.riskLevels;
+      }
+      
+      // 更新隐患数据
+      if (data.hazardData) {
+        updatedData.hazardData = data.hazardData;
+      }
+      
+      // 更新区域状态
+      if (data.zoneStatus) {
+        updatedData.zoneStatus = data.zoneStatus;
+      }
+      
+      // 更新最近告警
+      if (data.recentAlerts) {
+        updatedData.recentAlerts = this.processAlerts(data.recentAlerts);
+      }
+      
+      // 更新时间
+      updatedData.updateTime = this.formatTime(new Date());
+      
+      // 应用更新
+      if (Object.keys(updatedData).length > 0) {
+        this.setData(updatedData);
+      }
+      
+      // 更新图表数据
+      const updatedChartData = {};
+      
+      if (data.trendChartData) {
+        updatedChartData.trendChartData = data.trendChartData;
       } else {
-        console.warn('云函数返回success为false，使用模拟数据');
-        this.useMockData();
+        updatedChartData.trendChartData = this.generateTrendData();
+      }
+      
+      if (data.riskChartData) {
+        updatedChartData.riskChartData = data.riskChartData;
+      } else if (data.riskLevels) {
+        updatedChartData.riskChartData = this.generateRiskDistributionData(data.riskLevels);
+      }
+      
+      if (data.hazardChartData) {
+        updatedChartData.hazardChartData = data.hazardChartData;
+      } else if (data.hazardData) {
+        updatedChartData.hazardChartData = this.generateHazardStatusData(data.hazardData);
+      }
+      
+      // 应用图表数据更新
+      this.setData(updatedChartData);
+      
+      // 更新图表
+      this.updateCharts();
+      
+      console.log('仪表盘数据更新完成');
+    } catch (error) {
+      console.error('更新仪表盘数据失败:', error);
+    }
+  },
+
+  // 处理告警消息
+  handleAlertMessage(data) {
+    try {
+      if (!data) {
+        console.error('告警数据为空');
+        return;
+      }
+      
+      console.log('收到告警消息:', data);
+      
+      // 显示告警提示
+      wx.showToast({
+        title: data.title || '新告警',
+        icon: 'none',
+        duration: 3000,
+        image: '/images/alert-icon.png'
+      });
+      
+      // 更新告警列表
+      const newAlert = { ...data, time: this.formatTime(new Date()) };
+      let updatedAlerts = [newAlert, ...this.data.recentAlerts];
+      // 保持告警列表不超过5条
+      updatedAlerts = updatedAlerts.slice(0, 5);
+      
+      // 为新告警添加动画
+      updatedAlerts = this.processAlerts(updatedAlerts);
+      
+      this.setData({ recentAlerts: updatedAlerts });
+    } catch (error) {
+      console.error('处理告警消息失败:', error);
+    }
+  },
+
+  // 筛选和排序区域数据
+  filterAndSortZones(zones) {
+    let filtered = [...zones];
+    
+    // 筛选
+    const filterValue = this.data.zoneFilterOptions[this.data.zoneFilterIndex].value;
+    if (filterValue !== 'all') {
+      filtered = filtered.filter(zone => zone.status === filterValue);
+    }
+    
+    // 排序
+    const sortValue = this.data.zoneSortOptions[this.data.zoneSortIndex].value;
+    if (sortValue === 'default') {
+      // 默认排序（按ID）
+      filtered.sort((a, b) => a.id - b.id);
+    } else if (sortValue === 'safetyScore') {
+      // 按安全系数降序
+      filtered.sort((a, b) => b.safetyScore - a.safetyScore);
+    } else if (sortValue === 'incidents') {
+      // 按事故数量降序
+      filtered.sort((a, b) => b.incidents - a.incidents);
+    } else if (sortValue === 'hazards') {
+      // 按隐患数量降序
+      filtered.sort((a, b) => b.hazards - a.hazards);
+    }
+    
+    return filtered;
+  },
+
+  // 区域排序变更事件
+  onZoneSortChange(e) {
+    try {
+      const index = e.detail.value;
+      this.setData({
+        zoneSortIndex: index
+      });
+      
+      // 更新筛选和排序后的区域数据
+      const filteredZoneStatus = this.filterAndSortZones(this.data.zoneStatus);
+      this.setData({ filteredZoneStatus });
+    } catch (error) {
+      console.error('区域排序变更失败:', error);
+    }
+  },
+
+  // 区域筛选变更事件
+  onZoneFilterChange(e) {
+    try {
+      const index = e.detail.value;
+      this.setData({
+        zoneFilterIndex: index
+      });
+      
+      // 更新筛选和排序后的区域数据
+      const filteredZoneStatus = this.filterAndSortZones(this.data.zoneStatus);
+      this.setData({ filteredZoneStatus });
+    } catch (error) {
+      console.error('区域筛选变更失败:', error);
+    }
+  },
+
+  // 区域点击事件
+  onZoneTap(e) {
+    try {
+      const zoneId = e.currentTarget.dataset.zoneId;
+      const zoneName = e.currentTarget.dataset.zoneName;
+      console.log('点击区域:', zoneName, 'ID:', zoneId);
+      
+      // 跳转到区域详情页
+      wx.navigateTo({
+        url: `/pages/zone-detail/zone-detail?id=${zoneId}&name=${encodeURIComponent(zoneName)}`,
+        fail: (error) => {
+          console.error('跳转到区域详情页失败:', error);
+          wx.showToast({
+            title: '查看详情失败',
+            icon: 'error'
+          });
+        }
+      });
+    } catch (error) {
+      console.error('区域点击事件处理失败:', error);
+      wx.showToast({
+        title: '操作失败',
+        icon: 'error'
+      });
+    }
+  },
+
+  // 区域操作按钮点击事件
+  onZoneActionTap(e) {
+    try {
+      const action = e.currentTarget.dataset.action;
+      const zoneId = e.currentTarget.dataset.zoneId;
+      const zoneName = e.currentTarget.dataset.zoneName;
+      
+      console.log('区域操作:', action, '区域:', zoneName, 'ID:', zoneId);
+      
+      switch (action) {
+        case 'inspect':
+          // 跳转到区域检查页面
+          wx.navigateTo({
+            url: `/pages/inspection/inspection?zoneId=${zoneId}&zoneName=${encodeURIComponent(zoneName)}`,
+            fail: (error) => {
+              console.error('跳转到区域检查页面失败:', error);
+              wx.showToast({
+                title: '检查功能失败',
+                icon: 'error'
+              });
+            }
+          });
+          break;
+        case 'alerts':
+          // 跳转到区域告警页面
+          wx.navigateTo({
+            url: `/pages/zone-alerts/zone-alerts?zoneId=${zoneId}&zoneName=${encodeURIComponent(zoneName)}`,
+            fail: (error) => {
+              console.error('跳转到区域告警页面失败:', error);
+              wx.showToast({
+                title: '告警功能失败',
+                icon: 'error'
+              });
+            }
+          });
+          break;
+        case 'devices':
+          // 跳转到区域设备页面
+          wx.navigateTo({
+            url: `/pages/zone-devices/zone-devices?zoneId=${zoneId}&zoneName=${encodeURIComponent(zoneName)}`,
+            fail: (error) => {
+              console.error('跳转到区域设备页面失败:', error);
+              wx.showToast({
+                title: '设备功能失败',
+                icon: 'error'
+              });
+            }
+          });
+          break;
+        default:
+          console.warn('未知的区域操作:', action);
+          break;
       }
     } catch (error) {
-      console.error('获取仪表板数据失败:', error);
-      app.showError('获取数据失败');
-
-      // 使用模拟数据演示
-      this.useMockData();
-    } finally {
-      wx.hideLoading();
-    }
-  },
-
-  /**
-   * 使用模拟数据
-   */
-  useMockData() {
-    this.setData({
-      todayIncidents: 0,
-      riskLevel: '正常',
-      safetyRate: 95,
-      completionRate: 98,
-      majorRisks: 1,      // 重大风险（红色）
-      largeRisks: 3,      // 较大风险（橙色）
-      generalRisks: 8,    // 一般风险（黄色）
-      minorRisks: 12      // 低风险（蓝色）
-    });
-
-    // 模拟事故趋势数据
-    const trendData = [
-      { date: '周一', incidents: 2 },
-      { date: '周二', incidents: 1 },
-      { date: '周三', incidents: 3 },
-      { date: '周四', incidents: 0 },
-      { date: '周五', incidents: 1 },
-      { date: '周六', incidents: 0 },
-      { date: '今日', incidents: 0 }
-    ];
-
-    this.updateChart(trendData);
-  },
-
-  /**
-   * 初始化图表
-   */
-  initChart() {
-    // 使用小程序canvas API直接绘制
-    this.drawSimpleChart();
-  },
-
-  /**
-   * 绘制简单图表
-   */
-  drawSimpleChart() {
-    const query = wx.createSelectorQuery().in(this);
-    query.select('#incidentChart')
-      .fields({ node: true, size: true })
-      .exec((res) => {
-        if (!res[0]) return;
-
-        const canvas = res[0].node;
-        const ctx = canvas.getContext('2d');
-        const { width, height } = res[0];
-
-        // 设置canvas实际渲染大小
-        canvas.width = width * wx.getSystemInfoSync().pixelRatio;
-        canvas.height = height * wx.getSystemInfoSync().pixelRatio;
-        ctx.scale(wx.getSystemInfoSync().pixelRatio, wx.getSystemInfoSync().pixelRatio);
-
-        // 绘制简单的柱状图
-        this.drawColumnChart(ctx, width, height, [
-          { label: '周一', value: 2 },
-          { label: '周二', value: 1 },
-          { label: '周三', value: 3 },
-          { label: '周四', value: 0 },
-          { label: '周五', value: 1 },
-          { label: '周六', value: 0 },
-          { label: '今日', value: 0 }
-        ]);
+      console.error('区域操作处理失败:', error);
+      wx.showToast({
+        title: '操作失败',
+        icon: 'error'
       });
-  },
-
-  /**
-   * 绘制柱状图
-   */
-  drawColumnChart(ctx, width, height, data) {
-    const padding = 40;
-    const barWidth = (width - padding * 2) / data.length - 10;
-    const maxValue = Math.max(...data.map(d => d.value), 5);
-    const chartHeight = height - padding * 2;
-
-    // 清空画布
-    ctx.clearRect(0, 0, width, height);
-
-    // 绘制网格线
-    ctx.strokeStyle = '#f0f0f0';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-      const y = padding + (chartHeight / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(width - padding, y);
-      ctx.stroke();
     }
-
-    // 绘制柱状图
-    data.forEach((item, index) => {
-      const x = padding + index * (barWidth + 10) + 5;
-      const barHeight = (item.value / maxValue) * chartHeight;
-      const y = height - padding - barHeight;
-
-      // 绘制柱子
-      ctx.fillStyle = item.value > 2 ? '#ee0a24' : item.value > 0 ? '#ffbe00' : '#07c160';
-      ctx.fillRect(x, y, barWidth, barHeight);
-
-      // 绘制标签
-      ctx.fillStyle = '#666';
-      ctx.font = '24rpx sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(item.label, x + barWidth / 2, height - padding + 30);
-
-      // 绘制数值
-      if (item.value > 0) {
-        ctx.fillStyle = '#333';
-        ctx.font = '24rpx sans-serif';
-        ctx.fillText(item.value, x + barWidth / 2, y - 10);
-      }
-    });
   },
 
-  /**
-   * 更新图表数据
-   */
-  updateChart(trendData) {
-    // 简化版本，直接重绘
-    this.drawSimpleChart();
+  // 页面跳转
+  goToRiskAssessment() { 
+    try {
+      wx.navigateTo({ 
+        url: '/pages/risk/risk',
+        fail: (error) => {
+          console.error('跳转到风险评估页面失败:', error);
+          wx.showToast({ 
+            title: '页面跳转失败', 
+            icon: 'error' 
+          });
+        }
+      }); 
+    } catch (error) {
+      console.error('跳转到风险评估页面失败:', error);
+      wx.showToast({ 
+        title: '页面跳转失败', 
+        icon: 'error' 
+      });
+    }
+  },
+  
+  goToHazardInspection() { 
+    try {
+      wx.navigateTo({ 
+        url: '/pages/hazard/hazard',
+        fail: (error) => {
+          console.error('跳转到隐患排查页面失败:', error);
+          wx.showToast({ 
+            title: '页面跳转失败', 
+            icon: 'error' 
+          });
+        }
+      }); 
+    } catch (error) {
+      console.error('跳转到隐患排查页面失败:', error);
+      wx.showToast({ 
+        title: '页面跳转失败', 
+        icon: 'error' 
+      });
+    }
+  },
+  
+  goToSafetyCheck() { 
+    try {
+      wx.navigateTo({ 
+        url: '/pages/inspection/inspection',
+        fail: (error) => {
+          console.error('跳转到安全检查页面失败:', error);
+          wx.showToast({ 
+            title: '页面跳转失败', 
+            icon: 'error' 
+          });
+        }
+      }); 
+    } catch (error) {
+      console.error('跳转到安全检查页面失败:', error);
+      wx.showToast({ 
+        title: '页面跳转失败', 
+        icon: 'error' 
+      });
+    }
+  },
+  
+  goToDeviceManagement() { 
+    try {
+      wx.showToast({ 
+        title: '设备管理功能', 
+        icon: 'success' 
+      });
+    } catch (error) {
+      console.error('显示设备管理功能提示失败:', error);
+    }
   },
 
-  /**
-   * 跳转详情页面
-   */
-  goToIncidentDetail() {
-    wx.navigateTo({
-      url: '/pages/incident/incident'
-    });
-  },
-
-  /**
-   * 跳转风险评估详情
-   */
-  goToRiskDetail() {
-    wx.navigateTo({
-      url: '/pages/risk/risk'
-    });
-  },
-
-  /**
-   * 分享
-   */
+  // 分享功能
   onShareAppMessage() {
-    return {
-      title: '邹平货运铁路安全监控 - 实时数据',
-      path: '/pages/dashboard/dashboard'
-    };
+    try {
+      return {
+        title: '邹平货运铁路安全监控',
+        path: '/pages/dashboard/dashboard'
+      };
+    } catch (error) {
+      console.error('获取分享信息失败:', error);
+      return {
+        title: '邹平货运铁路安全监控',
+        path: '/pages/dashboard/dashboard'
+      };
+    }
   }
 });

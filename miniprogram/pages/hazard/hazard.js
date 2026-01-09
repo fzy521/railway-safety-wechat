@@ -99,6 +99,7 @@ Page({
    * 使用模拟数据
    */
   useMockData() {
+    // 使用模拟数据
     this.setData({
       hazardList: [
         {
@@ -115,7 +116,10 @@ Page({
           deadline: '2024-12-25',
           responsiblePerson: '李工',
           priority: 3,
-          priorityName: '一般'
+          priorityName: '一般',
+          complianceStatus: '符合GBT 33000-2025标准',
+          supervisionStatus: '未督办',
+          actualProgress: '0'
         },
         {
           id: 'HDD002',
@@ -131,7 +135,10 @@ Page({
           deadline: '2024-12-22',
           responsiblePerson: '技术经理_陈',
           priority: 1,
-          priorityName: '重要'
+          priorityName: '重要',
+          complianceStatus: '待验证',
+          supervisionStatus: '立案督办',
+          actualProgress: '65'
         },
         {
           id: 'HDD003',
@@ -148,7 +155,10 @@ Page({
           responsiblePerson: '组长_刘',
           priority: 4,
           priorityName: '一般',
-          rectificationResult: '已清理，排水畅通'
+          rectificationResult: '已清理，排水畅通',
+          complianceStatus: '符合GBT 33000-2025标准',
+          supervisionStatus: '验收通过',
+          actualProgress: '100'
         },
         {
           id: 'HDD004',
@@ -164,7 +174,10 @@ Page({
           deadline: '2024-12-25',
           responsiblePerson: '现场安全员',
           priority: 3,
-          priorityName: '一般'
+          priorityName: '一般',
+          complianceStatus: '不符合标准',
+          supervisionStatus: '待督办',
+          actualProgress: '0'
         }
       ],
       statistics: {
@@ -215,6 +228,78 @@ Page({
             title: '开始整改',
             icon: 'success'
           })
+        }
+      }
+    })
+  },
+
+  /**
+   * 挂牌督办
+   */
+  startSupervision(e) {
+    const id = e.currentTarget.dataset.id
+    wx.showModal({
+      title: '挂牌督办',
+      content: '确认对此隐患进行挂牌督办？',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            wx.showLoading({ title: '办理中...' })
+            const result = await wx.cloud.callFunction({
+              name: 'danger-supervision',
+              data: {
+                action: 'identify',
+                dangerId: id
+              }
+            })
+            wx.hideLoading()
+            if (result.result.success) {
+              wx.showToast({ title: '挂牌成功', icon: 'success' })
+              this.loadHazardData(true)
+            } else {
+              wx.showToast({ title: '挂牌失败', icon: 'error' })
+            }
+          } catch (error) {
+            wx.hideLoading()
+            console.error('挂牌督办失败:', error)
+            wx.showToast({ title: '挂牌失败', icon: 'error' })
+          }
+        }
+      }
+    })
+  },
+
+  /**
+   * 提交验证
+   */
+  submitVerification(e) {
+    const id = e.currentTarget.dataset.id
+    wx.showModal({
+      title: '提交验证',
+      content: '确认提交整改验证申请？',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            wx.showLoading({ title: '办理中...' })
+            const result = await wx.cloud.callFunction({
+              name: 'danger-supervision',
+              data: {
+                action: 'submit_verification',
+                dangerId: id
+              }
+            })
+            wx.hideLoading()
+            if (result.result.success) {
+              wx.showToast({ title: '提交成功', icon: 'success' })
+              this.loadHazardData(true)
+            } else {
+              wx.showToast({ title: '提交失败', icon: 'error' })
+            }
+          } catch (error) {
+            wx.hideLoading()
+            console.error('提交验证失败:', error)
+            wx.showToast({ title: '提交失败', icon: 'error' })
+          }
         }
       }
     })

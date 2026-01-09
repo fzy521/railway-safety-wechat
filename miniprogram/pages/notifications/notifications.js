@@ -116,8 +116,12 @@ Page({
     }
 
     // 跳转到详情页
-    wx.navigateTo({
-      url: `/pages/notifications/notification-detail?id=${id}`
+    // wx.navigateTo({
+    //   url: `/pages/notifications/notification-detail?id=${id}`
+    // })
+    wx.showToast({
+      title: '详情功能开发中',
+      icon: 'none'
     })
   },
 

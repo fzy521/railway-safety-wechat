@@ -98,9 +98,9 @@
       </view>
 
       <view class="plan-actions">
-        <button class="action-btn" bindtap="viewPlanDetail" data-id="{{item.id}}">详情</button>
-        <button class="action-btn" bindtap="viewPlanDrills" data-id="{{item.id}}">演练记录</button>
-        <button class="action-btn primary" bindtap="addDrillForPlan" data-id="{{item.id}}" data-name="{{item.name}}">添加演练</button>
+        <button class="action-btn" catchtap="viewPlanDetail" data-id="{{item.id}}">详情</button>
+        <button class="action-btn" catchtap="viewPlanDrills" data-id="{{item.id}}">演练记录</button>
+        <button class="action-btn primary" catchtap="addDrillForPlan" data-id="{{item.id}}" data-name="{{item.name}}">添加演练</button>
       </view>
     </view>
   </view>

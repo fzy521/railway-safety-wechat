@@ -1,0 +1,141 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 隐患详情 -->
+  <view wx:else class="danger-detail">
+    <!-- 基本信息 -->
+    <view class="basic-info">
+      <view class="title-section">
+        <text class="danger-title">{{dangerDetail.title}}</text>
+        <view class="danger-badges">
+          <view wx:if="{{dangerDetail.level === '重大隐患'}}" class="badge major">重大</view>
+          <view wx:else class="badge general">一般</view>
+        </view>
+      </view>
+      <view class="status-section">
+        <view class="status-item">
+          <text class="status-label">状态：</text>
+          <text class="status-value {{dangerDetail.status}}">{{dangerDetail.statusName}}</text>
+        </view>
+        <view class="status-item">
+          <text class="status-label">类型：</text>
+          <text class="status-value">{{dangerDetail.typeName}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 详细信息 -->
+    <view class="detail-section">
+      <view class="section-title">
+        <text>详细信息</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">隐患编号：</text>
+        <text class="info-value">{{dangerDetail.id}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">发现日期：</text>
+        <text class="info-value">{{dangerDetail.discoveryDate}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">发现位置：</text>
+        <text class="info-value">{{dangerDetail.zone}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">隐患描述：</text>
+        <text class="info-value info-content">{{dangerDetail.description}}</text>
+      </view>
+    </view>
+
+    <!-- 责任信息 -->
+    <view class="detail-section">
+      <view class="section-title">
+        <text>责任信息</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">责任单位：</text>
+        <text class="info-value">{{dangerDetail.responsibleUnit}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">责任人：</text>
+        <text class="info-value">{{dangerDetail.responsiblePerson}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">联系电话：</text>
+        <text class="info-value">{{dangerDetail.contact}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">优先级：</text>
+        <text class="info-value">{{dangerDetail.priorityName}}</text>
+      </view>
+    </view>
+
+    <!-- 整改信息 -->
+    <view class="detail-section">
+      <view class="section-title">
+        <text>整改信息</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">整改期限：</text>
+        <text class="info-value">{{dangerDetail.plannedCompleteDate}}</text>
+      </view>
+      <view class="info-item" wx:if="{{dangerDetail.actualCompleteDate}}">
+        <text class="info-label">实际完成：</text>
+        <text class="info-value">{{dangerDetail.actualCompleteDate}}</text>
+      </view>
+      <view class="info-item" wx:if="{{dangerDetail.rectificationPlan}}">
+        <text class="info-label">整改方案：</text>
+        <text class="info-value info-content">{{dangerDetail.rectificationPlan}}</text>
+      </view>
+      <view class="info-item" wx:if="{{dangerDetail.rectificationResult}}">
+        <text class="info-label">整改结果：</text>
+        <text class="info-value info-content">{{dangerDetail.rectificationResult}}</text>
+      </view>
+    </view>
+
+    <!-- 关联风险 -->
+    <view class="detail-section">
+      <view class="section-title">
+        <text>关联风险</text>
+      </view>
+      <view wx:if="{{risksLoading}}" class="loading-more">
+        <text>加载中...</text>
+      </view>
+      <view wx:elif="{{relatedRisks.length > 0}}" class="risk-list">
+        <view wx:for="{{relatedRisks}}" wx:key="id" class="risk-item" bindtap="viewRiskDetail" data-id="{{item.id}}">
+          <view class="risk-header">
+            <text class="risk-title">{{item.name}}</text>
+            <view class="risk-badge" style="background-color: {{item.riskColor}}">{{item.riskLevel}}</view>
+          </view>
+          <view class="risk-info">
+            <text class="risk-value">风险类型：{{item.typeName}}</text>
+            <text class="risk-value">风险区域：{{item.zone}}</text>
+          </view>
+          <view class="risk-description">
+            <text>{{item.description}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-list">
+        <text>暂无关联风险</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button wx:if="{{dangerDetail.status === 'identified'}}" class="btn primary" bindtap="startRectification">
+        开始整改
+      </button>
+      <button wx:if="{{dangerDetail.status === 'treating'}}" class="btn primary" bindtap="completeRectification">
+        完成整改
+      </button>
+      <button wx:if="{{dangerDetail.status === 'completed'}}" class="btn primary" bindtap="submitVerification">
+        提交验证
+      </button>
+    </view>
+  </view>
+</view>

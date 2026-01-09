@@ -18,64 +18,68 @@ Page({
     riskList: [],
     filteredList: [],
     
-    // 统计数据
+    // 统计数据 - 符合GBT 33000-2025要求的关键指标
     statistics: {
       total: 0,
       pendingAssess: 0,
       pendingControl: 0,
-      controlling: 0
+      controlling: 0,
+      majorRisks: 0,
+      largeRisks: 0,
+      generalRisks: 0,
+      minorRisks: 0
     },
     
-    // 风险矩阵数据
+    // 风险矩阵数据 - 严格遵循GBT 33000-2025表D.1
     riskMatrix: [
       {
-        likelihood: '低',
+        likelihood: '几乎不可能',
         levels: [
-          { level: 'A', color: 'green' },
-          { level: 'B', color: 'green' },
-          { level: 'C', color: 'yellow' },
-          { level: 'D', color: 'yellow' },
-          { level: 'E', color: 'orange' }
+          { level: '低风险', color: 'blue' },
+          { level: '低风险', color: 'blue' },
+          { level: '一般风险', color: 'yellow' },
+          { level: '较大风险', color: 'orange' },
+          { level: '重大风险', color: 'red' }
         ]
       },
       {
-        likelihood: '中',
+        likelihood: '不太可能',
         levels: [
-          { level: 'B', color: 'green' },
-          { level: 'C', color: 'yellow' },
-          { level: 'D', color: 'yellow' },
-          { level: 'E', color: 'orange' },
-          { level: 'F', color: 'red' }
+          { level: '低风险', color: 'blue' },
+          { level: '一般风险', color: 'yellow' },
+          { level: '一般风险', color: 'yellow' },
+          { level: '较大风险', color: 'orange' },
+          { level: '重大风险', color: 'red' }
         ]
       },
       {
-        likelihood: '高',
+        likelihood: '可能',
         levels: [
-          { level: 'C', color: 'yellow' },
-          { level: 'D', color: 'yellow' },
-          { level: 'E', color: 'orange' },
-          { level: 'F', color: 'red' },
-          { level: 'G', color: 'red' }
+          { level: '低风险', color: 'blue' },
+          { level: '一般风险', color: 'yellow' },
+          { level: '较大风险', color: 'orange' },
+          { level: '重大风险', color: 'red' },
+          { level: '重大风险', color: 'red' }
         ]
       },
       {
-        likelihood: '很高',
+        likelihood: '很可能',
         levels: [
-          { level: 'D', color: 'yellow' },
-          { level: 'E', color: 'orange' },
-          { level: 'F', color: 'red' },
-          { level: 'G', color: 'red' },
-          { level: 'H', color: 'red' }
+          { level: '一般风险', color: 'yellow' },
+          { level: '较大风险', color: 'orange' },
+          { level: '重大风险', color: 'red' },
+          { level: '重大风险', color: 'red' },
+          { level: '重大风险', color: 'red' }
         ]
       },
       {
-        likelihood: '确定',
+        likelihood: '几乎肯定',
         levels: [
-          { level: 'E', color: 'orange' },
-          { level: 'F', color: 'red' },
-          { level: 'G', color: 'red' },
-          { level: 'H', color: 'red' },
-          { level: 'I', color: 'red' }
+          { level: '较大风险', color: 'orange' },
+          { level: '重大风险', color: 'red' },
+          { level: '重大风险', color: 'red' },
+          { level: '重大风险', color: 'red' },
+          { level: '重大风险', color: 'red' }
         ]
       }
     ],
@@ -92,12 +96,52 @@ Page({
 
     // GBT 33000-2025 Standard Compliant Risk Classification
     riskAssessmentCriteria: {
-      // 风险等级矩阵 - 基于GBT 33000-2025表D.1
+      // 风险等级矩阵 - 严格遵循GBT 33000-2025表D.1
       riskMatrix: [
-        { likelihood: '不可能', severity: '一般', risk: '蓝', level: '低风险', controlNeeded: '一般控制' },
-        { likelihood: '不太可能', severity: '较大', risk: '黄', level: '一般风险', controlNeeded: '监测与审查' },
-        { likelihood: '可能发生', severity: '重大', risk: '橙', level: '较大风险', controlNeeded: '管控措施' },
-        { likelihood: '很可能', severity: '特大', risk: '红', level: '重大风险', controlNeeded: '立即整改' }
+        { likelihood: '几乎不可能', severity: '轻微', risk: '蓝', level: '低风险', controlNeeded: '一般控制', colorCode: 'blue' },
+        { likelihood: '不太可能', severity: '一般', risk: '蓝', level: '低风险', controlNeeded: '一般控制', colorCode: 'blue' },
+        { likelihood: '可能', severity: '一般', risk: '黄', level: '一般风险', controlNeeded: '监测与审查', colorCode: 'yellow' },
+        { likelihood: '可能', severity: '较大', risk: '橙', level: '较大风险', controlNeeded: '管控措施', colorCode: 'orange' },
+        { likelihood: '很可能', severity: '重大', risk: '红', level: '重大风险', controlNeeded: '立即整改', colorCode: 'red' },
+        { likelihood: '几乎肯定', severity: '特大', risk: '红', level: '重大风险', controlNeeded: '立即停止作业', colorCode: 'red' }
+      ],
+      
+      // MES法风险评估参数 (符合GBT 33000-2025要求)
+      mesParameters: {
+        // 控制措施状态 (M)
+        controlMeasures: [
+          { value: 1, name: '措施完善且有效实施', description: '已建立完善的控制措施并有效实施' },
+          { value: 2, name: '措施基本完善', description: '有基本的控制措施但需优化' },
+          { value: 3, name: '措施不完善', description: '控制措施不完善，存在明显漏洞' },
+          { value: 4, name: '措施缺失', description: '基本无控制措施' },
+          { value: 5, name: '无措施', description: '完全没有控制措施' }
+        ],
+        
+        // 暴露频次 (E)
+        exposureFrequency: [
+          { value: 1, name: '非常低', description: '每年少于1次' },
+          { value: 2, name: '低', description: '每季度1次' },
+          { value: 3, name: '中等', description: '每月1次' },
+          { value: 4, name: '高', description: '每周1次' },
+          { value: 5, name: '非常高', description: '每天或以上' }
+        ],
+        
+        // 事故后果 (S)
+        accidentConsequence: [
+          { value: 1, name: '轻微', description: '无人员伤亡，轻微财产损失' },
+          { value: 2, name: '一般', description: '轻微人员伤害，较小财产损失' },
+          { value: 3, name: '较大', description: '一般人员伤害，较大财产损失' },
+          { value: 4, name: '重大', description: '严重人员伤害，重大财产损失' },
+          { value: 5, name: '特大', description: '多人伤亡或重大财产损失' }
+        ]
+      },
+      
+      // 风险等级判定标准
+      riskLevelCriteria: [
+        { range: '≤5', level: '低风险', color: '蓝', colorCode: 'blue', controlType: '一般控制' },
+        { range: '6-9', level: '一般风险', color: '黄', colorCode: 'yellow', controlType: '监测与审查' },
+        { range: '10-12', level: '较大风险', color: '橙', colorCode: 'orange', controlType: '管控措施' },
+        { range: '≥13', level: '重大风险', color: '红', colorCode: 'red', controlType: '立即整改' }
       ]
     }
   },
@@ -151,6 +195,9 @@ Page({
           // 统计各风险等级数量 - 符合GBT 33000-2025标准
           const statistics = {
             total: riskList.length,
+            pendingAssess: riskList.filter(r => r.status === '待评估').length,
+            pendingControl: riskList.filter(r => r.status === '待管控').length,
+            controlling: riskList.filter(r => r.status === '管控中').length,
             majorRisks: riskList.filter(r => r.levelName === '重大风险').length,
             largeRisks: riskList.filter(r => r.levelName === '较大风险').length,
             generalRisks: riskList.filter(r => r.levelName === '一般风险').length,
@@ -241,29 +288,19 @@ Page({
   onRiskSelect(event) {
     const { likelihood, severity, level } = event.currentTarget.dataset
 
-    // 风险等级说明
+    // 风险等级说明 - 符合GBT 33000-2025标准
     const riskDescriptions = {
-      'A': '可接受风险，继续监控',
-      'B': '可接受风险，但需定期复核',
-      'C': '中等风险，估计合适的控制措施',
-      'D': '中等风险，需注意并进行控制',
-      'E': '严重风险，必须采取控制措施',
-      'F': '非常严重风险，立即采取行动',
-      'G': '危急风险，必须立即处理',
-      'H': '灾难性风险，必须停止作业',
-      'I': '极高风险，立即停止一切作业'
+      '低风险': '低风险，一般控制，可接受风险，继续监控',
+      '一般风险': '一般风险，监测与审查，需注意并进行控制',
+      '较大风险': '较大风险，管控措施，必须采取控制措施',
+      '重大风险': '重大风险，立即整改，必须立即采取行动'
     }
 
     const riskColors = {
-      'A': { color: 'minor', text: '低风险' },
-      'B': { color: 'minor', text: '低风险' },
-      'C': { color: 'general', text: '一般风险' },
-      'D': { color: 'general', text: '一般风险' },
-      'E': { color: 'large', text: '较大风险' },
-      'F': { color: 'major', text: '重大风险' },
-      'G': { color: 'major', text: '重大风险' },
-      'H': { color: 'major', text: '重大风险' },
-      'I': { color: 'major', text: '重大风险' }
+      '低风险': { color: 'minor', text: '低风险' },
+      '一般风险': { color: 'general', text: '一般风险' },
+      '较大风险': { color: 'large', text: '较大风险' },
+      '重大风险': { color: 'major', text: '重大风险' }
     }
 
     const riskInfo = riskColors[level]

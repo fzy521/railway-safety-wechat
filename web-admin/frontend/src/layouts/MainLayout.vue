@@ -14,46 +14,97 @@
         router
         class="sidebar-menu"
       >
-        <el-menu-item index="/dashboard">
-          <el-icon><DataAnalysis /></el-icon>
-          <template #title>数据看板</template>
+        <!-- 数据中心 -->
+        <el-sub-menu index="/data-center">
+          <template #title>
+            <el-icon><DataAnalysis /></el-icon>
+            <span>数据中心</span>
+          </template>
+          <el-menu-item index="/dashboard">
+            <el-icon><Monitor /></el-icon>
+            <template #title>数据看板</template>
+          </el-menu-item>
+          <el-menu-item index="/statistics">
+            <el-icon><TrendCharts /></el-icon>
+            <template #title>统计分析</template>
+          </el-menu-item>
+        </el-sub-menu>
+
+        <!-- 安全管理 -->
+        <el-sub-menu index="/safety-management">
+          <template #title>
+            <el-icon><Warning /></el-icon>
+            <span>安全管理</span>
+          </template>
+          <el-menu-item index="/risk">
+            <el-icon><Warning /></el-icon>
+            <template #title>风险管理</template>
+          </el-menu-item>
+          <el-menu-item index="/danger">
+            <el-icon><Document /></el-icon>
+            <template #title>隐患管理</template>
+          </el-menu-item>
+          <el-menu-item index="/incident">
+            <el-icon><CircleClose /></el-icon>
+            <template #title>事故管理</template>
+          </el-menu-item>
+          <el-menu-item index="/warning">
+            <el-icon><Bell /></el-icon>
+            <template #title>风险预警</template>
+          </el-menu-item>
+          <el-menu-item index="/supervision">
+            <el-icon><Files /></el-icon>
+            <template #title>隐患督办</template>
+          </el-menu-item>
+        </el-sub-menu>
+
+        <!-- 日常运营 -->
+        <el-sub-menu index="/daily-operation">
+          <template #title>
+            <el-icon><Operation /></el-icon>
+            <span>日常运营</span>
+          </template>
+          <el-menu-item index="/inspection">
+            <el-icon><Checked /></el-icon>
+            <template #title>巡检管理</template>
+          </el-menu-item>
+          <el-menu-item index="/emergency">
+            <el-icon><Lightning /></el-icon>
+            <template #title>应急管理</template>
+          </el-menu-item>
+          <el-menu-item index="/certificates">
+            <el-icon><Medal /></el-icon>
+            <template #title>证书管理</template>
+          </el-menu-item>
+          <el-menu-item index="/notifications">
+            <el-icon><Bell /></el-icon>
+            <template #title>消息通知</template>
+          </el-menu-item>
+        </el-sub-menu>
+
+        <!-- 用户中心 -->
+        <el-sub-menu index="/user-center">
+          <template #title>
+            <el-icon><User /></el-icon>
+            <span>用户中心</span>
+          </template>
+          <el-menu-item index="/users">
+            <el-icon><UserFilled /></el-icon>
+            <template #title>用户管理</template>
+          </el-menu-item>
+          <el-menu-item index="/profile">
+            <el-icon><Avatar /></el-icon>
+            <template #title>个人中心</template>
+          </el-menu-item>
+        </el-sub-menu>
+
+        <!-- 帮助与支持 -->
+        <el-menu-item index="/help">
+          <el-icon><Help /></el-icon>
+          <template #title>帮助与支持</template>
         </el-menu-item>
 
-        <el-menu-item index="/risk">
-          <el-icon><Warning /></el-icon>
-          <template #title>风险管理</template>
-        </el-menu-item>
-
-        <el-menu-item index="/danger">
-          <el-icon><Document /></el-icon>
-          <template #title>隐患管理</template>
-        </el-menu-item>
-
-        <el-menu-item index="/warning">
-          <el-icon><Bell /></el-icon>
-          <template #title>风险预警</template>
-        </el-menu-item>
-
-        <el-menu-item index="/supervision">
-          <el-icon><Files /></el-icon>
-          <template #title>隐患督办</template>
-        </el-menu-item>
-
-        <el-menu-item index="/inspection">
-          <el-icon><Checked /></el-icon>
-          <template #title>巡检管理</template>
-        </el-menu-item>
-
-        <el-menu-item index="/statistics">
-          <el-icon><TrendCharts /></el-icon>
-          <template #title>统计分析</template>
-        </el-menu-item>
-
-        <el-menu-item index="/users">
-          <el-icon><User /></el-icon>
-          <template #title>用户管理</template>
-        </el-menu-item>
-
+        <!-- 系统设置 -->
         <el-menu-item index="/settings">
           <el-icon><Setting /></el-icon>
           <template #title>系统设置</template>
@@ -136,7 +187,14 @@ import {
   Fold,
   Expand,
   ArrowDown,
-  SwitchButton
+  SwitchButton,
+  Lightning,
+  QuestionFilled,
+  Monitor,
+  Operation,
+  Medal,
+  Avatar,
+  Help
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 
@@ -226,12 +284,14 @@ const handleLogout = async () => {
   width: 200px;
 }
 
-/* 菜单项文字颜色 */
-.sidebar-menu :deep(.el-menu-item) {
+/* 菜单项和子菜单标题文字颜色 */
+.sidebar-menu :deep(.el-menu-item),
+.sidebar-menu :deep(.el-sub-menu__title) {
   color: #bfcbd9;
 }
 
-.sidebar-menu :deep(.el-menu-item:hover) {
+.sidebar-menu :deep(.el-menu-item:hover),
+.sidebar-menu :deep(.el-sub-menu__title:hover) {
   background-color: #263445 !important;
   color: #fff !important;
 }
@@ -241,11 +301,14 @@ const handleLogout = async () => {
   color: #fff !important;
 }
 
-.sidebar-menu :deep(.el-menu-item .el-icon) {
+/* 菜单项和子菜单标题图标颜色 */
+.sidebar-menu :deep(.el-menu-item .el-icon),
+.sidebar-menu :deep(.el-sub-menu__title .el-icon) {
   color: #bfcbd9;
 }
 
-.sidebar-menu :deep(.el-menu-item:hover .el-icon) {
+.sidebar-menu :deep(.el-menu-item:hover .el-icon),
+.sidebar-menu :deep(.el-sub-menu__title:hover .el-icon) {
   color: #fff !important;
 }
 

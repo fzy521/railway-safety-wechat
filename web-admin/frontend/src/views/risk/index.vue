@@ -61,6 +61,11 @@
       </el-button>
     </el-card>
 
+    <!-- 风险矩阵 -->
+    <el-card class="matrix-card">
+      <RiskMatrix :risks="allRisksForMatrix" @riskSelected="handleRiskCellClick" />
+    </el-card>
+
     <!-- 数据表格 -->
     <el-card class="table-card">
       <el-table :data="riskList" v-loading="loading" border stripe>
@@ -99,6 +104,16 @@
             {{ formatDate(row.nextCheckDate, 'YYYY-MM-DD') }}
           </template>
         </el-table-column>
+
+        <el-table-column prop="complianceStatus" label="符合状态" width="120" align="center">
+          <template #default="{ row }">
+            <el-tag :type="row.complianceStatus === '符合' ? 'success' : row.complianceStatus === '待验证' ? 'warning' : 'danger'">
+              {{ row.complianceStatus || '符合' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="controlMeasures" label="控制措施" width="150" show-overflow-tooltip />
 
         <el-table-column label="状态" width="80" align="center">
           <template #default="{ row }">
@@ -184,53 +199,53 @@
 
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="M值" prop="mValue">
-              <el-select v-model="riskForm.mValue" placeholder="请选择" style="width: 100%">
-                <el-option label="5-无控制措施" :value="5" />
-                <el-option label="3-应急措施" :value="3" />
-                <el-option label="1-预防措施" :value="1" />
+            <el-form-item label="严重程度 (S值)" prop="sValue">
+              <el-select v-model="riskForm.sValue" placeholder="请选择严重程度" style="width: 100%">
+                <el-option label="1分: 轻微伤害" value="1" />
+                <el-option label="2分: 需医院治疗" value="2" />
+                <el-option label="4分: 永久失能" value="4" />
+                <el-option label="8分: 1人死亡" value="8" />
+                <el-option label="10分: 多人死亡" value="10" />
               </el-select>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
-            <el-form-item label="E1值" prop="e1Value">
-              <el-select v-model="riskForm.e1Value" placeholder="请选择" style="width: 100%">
-                <el-option label="10-连续暴露" :value="10" />
-                <el-option label="6-每天暴露" :value="6" />
-                <el-option label="3-每周暴露" :value="3" />
-                <el-option label="2-每月暴露" :value="2" />
-                <el-option label="1-每年暴露" :value="1" />
+            <el-form-item label="暴露频率 (E1值)" prop="e1Value">
+              <el-select v-model="riskForm.e1Value" placeholder="请选择暴露频率" style="width: 100%">
+                <el-option label="1分: 几乎不可能" value="1" />
+                <el-option label="2分: 很少" value="2" />
+                <el-option label="3分: 有时" value="3" />
+                <el-option label="6分: 经常" value="6" />
+                <el-option label="10分: 频繁" value="10" />
               </el-select>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
-            <el-form-item label="E2值" prop="e2Value">
-              <el-select v-model="riskForm.e2Value" placeholder="请选择" style="width: 100%">
-                <el-option label="10-常态" :value="10" />
-                <el-option label="6-每天出现" :value="6" />
-                <el-option label="3-每周出现" :value="3" />
-                <el-option label="2-每月出现" :value="2" />
-                <el-option label="1-每年出现" :value="1" />
+            <el-form-item label="暴露强度 (E2值)" prop="e2Value">
+              <el-select v-model="riskForm.e2Value" placeholder="请选择暴露强度" style="width: 100%">
+                <el-option label="1分: 几乎不可能" value="1" />
+                <el-option label="2分: 很少" value="2" />
+                <el-option label="3分: 有时" value="3" />
+                <el-option label="6分: 经常" value="6" />
+                <el-option label="10分: 频繁" value="10" />
               </el-select>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
-            <el-form-item label="S值" prop="sValue">
-              <el-select v-model="riskForm.sValue" placeholder="请选择" style="width: 100%">
-                <el-option label="10-多人死亡" :value="10" />
-                <el-option label="8-1人死亡" :value="8" />
-                <el-option label="4-永久失能" :value="4" />
-                <el-option label="2-需医院治疗" :value="2" />
-                <el-option label="1-轻微伤害" :value="1" />
+            <el-form-item label="防护措施等级 (M值)" prop="mValue">
+              <el-select v-model="riskForm.mValue" placeholder="请选择防护措施等级" style="width: 100%">
+                <el-option label="1分: 无防护" value="1" />
+                <el-option label="3分: 部分防护" value="3" />
+                <el-option label="5分: 完善防护" value="5" />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-form-item label="风险值">
+        <el-form-item label="计算风险值">
           <el-input :value="riskValue" disabled />
         </el-form-item>
 
@@ -286,6 +301,25 @@
             <el-option label="风险矩阵法" value="风险矩阵法" />
           </el-select>
         </el-form-item>
+
+        <el-divider content-position="left">GBT 33000-2025 合规性信息</el-divider>
+
+        <el-form-item label="合规状态" prop="complianceStatus">
+          <el-select v-model="riskForm.complianceStatus" placeholder="请选择" style="width: 100%">
+            <el-option label="符合" value="符合" />
+            <el-option label="待验证" value="待验证" />
+            <el-option label="不符合" value="不符合" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="控制措施要求" prop="controlMeasuresRequirements">
+          <el-input
+            v-model="riskForm.controlMeasuresRequirements"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入控制措施要求，符合GBT 33000-2025标准"
+          />
+        </el-form-item>
       </el-form>
 
       <template #footer>
@@ -305,8 +339,9 @@ import {
   Plus,
   Download
 } from '@element-plus/icons-vue'
-import { getRisks, createRisk, updateRisk, deleteRisk } from '@/api/cloud'
+import { getRisks, createRisk, updateRisk, deleteRisk, getRisksAdvanced } from '@/api/cloud'
 import { formatDate, getRiskLevelColor, exportToCSV } from '@/utils'
+import RiskMatrix from '@/components/RiskMatrix.vue'
 import type { Risk } from '@/types'
 
 // 搜索表单
@@ -317,6 +352,21 @@ const searchForm = reactive({
   status: ''
 })
 
+// 处理风险矩阵单元格点击
+const handleRiskCellClick = (likelihood: number, severity: number) => {
+  // 添加风险矩阵筛选条件
+  matrixFilters.likelihood = likelihood
+  matrixFilters.severity = severity
+  pagination.page = 1
+  loadRiskList()
+}
+
+// 风险矩阵筛选条件
+const matrixFilters = reactive({
+  likelihood: undefined,
+  severity: undefined
+})
+
 // 分页
 const pagination = reactive({
   page: 1,
@@ -324,8 +374,11 @@ const pagination = reactive({
   total: 0
 })
 
-// 风险列表
+// 风险列表数据（用于表格展示）
 const riskList = ref<Risk[]>([])
+
+// 所有风险数据（用于风险矩阵展示）
+const allRisksForMatrix = ref<Risk[]>([])
 const loading = ref(false)
 
 // 对话框
@@ -349,7 +402,9 @@ const riskForm = reactive({
   manageMeasures: '',
   manageDept: '',
   managePerson: '',
-  identificationMethod: ''
+  identificationMethod: '',
+  complianceStatus: '符合',
+  controlMeasuresRequirements: ''
 })
 
 // 计算风险值
@@ -378,6 +433,10 @@ const riskRules: FormRules = {
   riskName: [{ required: true, message: '请输入风险名称', trigger: 'blur' }],
   riskType: [{ required: true, message: '请选择风险类型', trigger: 'change' }],
   location: [{ required: true, message: '请输入风险地点', trigger: 'blur' }],
+  sValue: [{ required: true, message: '请选择严重程度', trigger: 'change' }],
+  e1Value: [{ required: true, message: '请选择暴露频率', trigger: 'change' }],
+  e2Value: [{ required: true, message: '请选择暴露强度', trigger: 'change' }],
+  mValue: [{ required: true, message: '请选择防护措施等级', trigger: 'change' }],
   manageDept: [{ required: true, message: '请输入管控责任部门', trigger: 'blur' }],
   managePerson: [{ required: true, message: '请输入管控责任人', trigger: 'blur' }]
 }
@@ -388,17 +447,33 @@ const getRiskTagType = (level: number) => {
   return types[level - 1] || 'info'
 }
 
+// 获取风险等级颜色
+const getRiskLevelColor = (level: number) => {
+  const colors = ['#FF4D4F', '#FA8C16', '#FAAD14', '#52C41A']
+  return colors[level - 1] || '#1890FF'
+}
+
 // 加载风险列表
 const loadRiskList = async () => {
   loading.value = true
   try {
-    const result = await getRisks({
+    // 首先加载所有风险用于风险矩阵显示
+    const allRisksResult = await getRisks({ pageSize: 999 }) // 获取所有风险用于矩阵显示
+    allRisksForMatrix.value = allRisksResult.list
+    
+    // 然后根据筛选条件加载分页数据
+    const result = await getRisksAdvanced({
       page: pagination.page,
       pageSize: pagination.pageSize,
-      ...searchForm
+      search: searchForm.riskName,
+      level: searchForm.riskLevel,
+      color: searchForm.riskColor,
+      status: searchForm.status,
+      likelihood: matrixFilters.likelihood,
+      severity: matrixFilters.severity
     })
-    riskList.value = result.list
-    pagination.total = result.total
+    riskList.value = result.list || []
+    pagination.total = result.total || 0
   } catch (error: any) {
     ElMessage.error(error.message || '加载风险列表失败')
   } finally {
@@ -420,6 +495,9 @@ const handleReset = () => {
     riskColor: '',
     status: ''
   })
+  // 重置矩阵筛选
+  matrixFilters.likelihood = undefined
+  matrixFilters.severity = undefined
   handleSearch()
 }
 
@@ -441,7 +519,9 @@ const handleAdd = () => {
     manageMeasures: '',
     manageDept: '',
     managePerson: '',
-    identificationMethod: ''
+    identificationMethod: '',
+    complianceStatus: '符合',
+    controlMeasuresRequirements: ''
   })
   dialogVisible.value = true
 }
@@ -464,14 +544,36 @@ const handleEdit = (row: Risk) => {
     manageMeasures: row.manageMeasures,
     manageDept: row.manageDept,
     managePerson: row.managePerson,
-    identificationMethod: row.identificationMethod
+    identificationMethod: row.identificationMethod,
+    complianceStatus: row.complianceStatus || '符合',
+    controlMeasuresRequirements: row.controlMeasuresRequirements || ''
   })
   dialogVisible.value = true
 }
 
 // 查看
 const handleView = (row: Risk) => {
-  ElMessage.info('查看功能开发中')
+  // 构建查看对话框内容
+  ElMessageBox.alert(
+    `
+      <div class="view-risk-detail">
+        <h4>${row.riskName}</h4>
+        <p><strong>风险类型:</strong> ${row.riskType}</p>
+        <p><strong>风险等级:</strong> <span style="color: ${getRiskLevelColor(row.riskLevel)}">${row.riskGrade}</span></p>
+        <p><strong>风险地点:</strong> ${row.location}</p>
+        <p><strong>管控部门:</strong> ${row.manageDept}</p>
+        <p><strong>管控责任人:</strong> ${row.managePerson}</p>
+        <p><strong>风险值:</strong> ${row.rValue}</p>
+        <p><strong>控制措施:</strong> ${row.controlMeasures || '无'}</p>
+        <p><strong>合规状态:</strong> ${row.complianceStatus || '符合'}</p>
+      </div>
+    `,
+    '风险详情',
+    {
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: '关闭'
+    }
+  )
 }
 
 // 删除
@@ -557,6 +659,7 @@ loadRiskList()
 
 .search-card,
 .operation-card,
+.matrix-card,
 .table-card {
   margin-bottom: 20px;
 }

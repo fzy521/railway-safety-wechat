@@ -1,0 +1,283 @@
+@import "../../common.wxss";
+
+/* 页面容器 */
+.container {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+
+/* 加载容器 */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loading-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+/* 内容区域 */
+.content {
+  padding-bottom: var(--spacing-xxl);
+}
+
+/* 顶部导航 */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-back {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.nav-back:active {
+  background: var(--color-bg-hover);
+}
+
+.back-icon {
+  font-size: 48rpx;
+  color: var(--color-text-primary);
+  font-weight: 300;
+}
+
+.nav-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.nav-placeholder {
+  width: 80rpx;
+}
+
+/* 区块 */
+.section {
+  margin: var(--spacing-xl);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xxl);
+  box-shadow: var(--shadow-md);
+}
+
+/* 区块头部 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.section-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* 信息卡片 */
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-hover);
+  border-radius: var(--radius-md);
+}
+
+.info-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  min-width: 200rpx;
+}
+
+.info-value {
+  flex: 1;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  text-align: right;
+  word-break: break-all;
+}
+
+.info-value.effectiveness {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 状态徽章 */
+.status-badge {
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.status-badge.active {
+  background: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.status-badge.draft {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+}
+
+.status-badge.archived {
+  background: var(--color-info);
+  color: #fff;
+}
+
+/* PDF列表 */
+.pdf-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* PDF项 */
+.pdf-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-hover);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.pdf-item:active {
+  background: var(--color-bg-page);
+}
+
+/* PDF图标 */
+.pdf-icon {
+  width: 100rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #ff4b4b 0%, #ff6b6b 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.icon-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+}
+
+/* PDF信息 */
+.pdf-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.pdf-name {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* PDF操作按钮 */
+.pdf-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-left: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.action-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-base);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn.preview {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.action-btn.download {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.action-btn.delete {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxxxl) var(--spacing-xl);
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.empty-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}

@@ -65,7 +65,17 @@ Page({
         approvalDept: '安全管理部门',
         drillFrequency: '每年2次',
         drillFrequencyCode: 'yearly_2',
-        effectiveness: '已通过演练验证有效'
+        effectiveness: '已通过演练验证有效',
+        pdfFiles: [
+          {
+            id: 'PDF001',
+            fileName: '特种设备事故专项应急预案.pdf',
+            fileSize: '2.3MB',
+            uploadTime: '2024-11-15 10:30',
+            fileUrl: 'https://example.com/files/EP001.pdf',
+            cloudPath: 'emergency-plans/EP001.pdf'
+          }
+        ]
       },
       {
         id: 'EP002',
@@ -80,7 +90,8 @@ Page({
         approvalDept: '总经理办公室',
         drillFrequency: '每年1次',
         drillFrequencyCode: 'yearly_1',
-        effectiveness: '需补充低温天气专项演练'
+        effectiveness: '需补充低温天气专项演练',
+        pdfFiles: []
       },
       {
         id: 'EP003',
@@ -95,7 +106,17 @@ Page({
         approvalDept: '电力部门',
         drillFrequency: '每季度1次',
         drillFrequencyCode: 'quarterly_1',
-        effectiveness: '演练效果良好'
+        effectiveness: '演练效果良好',
+        pdfFiles: [
+          {
+            id: 'PDF003',
+            fileName: '接触网故障现场处置方案.pdf',
+            fileSize: '1.8MB',
+            uploadTime: '2024-12-01 14:20',
+            fileUrl: 'https://example.com/files/EP003.pdf',
+            cloudPath: 'emergency-plans/EP003.pdf'
+          }
+        ]
       },
       {
         id: 'EP004',
@@ -110,7 +131,8 @@ Page({
         approvalDept: '安全管理部门',
         drillFrequency: '每年1次',
         drillFrequencyCode: 'yearly_1',
-        effectiveness: '待验证'
+        effectiveness: '待验证',
+        pdfFiles: []
       }
     ]
 
@@ -464,9 +486,21 @@ Page({
    * 查看预案详情
    */
   viewPlanDetail(e) {
+    console.log('viewPlanDetail 被调用', e)
     const planId = e.currentTarget.dataset.id
+    console.log('planId:', planId)
     wx.navigateTo({
-      url: `/pages/emergency/plan-detail?id=${planId}`
+      url: '/pages/emergency/plan-detail/plan-detail?id=' + planId,
+      success: (res) => {
+        console.log('跳转成功', res)
+      },
+      fail: (err) => {
+        console.log('跳转失败', err)
+        wx.showToast({
+          title: '跳转失败',
+          icon: 'none'
+        })
+      }
     })
   },
 
@@ -515,7 +549,7 @@ Page({
   viewDrillDetail(e) {
     const drillId = e.currentTarget.dataset.id
     wx.navigateTo({
-      url: `/pages/emergency/drill-detail?id=${drillId}`
+      url: '/pages/emergency/drill-detail/drill-detail?id=' + drillId
     })
   },
 
@@ -525,7 +559,7 @@ Page({
   viewSupplyDetail(e) {
     const supplyId = e.currentTarget.dataset.id
     wx.navigateTo({
-      url: `/pages/emergency/supply-detail?id=${supplyId}`
+      url: '/pages/emergency/supply-detail/supply-detail?id=' + supplyId
     })
   },
 

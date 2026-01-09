@@ -27,6 +27,11 @@ Page({
     // 状态
     status: '待整改',
     
+    // 风险关联 - GBT 33000-2025 风险与隐患关联
+    associatedRisks: [],
+    availableRisks: [],
+    showRiskSelector: false,
+    
     // 附件
     photos: []
   },
@@ -39,6 +44,77 @@ Page({
       discoverer: app.globalData.userInfo?.name || '',
       discovererDept: app.globalData.userInfo?.dept || ''
     })
+    
+    // 加载可用风险列表 - GBT 33000-2025 风险与隐患关联
+    this.loadAvailableRisks()
+  },
+  
+  /**
+   * 加载可用风险列表
+   */
+  loadAvailableRisks() {
+    wx.cloud.database().collection('risk_library')
+      .where({ status: '管控中' })
+      .get({
+        success: res => {
+          this.setData({
+            availableRisks: res.data.map(risk => ({
+              id: risk._id,
+              name: risk.riskName,
+              level: risk.riskGrade,
+              color: risk.riskColor,
+              description: risk.riskDescription
+            }))
+          })
+        },
+        fail: err => {
+          console.error('加载风险列表失败:', err)
+        }
+      })
+  },
+  
+  /**
+   * 打开风险选择器
+   */
+  openRiskSelector() {
+    this.setData({ showRiskSelector: true })
+  },
+  
+  /**
+   * 关闭风险选择器
+   */
+  closeRiskSelector() {
+    this.setData({ showRiskSelector: false })
+  },
+  
+  /**
+   * 选择关联风险
+   */
+  selectRisk(e) {
+    const risk = e.currentTarget.dataset.risk
+    const associatedRisks = this.data.associatedRisks
+    
+    // 检查是否已关联
+    const index = associatedRisks.findIndex(r => r.id === risk.id)
+    if (index === -1) {
+      // 添加关联
+      associatedRisks.push(risk)
+    } else {
+      // 取消关联
+      associatedRisks.splice(index, 1)
+    }
+    
+    this.setData({ associatedRisks })
+  },
+  
+  /**
+   * 移除关联风险
+   */
+  removeAssociatedRisk(e) {
+    const index = e.currentTarget.dataset.index
+    const associatedRisks = this.data.associatedRisks
+    associatedRisks.splice(index, 1)
+    this.setData({ associatedRisks })
   },
 
   onDangerLocationChange(e) {
@@ -96,6 +172,14 @@ Page({
 
     wx.showLoading({ title: '提交中...' })
 
+    // 构建关联风险数据
+    const associatedRisksData = this.data.associatedRisks.map(risk => ({
+      riskId: risk.id,
+      riskName: risk.name,
+      riskLevel: risk.level,
+      riskColor: risk.color
+    }))
+    
     const data = {
       dangerLocation: this.data.dangerLocation,
       dangerPart: this.data.dangerPart,
@@ -123,7 +207,11 @@ Page({
       status: this.data.status,
       photos: this.data.photos,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      
+      // 关联风险信息 - GBT 33000-2025 风险与隐患关联
+      associatedRisks: associatedRisksData,
+      riskCorrelation: associatedRisksData.length > 0 ? '已关联' : '未关联'
     }
 
     wx.cloud.database().collection('hidden_danger_library').add({

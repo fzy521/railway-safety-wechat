@@ -1,81 +1,280 @@
 <view class="container">
-  <view class="safety-overview">
-    <text class="section-title">安全概况</text>
-    <view class="metrics-grid">
-      <view class="metric-card">
-        <text class="metric-value">{{todayIncidents}}</text>
-        <text class="metric-label">今日事故</text>
+  <!-- 顶部更新时间 -->
+  <view class="update-time-container">
+    <view class="update-time">
+      <text class="update-label">最后更新:</text>
+      <text class="update-value">{{updateTime}}</text>
+      <text class="update-refresh" bindtap="loadDashboardData">
+        <text class="iconfont icon-refresh"></text>
+      </text>
+    </view>
+  </view>
+
+  <!-- 安全概况卡片 -->
+  <view class="overview-section">
+    <view class="section-header">
+      <text class="section-title">安全概况</text>
+      <text class="section-subtitle">关键安全指标实时监控</text>
+    </view>
+    
+    <view class="overview-cards">
+      <!-- 今日事故数 -->
+      <view class="overview-card danger">
+        <view class="card-icon">
+          <text class="iconfont icon-warning"></text>
+        </view>
+        <view class="card-value">{{safetyOverview.todayIncidents}}</view>
+        <view class="card-label">今日事故数</view>
       </view>
-      <view class="metric-card">
-        <text class="metric-value">{{riskLevel}}</text>
-        <text class="metric-label">风险等级</text>
+      
+      <!-- 风险等级 -->
+      <view class="overview-card risk">
+        <view class="card-icon">
+          <text class="iconfont icon-risk"></text>
+        </view>
+        <view class="card-value">{{safetyOverview.riskLevel}}</view>
+        <view class="card-label">当前风险等级</view>
       </view>
-      <view class="metric-card">
-        <text class="metric-value {{safetyRate >= 95 ? 'status-safe' : safetyRate >= 80 ? 'status-warning' : 'status-danger'}}">{{safetyRate}}%</text>
-        <text class="metric-label">安全指数</text>
+      
+      <!-- 安全率 -->
+      <view class="overview-card safe">
+        <view class="card-icon">
+          <text class="iconfont icon-safe"></text>
+        </view>
+        <view class="card-value">{{safetyOverview.safetyRate}}%</view>
+        <view class="card-label">安全率</view>
       </view>
-      <view class="metric-card">
-        <text class="metric-value">{{completionRate}}%</text>
-        <text class="metric-label">巡检完成率</text>
+      
+      <!-- 重大风险 -->
+      <view class="overview-card danger">
+        <view class="card-icon">
+          <text class="iconfont icon-major-risk"></text>
+        </view>
+        <view class="card-value">{{safetyOverview.majorRisks}}</view>
+        <view class="card-label">重大风险</view>
       </view>
     </view>
   </view>
 
-  <view class="risk-section">
-    <text class="section-title">风险评估</text>
+  <!-- 详细指标网格 -->
+  <view class="metrics-section">
+    <view class="section-header">
+      <text class="section-title">详细指标</text>
+    </view>
+    <view class="metrics-grid">
+      <view class="metric-card">
+        <view class="metric-label">本周事故数</view>
+        <view class="metric-value">{{safetyOverview.recentIncidents}}</view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-label">风险总数</view>
+        <view class="metric-value">{{safetyOverview.totalRisks}}</view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-label">安全分数</view>
+        <view class="metric-value status-safe">{{safetyOverview.safetyScore}}</view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-label">总检查数</view>
+        <view class="metric-value">{{safetyOverview.totalInspections}}</view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-label">检查通过率</view>
+        <view class="metric-value">{{safetyOverview.inspectionCompletionRate}}%</view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-label">待处理检查</view>
+        <view class="metric-value">{{safetyOverview.pendingInspections}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备状态卡片 -->
+  <view class="device-section">
+    <view class="section-header">
+      <text class="section-title">设备状态</text>
+    </view>
+    <view class="device-cards">
+      <view class="device-card online">
+        <view class="device-icon">
+          <text class="iconfont icon-device-online"></text>
+        </view>
+        <view class="device-info">
+          <view class="device-value">{{onlineDevices}}</view>
+          <view class="device-label">在线设备</view>
+        </view>
+        <view class="device-progress">
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{Math.min(100, (onlineDevices / (onlineDevices + offlineDevices)) * 100)}}%"></view>
+          </view>
+          <view class="progress-text">{{Math.min(100, (onlineDevices / (onlineDevices + offlineDevices)) * 100)}}%</view>
+        </view>
+      </view>
+      
+      <view class="device-card offline">
+        <view class="device-icon">
+          <text class="iconfont icon-device-offline"></text>
+        </view>
+        <view class="device-info">
+          <view class="device-value">{{offlineDevices}}</view>
+          <view class="device-label">离线设备</view>
+        </view>
+        <view class="device-progress">
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{Math.min(100, (offlineDevices / (onlineDevices + offlineDevices)) * 100)}}%"></view>
+          </view>
+          <view class="progress-text">{{Math.min(100, (offlineDevices / (onlineDevices + offlineDevices)) * 100)}}%</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实时告警信息 -->
+  <view class="alerts-section">
+    <view class="section-title">实时告警</view>
+    <view class="alerts-list" wx:if="{{recentAlerts.length>0}}">
+      <view class="alert-item alert-{{item.type}}" wx:for="{{recentAlerts}}" wx:key="id" animation="{{item.animation}}">
+        <view class="alert-icon alert-{{item.type}}"></view>
+        <view class="alert-info">
+          <view class="alert-title">{{item.title}}</view>
+          <view class="alert-description">{{item.description}}</view>
+        </view>
+        <view class="alert-time">{{item.time}}</view>
+      </view>
+    </view>
+    <view class="no-alerts" wx:else>暂无告警信息</view>
+  </view>
+
+  <!-- 安全趋势分析 -->
+  <view class="chart-section">
+    <view class="section-title">安全趋势分析</view>
+    <canvas canvas-id="trendChart" class="chart-canvas"></canvas>
+  </view>
+
+  <!-- 风险等级分布 -->
+  <view class="chart-section">
+    <view class="section-title">风险等级分布</view>
     <view class="risk-grid">
-      <view class="risk-item risk-minor">
-        <text class="risk-count">{{minorRisks}}</text>
-        <text class="risk-label">低风险</text>
+      <view class="risk-item">
+        <view class="risk-name">低风险</view>
+        <view class="risk-value">{{riskLevels.low}}</view>
       </view>
-      <view class="risk-item risk-general">
-        <text class="risk-count">{{generalRisks}}</text>
-        <text class="risk-label">一般风险</text>
+      <view class="risk-item">
+        <view class="risk-name">一般风险</view>
+        <view class="risk-value">{{riskLevels.moderate}}</view>
       </view>
-      <view class="risk-item risk-large">
-        <text class="risk-count">{{largeRisks}}</text>
-        <text class="risk-label">较大风险</text>
+      <view class="risk-item">
+        <view class="risk-name">较大风险</view>
+        <view class="risk-value">{{riskLevels.critical}}</view>
       </view>
-      <view class="risk-item risk-major">
-        <text class="risk-count">{{majorRisks}}</text>
-        <text class="risk-label">重大风险</text>
+      <view class="risk-item">
+        <view class="risk-name">重大风险</view>
+        <view class="risk-value">{{riskLevels.major}}</view>
+      </view>
+    </view>
+    <canvas canvas-id="riskChart" class="chart-canvas"></canvas>
+  </view>
+
+  <!-- 隐患排查统计 -->
+  <view class="chart-section">
+    <view class="section-title">隐患排查统计</view>
+    <view class="hazard-grid">
+      <view class="hazard-item">
+        <view class="hazard-name">隐患总数</view>
+        <view class="hazard-value">{{hazardData.totalHazards}}</view>
+      </view>
+      <view class="hazard-item">
+        <view class="hazard-name">已解决</view>
+        <view class="hazard-value">{{hazardData.resolvedHazards}}</view>
+      </view>
+      <view class="hazard-item">
+        <view class="hazard-name">待处理</view>
+        <view class="hazard-value">{{hazardData.pendingHazards}}</view>
+      </view>
+      <view class="hazard-item">
+        <view class="hazard-name">结案率</view>
+        <view class="hazard-value">{{hazardData.closureRate}}%</view>
+      </view>
+    </view>
+    <canvas canvas-id="hazardChart" class="chart-canvas"></canvas>
+  </view>
+
+  <!-- 区域安全状态 -->
+  <view class="zones-section">
+    <view class="section-header">
+      <view class="section-title">区域安全状态</view>
+      <view class="zone-controls">
+        <picker bindchange="onZoneSortChange" value="{{zoneSortIndex}}" range="{{zoneSortOptions}}" range-key="name">
+          <view class="sort-picker">
+            排序: {{zoneSortOptions[zoneSortIndex].name}}
+          </view>
+        </picker>
+        <picker bindchange="onZoneFilterChange" value="{{zoneFilterIndex}}" range="{{zoneFilterOptions}}" range-key="name">
+          <view class="filter-picker">
+            筛选: {{zoneFilterOptions[zoneFilterIndex].name}}
+          </view>
+        </picker>
+      </view>
+    </view>
+    <view class="zone-list">
+      <view class="zone-item {{item.status == '危险' ? 'status-danger' : item.status == '警告' ? 'status-warning' : 'status-safe'}}" 
+            wx:for="{{filteredZoneStatus}}" 
+            wx:key="id"
+            bindtap="onZoneTap"
+            data-zone-id="{{item.id}}"
+            data-zone-name="{{item.name}}">
+        <view class="zone-header">
+          <view class="zone-name">{{item.name}}</view>
+          <view class="status-badge {{item.status == '危险' ? 'status-danger' : item.status == '警告' ? 'status-warning' : 'status-safe'}}">
+            {{item.status}}
+          </view>
+        </view>
+        <view class="zone-details">
+          <text class="zone-stat">事故: <span class="stat-value">{{item.incidents}}</span></text>
+          <text class="zone-stat">隐患: <span class="stat-value">{{item.hazards}}</span></text>
+          <text class="zone-stat">设备: <span class="stat-value">{{item.devices}}</span></text>
+        </view>
+        <view class="last-inspection">最后检查: {{item.lastInspection}}</view>
+        <view class="zone-progress">
+          <view class="progress-label">安全系数</view>
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{item.safetyScore || 80}}%;"></view>
+          </view>
+          <view class="progress-value">{{item.safetyScore || 80}}%</view>
+        </view>
+        <view class="zone-actions">
+          <view class="action-icon" catchtap="onZoneActionTap" data-action="inspect" data-zone-id="{{item.id}}" data-zone-name="{{item.name}}">
+            <text>🔍</text>
+            <text class="action-text">检查</text>
+          </view>
+          <view class="action-icon" catchtap="onZoneActionTap" data-action="alerts" data-zone-id="{{item.id}}" data-zone-name="{{item.name}}">
+            <text>⚠️</text>
+            <text class="action-text">告警</text>
+          </view>
+          <view class="action-icon" catchtap="onZoneActionTap" data-action="devices" data-zone-id="{{item.id}}" data-zone-name="{{item.name}}">
+            <text>📱</text>
+            <text class="action-text">设备</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
 
-  <view class="hazard-section">
-    <text class="section-title">隐患排查</text>
-    <view class="metrics-grid">
-      <view class="metric-card">
-        <text class="metric-value">{{totalHazards}}</text>
-        <text class="metric-label">隐患总数</text>
-      </view>
-      <view class="metric-card">
-        <text class="metric-value">{{pendingHazards}}</text>
-        <text class="metric-label">待整改</text>
-      </view>
-      <view class="metric-card">
-        <text class="metric-value">{{inProgressHazards}}</text>
-        <text class="metric-label">整改中</text>
-      </view>
-      <view class="metric-card">
-        <text class="metric-value">{{completedHazards}}</text>
-        <text class="metric-label">已整改</text>
-      </view>
-    </view>
+  <!-- 更新时间 -->
+  <view class="update-time">
+    更新时间: {{updateTime}}
   </view>
 
-  <view class="zone-list">
-    <text class="section-title">各区域安全状态</text>
-    <view class="zone-item" wx:for="{{zones}}" wx:key="id">
-      <view class="zone-info">
-        <text class="zone-name">{{item.name}}</text>
-        <text class="zone-status {{item.status}}">{{item.statusText}}</text>
-      </view>
-      <view class="zone-stats">
-        <text class="zone-incidents">事故: {{item.incidents}}</text>
-        <text class="zone-risks">风险: {{item.risks}}</text>
-      </view>
+  <!-- 底部操作区域 -->
+  <view class="dashboard-section">
+    <view class="section-header">
+      <text class="section-title">快速操作</text>
+    </view>
+    <view class="action-buttons">
+      <button class="action-btn" type="primary" size="mini" bindtap="goToRiskAssessment">风险评估</button>
+      <button class="action-btn" type="default" size="mini" bindtap="goToHazardInspection">隐患排查</button>
+      <button class="action-btn" type="default" size="mini" bindtap="goToSafetyCheck">安全检查</button>
+      <button class="action-btn" type="default" size="mini" bindtap="goToDeviceManagement">设备管理</button>
     </view>
   </view>
 </view>

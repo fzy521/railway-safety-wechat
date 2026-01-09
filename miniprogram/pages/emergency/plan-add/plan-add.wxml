@@ -1,13 +1,15 @@
-﻿<view style="padding: 40rpx; background: #fff; min-height: 100vh;">
-  <view style="text-align: center; margin-bottom: 40rpx;">
-    <text style="font-size: 36rpx; font-weight: bold; color: #333;">添加应急预案</text>
+﻿<view class="container">
+  <view class="header">
+    <text class="title">添加应急预案</text>
+    <text class="subtitle">上传PDF文档并创建新预案</text>
   </view>
   
   <form bindsubmit="handleSubmit">
-    <view style="margin-bottom: 32rpx;">
-      <text style="display: block; font-size: 28rpx; margin-bottom: 16rpx;">预案名称 *</text>
+    <!-- 预案名称 -->
+    <view class="form-group">
+      <text class="form-label">预案名称 *</text>
       <input
-        style="width: 100%; height: 88rpx; padding: 0 32rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box; font-size: 28rpx;"
+        class="form-input"
         name="name"
         placeholder="请输入预案名称"
         value="{{formData.name}}"
@@ -16,25 +18,60 @@
       />
     </view>
     
-    <view style="margin-bottom: 32rpx;">
-      <text style="display: block; font-size: 28rpx; margin-bottom: 16rpx;">预案类型 *</text>
+    <!-- 预案类型 -->
+    <view class="form-group">
+      <text class="form-label">预案类型 *</text>
       <picker
-        style="width: 100%; height: 88rpx; padding: 0 32rpx; background: #f5f5f5; border: 1rpx solid #ddd; border-radius: 8rpx; box-sizing: border-box; font-size: 28rpx;"
+        class="form-picker"
         mode="selector"
         range="{{planTypes}}"
         range-key="label"
         value="{{formData.typeIndex}}"
         bindchange="onTypeChange"
       >
-        <view style="font-size: 28rpx;">
+        <view class="picker-value">
           {{formData.typeIndex !== '' ? planTypes[formData.typeIndex].label : '请选择预案类型'}}
         </view>
       </picker>
     </view>
+
+    <!-- PDF文件上传 -->
+    <view class="form-group">
+      <text class="form-label">预案文档 *</text>
+      <text class="form-hint">请上传PDF格式的预案文档</text>
+      
+      <!-- 上传按钮 -->
+      <view class="upload-btn" bindtap="choosePdfFile">
+        <text class="upload-icon">📄</text>
+        <text class="upload-text">{{uploading ? '上传中...' : '点击上传PDF文件'}}</text>
+      </view>
+
+      <!-- 已上传文件列表 -->
+      <view wx:if="{{uploadedFiles.length > 0}}" class="file-list">
+        <view wx:for="{{uploadedFiles}}" wx:key="id" class="file-item">
+          <view class="file-icon">
+            <text class="icon-text">PDF</text>
+          </view>
+          <view class="file-info">
+            <text class="file-name">{{item.fileName}}</text>
+            <text class="file-meta">{{item.fileSize}} · {{item.uploadTime}}</text>
+          </view>
+          <view class="file-actions">
+            <view class="action-btn preview" bindtap="previewPdf" data-url="{{item.fileUrl}}" data-name="{{item.fileName}}">
+              <text>预览</text>
+            </view>
+            <view class="action-btn delete" bindtap="deleteFile" data-id="{{item.id}}" data-cloud-path="{{item.cloudPath}}" data-name="{{item.fileName}}">
+              <text>删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
     
-    <view style="display: flex; gap: 24rpx; margin-top: 40rpx;">
-      <button style="flex: 1; padding: 24rpx; background: #f5f5f5; color: #666; border: none; border-radius: 8rpx; font-size: 28rpx;" bindtap="handleCancel">取消</button>
-      <button style="flex: 1; padding: 24rpx; background: #1976d2; color: #fff; border: none; border-radius: 8rpx; font-size: 28rpx;" formType="submit">保存预案</button>
+    <!-- 操作按钮 -->
+    <view class="button-group">
+      <button class="btn-cancel" bindtap="handleCancel">取消</button>
+      <button class="btn-submit" formType="submit">保存预案</button>
     </view>
   </form>
 </view>

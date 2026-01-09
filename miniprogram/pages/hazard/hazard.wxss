@@ -193,10 +193,8 @@
   color: var(--color-text-secondary);
 }
 
-.hazard-description,
-.hazard-deadline,
-.hazard-responsible,
-.hazard-rectification {
+.hazard-description, .hazard-deadline, .hazard-responsible, .hazard-rectification,
+.hazard-compliance, .hazard-supervision, .hazard-progress {
   margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
@@ -206,7 +204,10 @@
 .hazard-description .label,
 .hazard-deadline .label,
 .hazard-responsible .label,
-.hazard-rectification .label {
+.hazard-rectification .label,
+.hazard-compliance .label,
+.hazard-supervision .label,
+.hazard-progress .label {
   color: var(--color-text-tertiary);
   margin-right: var(--spacing-sm);
 }
@@ -214,7 +215,9 @@
 .hazard-description .value,
 .hazard-deadline .value,
 .hazard-responsible .value,
-.hazard-rectification .value {
+.hazard-rectification .value,
+.hazard-compliance .value,
+.hazard-supervision .value {
   color: var(--color-text-primary);
 }
 
@@ -273,9 +276,47 @@
   color: #fff;
 }
 
+.supervise-btn {
+  background: var(--color-warning);
+  color: #fff;
+}
+
+.verify-btn {
+  background: var(--color-success);
+  color: #fff;
+}
+
 .detail-btn {
   background: var(--color-bg-hover);
   color: var(--color-text-primary);
+}
+
+/* 整改进展条样式 */
+.hazard-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8rpx;
+  background: var(--color-border-light);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-success);
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-base);
+}
+
+.progress-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-left: var(--spacing-sm);
 }
 
 /* 添加按钮 */

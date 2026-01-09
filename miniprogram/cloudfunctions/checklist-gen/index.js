@@ -1,4 +1,7 @@
 const cloud = require('wx-server-sdk')
+const cache = require('./utils/cache.js')
+const validator = require('./utils/validator.js')
+const { accessControl, PERMISSIONS } = require('./utils/accessControl.js')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
@@ -10,23 +13,54 @@ exports.main = async (event, context) => {
   const _ = db.command
 
   try {
+    // 获取用户信息和角色
+    const user = await accessControl.getUserInfo(OPENID)
+
     // 1. 生成检查表
     if (action === 'generate') {
+      // 验证读取权限
+      if (!user.hasPermission(PERMISSIONS.CHECKLIST.READ)) {
+        return {
+          success: false,
+          error: '您没有权限生成检查表'
+        }
+      }
       return await generateChecklist(checkType, dept, location, db);
     }
 
     // 2. 保存检查记录
     if (action === 'save') {
-      return await saveCheckRecord(checkRecordId, checkItems, db);
+      // 验证创建/更新权限
+      if (!user.hasPermission(PERMISSIONS.CHECKLIST.CREATE) && !user.hasPermission(PERMISSIONS.CHECKLIST.UPDATE)) {
+        return {
+          success: false,
+          error: '您没有权限保存检查记录'
+        }
+      }
+      return await saveCheckRecord(checkRecordId, checkItems, db, OPENID);
     }
 
     // 3. 获取检查记录列表
     if (action === 'list') {
+      // 验证读取权限
+      if (!user.hasPermission(PERMISSIONS.CHECKLIST.READ)) {
+        return {
+          success: false,
+          error: '您没有权限查看检查记录列表'
+        }
+      }
       return await getCheckRecordList(event.status, db);
     }
 
     // 4. 获取检查记录详情
     if (action === 'detail') {
+      // 验证读取权限
+      if (!user.hasPermission(PERMISSIONS.CHECKLIST.READ)) {
+        return {
+          success: false,
+          error: '您没有权限查看检查记录详情'
+        }
+      }
       return await getCheckRecordDetail(checkRecordId, db);
     }
 
@@ -46,6 +80,14 @@ exports.main = async (event, context) => {
 
 // 生成检查表
 async function generateChecklist(checkType, dept, location, db) {
+  const cacheKey = cache.generateKey('generateChecklist', { checkType, dept, location })
+  
+  // 尝试从缓存获取数据
+  const cachedData = await cache.get(cacheKey)
+  if (cachedData) {
+    return cachedData
+  }
+  
   let query = db.collection('risk_library').where({
     status: 'active'
   })
@@ -89,7 +131,7 @@ async function generateChecklist(checkType, dept, location, db) {
     handleStatus: ''
   }))
 
-  return {
+  const data = {
     success: true,
     data: {
       checkType: checkType || '定期排查',
@@ -97,16 +139,39 @@ async function generateChecklist(checkType, dept, location, db) {
       total: checkItems.length
     }
   }
+  
+  // 设置缓存，24小时过期
+  await cache.set(cacheKey, data, 86400000)
+  
+  return data
 }
 
 // 保存检查记录
-async function saveCheckRecord(checkRecordId, checkItems, db) {
-  const { OPENID } = cloud.getWXContext()
+async function saveCheckRecord(checkRecordId, checkItems, db, openid) {
 
+  // 验证和清理检查记录数据
+  // 从检查项中提取必要的检查信息
+  const firstItem = checkItems[0] || {};
+  let recordData = {
+    checkItems,
+    checkType: firstItem.checkType || '定期排查',
+    checkDept: firstItem.checkDept || '',
+    checkPerson: firstItem.checkPerson || '',
+    checkScope: firstItem.checkScope || ''
+  };
+  const validation = validator.validateCheckRecordData(recordData)
+  if (!validation.valid) {
+    return {
+      success: false,
+      error: validation.errors.join('; ')
+    }
+  }
+
+  const sanitizedCheckItems = validation.data.checkItems
   let problemsFound = 0
   let problemsRectified = 0
 
-  checkItems.forEach(item => {
+  sanitizedCheckItems.forEach(item => {
     if (item.result === '异常') {
       problemsFound++
       if (item.handleStatus === '已处理') {
@@ -115,18 +180,18 @@ async function saveCheckRecord(checkRecordId, checkItems, db) {
     }
   })
 
-  const recordData = {
-    checkType: checkItems[0]?.checkType || '定期排查',
+  recordData = {
+    checkType: sanitizedCheckItems[0]?.checkType || '定期排查',
     checkDate: new Date(),
-    checkDept: checkItems[0]?.checkDept || '',
-    checkPerson: checkItems[0]?.checkPerson || '',
-    checkScope: checkItems[0]?.checkScope || '',
-    checkItems: checkItems,
+    checkDept: sanitizedCheckItems[0]?.checkDept || '',
+    checkPerson: sanitizedCheckItems[0]?.checkPerson || '',
+    checkScope: sanitizedCheckItems[0]?.checkScope || '',
+    checkItems: sanitizedCheckItems,
     problemsFound: problemsFound,
     problemsRectified: problemsRectified,
-    summary: `共检查${checkItems.length}项，发现${problemsFound}个问题，已整改${problemsRectified}个`,
+    summary: `共检查${sanitizedCheckItems.length}项，发现${problemsFound}个问题，已整改${problemsRectified}个`,
     createdAt: new Date(),
-    createdBy: OPENID
+    createdBy: openid
   }
 
   let result
@@ -145,10 +210,9 @@ async function saveCheckRecord(checkRecordId, checkItems, db) {
 
   // 检查是否有异常项需要生成隐患
   if (problemsFound > 0) {
-    const abnormalItems = checkItems.filter(item => item.result === '异常' && item.handleStatus !== '已处理')
-    for (const item of abnormalItems) {
-      await createDangerFromCheckItem(item, db)
-    }
+    const abnormalItems = sanitizedCheckItems.filter(item => item.result === '异常' && item.handleStatus !== '已处理')
+    // 使用Promise.all优化异步操作
+    await Promise.all(abnormalItems.map(item => createDangerFromCheckItem(item, db)))
   }
 
   return {
@@ -212,6 +276,14 @@ async function createDangerFromCheckItem(checkItem, db) {
 
 // 获取检查记录列表
 async function getCheckRecordList(status, db) {
+  const cacheKey = cache.generateKey('getCheckRecordList', { status })
+  
+  // 尝试从缓存获取数据，缓存时间30分钟
+  const cachedData = await cache.get(cacheKey)
+  if (cachedData) {
+    return cachedData
+  }
+  
   let query = db.collection('check_records')
 
   if (status && status !== 'all') {
@@ -228,14 +300,27 @@ async function getCheckRecordList(status, db) {
     createdAt: formatDate(new Date(item.createdAt))
   }))
 
-  return {
+  const data = {
     success: true,
     data: list
   }
+  
+  // 设置缓存，30分钟过期
+  await cache.set(cacheKey, data, 1800000)
+  
+  return data
 }
 
 // 获取检查记录详情
 async function getCheckRecordDetail(checkRecordId, db) {
+  const cacheKey = cache.generateKey('getCheckRecordDetail', { checkRecordId })
+  
+  // 尝试从缓存获取数据，缓存时间1小时
+  const cachedData = await cache.get(cacheKey)
+  if (cachedData) {
+    return cachedData
+  }
+  
   const result = await db.collection('check_records').doc(checkRecordId).get()
 
   if (!result.data) {
@@ -249,10 +334,15 @@ async function getCheckRecordDetail(checkRecordId, db) {
   record.checkDate = formatDate(new Date(record.checkDate))
   record.createdAt = formatDate(new Date(record.createdAt))
 
-  return {
+  const data = {
     success: true,
     data: record
   }
+  
+  // 设置缓存，1小时过期
+  await cache.set(cacheKey, data, 3600000)
+  
+  return data
 }
 
 // 工具函数：格式化日期

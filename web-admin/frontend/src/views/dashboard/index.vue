@@ -61,7 +61,7 @@
 
     <!-- 图表区域 -->
     <el-row :gutter="20" class="charts-row">
-      <!-- 风险分布图 -->
+      <!-- 风险等级分布 -->
       <el-col :xs="24" :lg="12">
         <el-card class="chart-card">
           <template #header>
@@ -73,7 +73,7 @@
         </el-card>
       </el-col>
 
-      <!-- 隐患趋势图 -->
+      <!-- 隐患治理趋势 -->
       <el-col :xs="24" :lg="12">
         <el-card class="chart-card">
           <template #header>
@@ -87,8 +87,8 @@
     </el-row>
 
     <el-row :gutter="20" class="charts-row">
-      <!-- 风险柱状图 -->
-      <el-col :xs="24" :lg="12">
+      <!-- 风险类别统计 -->
+      <el-col :xs="24" :lg="8">
         <el-card class="chart-card">
           <template #header>
             <div class="card-header">
@@ -99,8 +99,8 @@
         </el-card>
       </el-col>
 
-      <!-- 隐患饼图 -->
-      <el-col :xs="24" :lg="12">
+      <!-- 隐患类别分布 -->
+      <el-col :xs="24" :lg="8">
         <el-card class="chart-card">
           <template #header>
             <div class="card-header">
@@ -108,6 +108,44 @@
             </div>
           </template>
           <div ref="dangerPieChartRef" class="chart-container"></div>
+        </el-card>
+      </el-col>
+
+      <!-- 部门风险分布 -->
+      <el-col :xs="24" :lg="8">
+        <el-card class="chart-card">
+          <template #header>
+            <div class="card-header">
+              <span>部门风险分布</span>
+            </div>
+          </template>
+          <div ref="deptRiskChartRef" class="chart-container"></div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20" class="charts-row">
+      <!-- 巡检完成情况 -->
+      <el-col :xs="24" :lg="12">
+        <el-card class="chart-card">
+          <template #header>
+            <div class="card-header">
+              <span>巡检完成情况</span>
+            </div>
+          </template>
+          <div ref="inspectionChartRef" class="chart-container"></div>
+        </el-card>
+      </el-col>
+
+      <!-- 安全指标概览 -->
+      <el-col :xs="24" :lg="12">
+        <el-card class="chart-card">
+          <template #header>
+            <div class="card-header">
+              <span>安全指标概览</span>
+            </div>
+          </template>
+          <div ref="safetyMetricsChartRef" class="chart-container"></div>
         </el-card>
       </el-col>
     </el-row>
@@ -251,12 +289,18 @@ const riskPieChartRef = ref<HTMLElement>()
 const dangerLineChartRef = ref<HTMLElement>()
 const riskBarChartRef = ref<HTMLElement>()
 const dangerPieChartRef = ref<HTMLElement>()
+const deptRiskChartRef = ref<HTMLElement>()
+const inspectionChartRef = ref<HTMLElement>()
+const safetyMetricsChartRef = ref<HTMLElement>()
 
 // 图表实例
 let riskPieChart: echarts.ECharts | null = null
 let dangerLineChart: echarts.ECharts | null = null
 let riskBarChart: echarts.ECharts | null = null
 let dangerPieChart: echarts.ECharts | null = null
+let deptRiskChart: echarts.ECharts | null = null
+let inspectionChart: echarts.ECharts | null = null
+let safetyMetricsChart: echarts.ECharts | null = null
 
 // 获取预警类型
 const getWarningType = (level: string) => {
@@ -419,11 +463,179 @@ const initDangerPieChart = () => {
   dangerPieChart.setOption(option)
 }
 
+// 初始化部门风险分布图
+const initDeptRiskChart = () => {
+  if (!deptRiskChartRef.value) return
+
+  deptRiskChart = echarts.init(deptRiskChartRef.value)
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    legend: {
+      data: ['重大风险', '较大风险', '一般风险', '低风险']
+    },
+    xAxis: {
+      type: 'category',
+      data: ['工务段', '电务段', '运输部', '机务段', '安监部']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: '重大风险',
+        type: 'bar',
+        data: [3, 2, 1, 1, 0],
+        itemStyle: { color: '#f56c6c' }
+      },
+      {
+        name: '较大风险',
+        type: 'bar',
+        data: [4, 3, 2, 2, 1],
+        itemStyle: { color: '#e6a23c' }
+      },
+      {
+        name: '一般风险',
+        type: 'bar',
+        data: [8, 7, 5, 4, 2],
+        itemStyle: { color: '#409eff' }
+      },
+      {
+        name: '低风险',
+        type: 'bar',
+        data: [5, 4, 3, 2, 1],
+        itemStyle: { color: '#67c23a' }
+      }
+    ]
+  }
+
+  deptRiskChart.setOption(option)
+}
+
+// 初始化巡检完成情况图
+const initInspectionChart = () => {
+  if (!inspectionChartRef.value) return
+
+  inspectionChart = echarts.init(inspectionChartRef.value)
+
+  const option = {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['计划巡检', '实际完成', '完成率']
+    },
+    xAxis: {
+      type: 'category',
+      data: ['1月', '2月', '3月', '4月', '5月', '6月']
+    },
+    yAxis: [
+      {
+        type: 'value',
+        name: '巡检次数',
+        position: 'left'
+      },
+      {
+        type: 'value',
+        name: '完成率(%)',
+        position: 'right',
+        min: 0,
+        max: 100
+      }
+    ],
+    series: [
+      {
+        name: '计划巡检',
+        type: 'bar',
+        data: [30, 32, 35, 33, 38, 36],
+        itemStyle: { color: '#909399' }
+      },
+      {
+        name: '实际完成',
+        type: 'bar',
+        data: [28, 30, 34, 31, 36, 35],
+        itemStyle: { color: '#409eff' }
+      },
+      {
+        name: '完成率',
+        type: 'line',
+        yAxisIndex: 1,
+        data: [93, 94, 97, 94, 95, 97],
+        smooth: true,
+        itemStyle: { color: '#67c23a' }
+      }
+    ]
+  }
+
+  inspectionChart.setOption(option)
+}
+
+// 初始化安全指标概览图
+const initSafetyMetricsChart = () => {
+  if (!safetyMetricsChartRef.value) return
+
+  safetyMetricsChart = echarts.init(safetyMetricsChartRef.value)
+
+  const option = {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      bottom: 0,
+      data: ['风险管控', '隐患治理', '安全培训', '设备管理']
+    },
+    radar: {
+      indicator: [
+        { name: '风险识别率', max: 100 },
+        { name: '隐患整改率', max: 100 },
+        { name: '培训完成率', max: 100 },
+        { name: '设备完好率', max: 100 },
+        { name: '检查覆盖率', max: 100 },
+        { name: '应急准备', max: 100 }
+      ]
+    },
+    series: [
+      {
+        name: '安全指标',
+        type: 'radar',
+        data: [
+          {
+            value: [95, 78, 92, 88, 90, 85],
+            name: '风险管控'
+          },
+          {
+            value: [82, 90, 85, 83, 87, 80],
+            name: '隐患治理'
+          },
+          {
+            value: [88, 85, 95, 87, 90, 89],
+            name: '安全培训'
+          },
+          {
+            value: [90, 87, 82, 93, 88, 91],
+            name: '设备管理'
+          }
+        ]
+      }
+    ]
+  }
+
+  safetyMetricsChart.setOption(option)
+}
+
 // 加载数据
 const loadData = async () => {
   try {
     const stats = await getQuickStats()
-    quickStats.value = stats
+    quickStats.value = {
+      ...quickStats.value,
+      ...stats
+    }
   } catch (error) {
     console.error('加载统计数据失败:', error)
   }
@@ -435,6 +647,9 @@ const handleResize = () => {
   dangerLineChart?.resize()
   riskBarChart?.resize()
   dangerPieChart?.resize()
+  deptRiskChart?.resize()
+  inspectionChart?.resize()
+  safetyMetricsChart?.resize()
 }
 
 onMounted(() => {
@@ -443,6 +658,9 @@ onMounted(() => {
   initDangerLineChart()
   initRiskBarChart()
   initDangerPieChart()
+  initDeptRiskChart()
+  initInspectionChart()
+  initSafetyMetricsChart()
   window.addEventListener('resize', handleResize)
 })
 
@@ -451,6 +669,9 @@ onBeforeUnmount(() => {
   dangerLineChart?.dispose()
   riskBarChart?.dispose()
   dangerPieChart?.dispose()
+  deptRiskChart?.dispose()
+  inspectionChart?.dispose()
+  safetyMetricsChart?.dispose()
   window.removeEventListener('resize', handleResize)
 })
 </script>

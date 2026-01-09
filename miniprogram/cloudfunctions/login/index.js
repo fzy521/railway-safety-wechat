@@ -1,110 +1,113 @@
 // 云函数入口文件
-const cloud = require('wx-server-sdk')
+const cloud = require('wx-server-sdk');
+const CloudFunctionUtils = require('./utils/cloudUtils');
 
-cloud.init({
-  env: cloud.DYNAMIC_CURRENT_ENV
-})
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
+const db = cloud.database();
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const wxContext = cloud.getWXContext()
-
-  // 获取调用者信息
-  const db = cloud.database()
-  const userCollection = db.collection('users')
-
-  // 获取传入的用户信息（头像和昵称）
-  const userInfo = event.userInfo || {}
+  const utils = new CloudFunctionUtils();
+  const wxContext = cloud.getWXContext();
 
   try {
-    // 根据openid查询用户
-    const userResult = await userCollection.where({
-      openid: wxContext.OPENID
-    }).get()
+    // 输入验证
+    const validation = utils.validateInput(event, {
+      userInfo: { type: 'object', required: true }
+    });
 
-    let user = null
+    if (!validation.valid) {
+      return utils.standardResponse(false, null, validation.errors.join(';'));
+    }
 
+    const { userInfo } = event;
+    const openid = wxContext.OPENID;
+    const userCollection = db.collection('users');
+
+    // 查询用户是否已存在
+    let user = null;
+    const userResult = await userCollection.where({ openid: openid }).get();
     if (userResult.data.length > 0) {
-      // 用户已存在，更新登录时间和用户信息
-      user = userResult.data[0]
-      
-      // 构建更新数据
+      user = userResult.data[0];
+    }
+
+    if (user) {
+      // 更新用户信息
       const updateData = {
-        lastLoginTime: new Date(),
+        lastLoginTime: db.serverDate(),
         totalLoginTimes: db.command.inc(1)
-      }
+      };
 
-      // 如果传入了新的用户信息，更新头像和昵称
+      // 更新用户头像和昵称
       if (userInfo.nickName || userInfo.avatarUrl) {
-        updateData['profile.name'] = userInfo.nickName || user.profile.name
-        updateData['profile.avatar'] = userInfo.avatarUrl || user.profile.avatar
+        updateData['profile.name'] = userInfo.nickName || user.profile.name;
+        updateData['profile.avatar'] = userInfo.avatarUrl || user.profile.avatar;
       }
 
-      await userCollection.doc(user._id).update({
-        data: updateData
-      })
+      await userCollection.doc(user._id).update({ data: updateData });
 
-      // 将用户类型的openid数组更新到最新
-      if (!user.openIds || !user.openIds.includes(wxContext.OPENID)) {
+      // 更新openIds数组
+      if (!user.openIds || !user.openIds.includes(openid)) {
         await userCollection.doc(user._id).update({
           data: {
-            openIds: db.command.addToSet(wxContext.OPENID)
+            openIds: db.command.addToSet(openid)
           }
-        })
+        });
       }
+
+      const responseUser = {
+        _id: user._id,
+        openid: user.openid,
+        nickName: user.profile.name,
+        avatarUrl: user.profile.avatar,
+        gender: userInfo.gender || 0,
+        role: user.role || 'visitor',
+        permissions: user.permissions || ['read'],
+        department: user.profile.department || '',
+        lastLoginTime: new Date().toLocaleString('zh-CN')
+      };
+
+      return utils.standardResponse(true, responseUser);
     } else {
-      // 新用户，创建记录
-      const newUserData = {
-        openid: wxContext.OPENID,
-        openIds: [wxContext.OPENID],
+      // 创建新用户
+      const newUser = {
+        openid: openid,
+        openIds: [openid],
         unionId: wxContext.UNIONID || '',
-        createdAt: new Date(),
-        lastLoginTime: new Date(),
+        createdAt: db.serverDate(),
+        lastLoginTime: db.serverDate(),
         totalLoginTimes: 1,
-        role: 'visitor', // 默认角色
-        permissions: ['read'], // 默认权限
+        role: 'visitor',
+        permissions: ['read'],
         status: 'active',
         profile: {
-          name: userInfo.nickName || '用户' + wxContext.OPENID.substr(-6),
+          name: userInfo.nickName || '用户' + openid.substr(-6),
           avatar: userInfo.avatarUrl || '',
           phone: '',
           department: '',
           position: ''
         }
-      }
+      };
 
-      const addResult = await userCollection.add({
-        data: newUserData
-      })
+      const addResult = await userCollection.add({ data: newUser });
 
-      user = {
-        ...newUserData,
-        _id: addResult._id
-      }
-    }
+      const responseUser = {
+        _id: addResult._id,
+        openid: openid,
+        nickName: userInfo.nickName || '用户' + openid.substr(-6),
+        avatarUrl: userInfo.avatarUrl || '',
+        gender: userInfo.gender || 0,
+        role: 'visitor',
+        permissions: ['read'],
+        department: '',
+        lastLoginTime: new Date().toLocaleString('zh-CN')
+      };
 
-    return {
-      success: true,
-      data: {
-        openid: wxContext.OPENID,
-        appid: wxContext.APPID,
-        unionId: wxContext.UNIONID || '',
-        userInfo: {
-          _id: user._id,
-          name: user.profile.name,
-          avatar: user.profile.avatar,
-          role: user.role,
-          permissions: user.permissions,
-          department: user.profile.department
-        }
-      }
+      return utils.standardResponse(true, responseUser);
     }
 
   } catch (err) {
-    console.error('用户登录处理失败:', err)
-    return {
-      success: false,
-      error: err.message
-    }
+    console.error('登录失败:', err);
+    return utils.standardResponse(false, null, err.message);
   }
-}
+};

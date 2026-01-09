@@ -1,0 +1,209 @@
+{
+  "tasks": {
+    "task-013": {
+      "name": "云开发智能体子职责划分-云函数开发",
+      "description": "负责云函数的开发、优化和维护，包括函数逻辑、性能优化和缓存机制",
+      "assigned_to": "cloud-dev-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-11",
+      "priority": "medium",
+      "created_at": "2026-01-08T16:00:00Z",
+      "started_at": "2026-01-08T16:30:00Z"
+    },
+    "task-014": {
+      "name": "云开发智能体子职责划分-数据库管理",
+      "description": "负责数据库设计、维护和优化，包括数据结构设计、索引优化和数据安全",
+      "assigned_to": "cloud-dev-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-11",
+      "priority": "medium",
+      "created_at": "2026-01-08T16:00:00Z",
+      "started_at": "2026-01-08T16:30:00Z"
+    },
+    "task-015": {
+      "name": "数据可视化智能体子职责划分-图表设计",
+      "description": "负责图表的设计、开发和优化，包括图表样式、交互效果和用户体验",
+      "assigned_to": "data-viz-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-11",
+      "priority": "medium",
+      "created_at": "2026-01-08T16:00:00Z",
+      "started_at": "2026-01-08T16:30:00Z"
+    },
+    "task-016": {
+      "name": "数据可视化智能体子职责划分-数据处理",
+      "description": "负责数据的处理、转换和分析，包括数据清洗、格式转换和统计计算",
+      "assigned_to": "data-viz-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-11",
+      "priority": "medium",
+      "created_at": "2026-01-08T16:00:00Z",
+      "started_at": "2026-01-08T16:30:00Z"
+    },
+    "task-017": {
+      "name": "安全管理专家智能体子职责划分-安全合规审查",
+      "description": "负责系统安全合规性审查，包括GBT 33000-2025标准符合性检查和安全文档审核",
+      "assigned_to": "safety-expert-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-11",
+      "priority": "medium",
+      "created_at": "2026-01-08T16:00:00Z",
+      "started_at": "2026-01-08T16:30:00Z"
+    },
+    "task-019": {
+      "name": "修复Web后台剩余构建错误",
+      "description": "修复Web后台前端代码中的剩余构建错误，包括类型错误、未使用的导入和变量、导入冲突等",
+      "assigned_to": "web-admin-dev-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-09T12:00:00Z",
+      "priority": "high",
+      "created_at": "2026-01-08T18:30:00Z",
+      "total_errors": 48,
+      "fixed_errors": 0
+    },
+    "task-020": {
+      "name": "修复数据可视化相关错误",
+      "description": "修复数据可视化相关的错误，包括统计图表和仪表盘相关的错误",
+      "assigned_to": "data-viz-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-09T12:00:00Z",
+      "priority": "medium",
+      "created_at": "2026-01-08T18:30:00Z"
+    } "started_at": "2026-01-08T16:30:00Z"
+    },
+    "task-001": {
+      "name": "完善小程序数据看板功能",
+      "description": "优化小程序数据看板展示效果，添加实时数据更新功能，完善区域状态监控功能",
+      "assigned_to": "miniprogram-dev-agent",
+      "status": "completed",
+      "deadline": "2026-01-10",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-07T23:20:00Z",
+      "completed_at": "2026-01-08T03:00:00Z"
+    },
+    "task-002": {
+      "name": "优化小程序用户体验",
+      "description": "优化小程序加载速度，完善页面跳转逻辑，优化表单交互体验",
+      "assigned_to": "miniprogram-dev-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-12",
+      "priority": "medium",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-08T03:30:00Z"
+    },
+    "task-003": {
+      "name": "完善Web后台风险管理模块",
+      "description": "实现风险评估流程，完善风险矩阵功能，优化风险列表展示",
+      "assigned_to": "web-admin-dev-agent",
+      "status": "completed",
+      "deadline": "2026-01-10",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-07T23:20:00Z",
+      "completed_at": "2026-01-08T03:00:00Z"
+    },
+    "task-004": {
+      "name": "完善Web后台隐患管理模块",
+      "description": "实现隐患闭环管理流程，完善隐患统计功能，优化隐患处理流程",
+      "assigned_to": "web-admin-dev-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-12",
+      "priority": "medium",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-08T03:30:00Z",
+      "recent_bug_fixes": [
+        "修复了emergency.ts中的云函数调用错误，将对象参数改为两个独立参数",
+        "修复了notifications/index.vue中的云函数调用错误",
+        "修复了certificates/index.vue中的云函数调用错误",
+        "添加了ICallFunctionResponse类型定义，修复云函数调用返回类型错误",
+        "修复了danger/index.vue中的InstanceType类型导入错误",
+        "修复了danger/index.vue中的statisticsData类型错误",
+        "修复了cloud.ts中的query类型错误和日期比较错误",
+        "修复了login/index.vue中的callCloudFunction未定义错误",
+        "修复了notifications/index.vue中的reactive未定义错误",
+        "添加了vite-env.d.ts文件，解决环境变量和模块声明问题"
+      ]
+    },
+    "task-005": {
+      "name": "优化云函数性能",
+      "description": "分析云函数运行情况，优化云函数代码，实现云函数缓存机制",
+      "assigned_to": "cloud-dev-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-11",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-07T23:20:00Z"
+    },
+    "task-006": {
+      "name": "完善数据安全机制",
+      "description": "实现数据加密存储，完善权限控制，实现数据备份机制",
+      "assigned_to": "cloud-dev-agent",
+      "status": "pending",
+      "deadline": "2026-01-13",
+      "priority": "medium",
+      "created_at": "2026-01-07T10:00:00Z"
+    },
+    "task-007": {
+      "name": "完善数据看板图表",
+      "description": "实现更多图表类型，优化图表交互体验，完善图表数据展示",
+      "assigned_to": "data-viz-agent",
+      "status": "completed",
+      "deadline": "2026-01-10",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-07T23:20:00Z",
+      "completed_at": "2026-01-08T03:00:00Z"
+    },
+    "task-008": {
+      "name": "实现统计分析功能",
+      "description": "实现月度隐患排查报表，实现风险管控效果评价，实现自定义报表导出",
+      "assigned_to": "data-viz-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-13",
+      "priority": "medium",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-08T03:30:00Z"
+    },
+    "task-009": {
+      "name": "确保系统符合GBT 33000-2025标准",
+      "description": "审查系统功能是否符合标准，完善安全风险评估模型，优化安全管理流程",
+      "assigned_to": "safety-expert-agent",
+      "status": "completed",
+      "deadline": "2026-01-11",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-07T23:20:00Z",
+      "completed_at": "2026-01-08T10:00:00Z"
+    },
+    "task-010": {
+      "name": "编写安全管理文档",
+      "description": "编写系统安全使用指南，编写安全管理最佳实践，编写应急处置流程",
+      "assigned_to": "safety-expert-agent",
+      "status": "completed",
+      "deadline": "2026-01-14",
+      "priority": "medium",
+      "created_at": "2026-01-07T10:00:00Z",
+      "started_at": "2026-01-08T10:00:00Z",
+      "completed_at": "2026-01-08T17:00:00Z"
+    },
+    "task-011": {
+      "name": "项目进度管理",
+      "description": "跟踪各智能体任务进度，协调解决任务冲突，定期更新项目进度报告",
+      "assigned_to": "project-coord-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-15",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z"
+    },
+    "task-012": {
+      "name": "团队协作管理",
+      "description": "组织每日站会，协调各智能体之间的工作，确保信息畅通",
+      "assigned_to": "project-coord-agent",
+      "status": "in_progress",
+      "deadline": "2026-01-15",
+      "priority": "high",
+      "created_at": "2026-01-07T10:00:00Z"
+    }
+  }
+}

@@ -72,6 +72,24 @@
         <text class="value">{{item.description}}</text>
       </view>
 
+      <view class="hazard-compliance">
+        <text class="label">合规状态:</text>
+        <text class="value">{{item.complianceStatus || '未评估'}}</text>
+      </view>
+
+      <view class="hazard-supervision">
+        <text class="label">督办状态:</text>
+        <text class="value">{{item.supervisionStatus || '未督办'}}</text>
+      </view>
+
+      <view class="hazard-progress" wx:if="{{item.actualProgress}}">
+        <text class="label">整改进展:</text>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{item.actualProgress}}%"></view>
+        </view>
+        <text class="progress-text">{{item.actualProgress}}%</text>
+      </view>
+
       <view class="hazard-deadline">
         <text class="label">整改期限:</text>
         <text class="value">{{item.deadline}}</text>
@@ -89,6 +107,8 @@
         </view>
         <view class="actions">
           <button wx:if="{{item.status === 'identified'}}" class="action-btn start-btn" bindtap="startRectification" data-id="{{item.id}}">开始整改</button>
+          <button class="action-btn supervise-btn" bindtap="startSupervision" data-id="{{item.id}}">挂牌督办</button>
+          <button class="action-btn verify-btn" bindtap="submitVerification" data-id="{{item.id}}">提交验证</button>
           <button class="action-btn detail-btn" bindtap="viewHazardDetail" data-id="{{item.id}}">详情</button>
         </view>
       </view>

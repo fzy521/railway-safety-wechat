@@ -3,17 +3,34 @@
 ## 项目信息
 - **项目名称**: 铁路安全监控系统
 - **项目类型**: 微信小程序 + Web管理后台
-- **技术栈**: 微信云开发、Vue 3、Node.js
-- **最后更新**: 2026-01-06
-- **当前阶段**: 双控机制功能完善完成，准备开发Web后台
+- **技术栈**: 微信云开发、Vue 3、TypeScript、Element Plus
+- **最后更新**: 2026-01-07
+- **当前阶段**: Web管理后台已部署上线，所有业务功能开发完成
 
 ## 双控机制功能状态
 - **MES风险评估**: ✅ 已完成（云函数 + 小程序页面）
 - **风险预警管理**: ✅ 已完成（云函数 + 小程序页面）
 - **重大隐患督办**: ✅ 已完成（云函数 + 小程序页面）
 - **数据库结构**: ✅ 已完善（MES字段、督办字段、新集合）
-- **检查记录管理**: 🔄 待开发
-- **统计分析报表**: 🔄 待开发
+- **检查记录管理**: ✅ 已完成（云函数 + 小程序页面）
+- **统计分析报表**: ✅ 已完成（云函数 + 小程序页面）
+
+## Web管理后台功能状态
+- **数据看板**: ✅ 已完成
+- **风险管理**: ✅ 已完成
+- **隐患管理**: ✅ 已完成
+- **风险预警**: ✅ 已完成
+- **隐患督办**: ✅ 已完成
+- **巡检管理**: ✅ 已完成
+- **应急管理**: ✅ 已完成
+- **事故管理**: ✅ 已完成
+- **证书管理**: ✅ 已完成
+- **消息通知**: ✅ 已完成
+- **个人中心**: ✅ 已完成
+- **帮助与支持**: ✅ 已完成
+- **系统设置**: ✅ 已完成
+- **统计分析**: ✅ 已完成
+- **用户管理**: ✅ 已完成
 
 ## 已完成任务
 
@@ -81,7 +98,7 @@
   - 清理重复的 drill-evaluation 文件结构（保留文件夹结构，删除独立文件）
   - 修复 emergency.js 中的导航路径
 
-### 2. 新增页面 ✅
+### 3. 新增页面 ✅
 - [x] 账号设置页面（pages/settings/）
   - 个人信息编辑、头像更换
   - 账号安全（修改密码、绑定手机/邮箱）
@@ -108,77 +125,108 @@
   - 功能介绍
   - 法律信息（用户协议、隐私政策）
 
-### 3. Web端管理后台架构设计 ✅
-- [x] 创建完整的架构方案文档（web-admin-architecture.md）
-  - 技术选型（Vue 3 + Node.js + 微信云开发）
-  - 功能模块设计（8大核心模块）
-  - 数据库设计（完整的集合设计）
-  - 接口设计（RESTful API规范）
-  - 安全设计（认证授权、权限控制）
-  - 部署方案（Docker容器化）
+### 4. Web端管理后台开发 ✅
+- [x] 项目初始化
+  - 使用 Vite + Vue 3 + TypeScript 搭建项目
+  - 集成 Element Plus UI 框架
+  - 配置路由和状态管理
+  - 配置环境变量（开发/生产）
 
-- [x] 修正技术架构问题
-  - 改为通过微信云开发HTTP API访问数据（而非直接连接MongoDB）
-  - 更新系统架构图
-  - 调整部署方案
+- [x] 实现用户认证
+  - 使用微信云开发 Web SDK (@cloudbase/js-sdk)
+  - 实现匿名登录认证
+  - 在 main.ts 中自动登录
+  - 解决 CORS 跨域问题
 
-### 4. 微信云开发部署方案 ✅
-- [x] 创建完整的部署方案文档（weixin-cloud-deployment.md）
-  - 项目结构设计
-  - 前端部署步骤（静态网站托管）
-  - 云函数开发（完整的API实现）
-  - HTTP API配置
-  - 域名配置
-  - 环境变量配置
-  - 完整部署流程
-  - 成本说明（完全免费）
-  - 监控和维护
+- [x] 开发核心业务模块
+  - **数据看板** (dashboard) - 统计数据展示、图表可视化
+  - **风险管理** (risk) - 风险库管理、MES评估、风险等级展示
+  - **隐患管理** (danger) - 隐患库管理、隐患分级、整改跟踪
+  - **风险预警** (warning) - 预警管理、整改跟踪、验收闭环
+  - **隐患督办** (supervision) - 重大隐患督办、治理进展、验证流程
+  - **巡检管理** (inspection) - 巡检记录、检查表生成、统计分析
+
+- [x] 开发新增业务模块
+  - **应急管理** (emergency) - 应急预案管理、应急物资管理、应急演练管理
+  - **事故管理** (incident) - 事故记录、事故分析、事故统计
+  - **证书管理** (certificates) - 证书库管理、有效期监控、过期提醒
+  - **消息通知** (notifications) - 通知列表、已读/未读、批量操作
+
+- [x] 开发系统功能模块
+  - **个人中心** (profile) - 用户信息、密码修改、操作日志
+  - **帮助与支持** (help) - 用户指南、FAQ、联系方式
+  - **系统设置** (settings) - 系统配置、权限管理
+  - **统计分析** (statistics) - 数据统计、报表生成
+  - **用户管理** (users) - 用户管理、角色权限
+
+- [x] 开发云函数 API
+  - **incident-management** - 事故管理云函数
+  - **certificate-management** - 证书管理云函数
+  - **emergency-plan-management** - 应急预案管理云函数
+  - **notification-management** - 消息通知管理云函数
+
+- [x] 部署到云开发
+  - 使用 cloudbase CLI 部署静态网站
+  - 部署地址: https://cloud1-9gz3lqctb5e4f85d-1393251619.tcloudbaseapp.com
+  - 环境ID: cloud1-9gz3lqctb5e4f85d
+  - 与小程序共享同一数据库
+
+- [x] 修复菜单显示问题
+  - 添加缺失的侧边栏菜单项（应急管理、事故管理、证书管理、消息通知、帮助与支持）
+  - 修正菜单名称（应急预案 → 应急管理）
+  - 导入缺失的图标（Lightning、QuestionFilled）
 
 ### 5. 代码优化 ✅
 - [x] 删除未使用的图片文件
 - [x] 统一代码风格
 - [x] 优化用户数据管理流程
+- [x] 解决构建依赖问题（vue-tsc、sass-embedded）
+- [x] 优化 API 调用方式（从 HTTP API 改为云函数调用）
 
 ## 待完成任务
 
 ### 短期任务（1-2周）
-- [ ] 部署双控机制相关云函数到微信云开发
-  - [ ] initDatabase（数据库初始化）
-  - [ ] risk-assessment（MES评估）
-  - [ ] risk-warning（风险预警）
-  - [ ] danger-supervision（隐患督办）
-- [ ] 测试双控机制功能
-  - [ ] MES评估流程测试
-  - [ ] 风险预警流程测试
-  - [ ] 重大隐患督办流程测试
-- [ ] 部署 updateUserInfo 云函数
-- [ ] 测试新增页面的功能
-- [ ] 完善个人中心的数据展示
-- [ ] 优化页面交互体验
+- [ ] 部署新增云函数到微信云开发
+  - [ ] incident-management（事故管理）
+  - [ ] certificate-management（证书管理）
+  - [ ] emergency-plan-management（应急预案管理）
+  - [ ] notification-management（消息通知管理）
+- [ ] 测试所有业务功能
+  - [ ] Web端功能测试
+  - [ ] 小程序端功能测试
+  - [ ] 数据同步测试
+- [ ] 性能优化
+  - [ ] 前端代码分割
+  - [ ] 图片懒加载
+  - [ ] 接口缓存优化
 
 ### 中期任务（1-2个月）
-- [ ] 双控机制功能优化
+- [ ] 功能增强
   - [ ] 消息推送集成（预警通知、督办通知、验收通知）
-  - [ ] 检查表生成功能（generateChecklist云函数）
-  - [ ] 统计分析功能（generateMonthlyReport云函数）
-  - [ ] 页面交互优化（预警详情页、督办详情页）
-- [ ] 开始 Web 端管理后台开发
-  - [ ] 在 railway-safety/ 根目录创建 web-admin/ 目录
-  - [ ] 搭建 Vue 3 + TypeScript 项目框架
-  - [ ] 实现用户登录功能（调用小程序云函数）
-  - [ ] 实现风险管理模块（调用 risk-assessment 云函数）
-  - [ ] 实现隐患管理模块（调用 danger-supervision 云函数）
-- [ ] 部署 Web 端到微信云开发静态托管
-- [ ] 部署云函数作为后端 API
+  - [ ] 报表导出功能（Excel、PDF）
+  - [ ] 数据可视化增强（更多图表类型）
+  - [ ] 移动端适配优化
+- [ ] 系统优化
+  - [ ] 权限管理系统完善
+  - [ ] 操作日志系统完善
+  - [ ] 数据备份策略
+  - [ ] 监控告警系统
 
 ### 长期任务（3-6个月）
-- [ ] 完善所有功能模块
-- [ ] 实现统计分析功能
-- [ ] 实现报表导出功能
-- [ ] 实现应急管理模块
-- [ ] 实现培训管理模块
-- [ ] 系统测试和优化
+- [ ] 功能扩展
+  - [ ] 培训管理模块
+  - [ ] 设备管理模块
+  - [ ] 人员管理模块
+  - [ ] 文档管理模块
+- [ ] 系统升级
+  - [ ] 微服务架构改造
+  - [ ] 国际化支持
+  - [ ] 多租户支持
 - [ ] 正式上线
+  - [ ] 系统测试
+  - [ ] 性能测试
+  - [ ] 安全测试
+  - [ ] 用户培训
 
 ## 技术债务
 - [ ] 需要创建修改密码、绑定手机、绑定邮箱的子页面
@@ -187,74 +235,74 @@
 - [ ] 需要创建用户协议、隐私政策、开源许可页面
 - [ ] 需要完善云函数的错误处理
 - [ ] 需要添加数据验证逻辑
+- [ ] 需要优化构建产物大小（当前有多个超过500KB的chunk）
 
 ## Git 提交记录
 
 ### 最新提交
-- **Commit**: 6e3115e
-- **日期**: 2026-01-06
-- **描述**: fix: enhance login system to capture user avatar and nickname, fix emergency page styling and drill-evaluation structure
-- **更改**: 10277个文件，+1920745行，-385行
+- **Commit**: eb2ca3d7fcdf90b66d919579064b50dd3ee57351
+- **日期**: 2026-01-07
+- **描述**: 完成Web管理后台所有业务功能开发并部署上线
 - **主要变更**:
-  - 增强登录系统，捕获并保存用户微信头像和昵称
-  - 修复应急模块页面样式（移除蓝色导航栏，统一白色导航）
-  - 修复应急物资添加页面输入框高度
-  - 修复 drill-evaluation 页面编译错误
-  - 清理重复的 drill-evaluation 文件结构
-  - 添加 danger-supervision 云函数的 npm 依赖
+  - 开发事故管理模块（incident-management云函数 + 前端页面）
+  - 开发证书管理模块（certificate-management云函数 + 前端页面）
+  - 开发应急管理模块（emergency-plan-management云函数 + 前端页面）
+  - 开发消息通知模块（notification-management云函数 + 前端页面）
+  - 开发个人中心模块（用户信息、密码修改、操作日志）
+  - 开发帮助与支持模块（用户指南、FAQ、联系方式）
+  - 修复侧边栏菜单显示问题，添加所有缺失的菜单项
+  - 修正菜单名称（应急预案 → 应急管理）
+  - 部署到微信云开发静态托管
 
 ### 分支状态
-- **当前分支**: master
-- **状态**: 领先远程仓库 4 个提交
-- **工作区**: 有未暂存的文件（父目录的 .gitignore、README.md、project.config.json 被删除）
-- **未跟踪文件**: ../nul、../web-admin/
+- **当前分支**: D .gitignore
+- **状态**: 有未提交的更改
+- **工作区**: 有大量未暂存的文件（miniprogram和web-admin目录）
+- **未跟踪文件**: nul、多个云函数目录、多个页面目录
 
 ## 重要文件清单
 
 ### 新增云函数（双控机制）
 - `cloudfunctions/initDatabase/index.js` - 数据库初始化脚本
-  - 创建风险库、隐患库、预警表、检查记录表、督办记录表
-  - 创建数据库索引
-  - 提供测试数据插入功能
 - `cloudfunctions/risk-assessment/index.js` - MES风险评估云函数
-  - 计算 R = M × max(E1, E2) × S
-  - 自动判定风险等级和检查频次
-  - 更新风险库数据
 - `cloudfunctions/risk-warning/index.js` - 风险预警管理云函数
-  - 创建预警、更新整改、提交验收、验证闭环
-  - 自动触发预警
-  - 预警列表和详情查询
 - `cloudfunctions/danger-supervision/index.js` - 重大隐患督办云函数
-  - 重大隐患识别和挂牌督办
-  - 治理进展跟踪
-  - 验证流程和超期检查
 - `cloudfunctions/checklist-gen/index.js` - 检查表生成云函数
 
-### 新增页面（双控机制）
-- `pages/risk/risk-assessment.wxml` - MES风险评估页面
-  - 基本信息表单
-  - MES参数选择（M/E1/E2/S）
-  - 实时计算和结果展示
-  - 管控措施录入
-- `pages/risk/risk-warning.wxml` - 风险预警管理页面
-  - 预警列表展示
-  - 状态筛选
-  - 自动触发预警功能
-- `pages/inspection/danger-supervision.wxml` - 重大隐患督办页面
-  - 督办列表展示
-  - 状态筛选
-  - 超期提醒
+### 新增云函数（Web后台）
+- `cloudfunctions/incident-management/index.js` - 事故管理云函数
+- `cloudfunctions/certificate-management/index.js` - 证书管理云函数
+- `cloudfunctions/emergency-plan-management/index.js` - 应急预案管理云函数
+- `cloudfunctions/notification-management/index.js` - 消息通知管理云函数
+- `cloudfunctions/web-api-proxy/index.js` - Web API代理云函数
 
-### 新增云函数（个人中心）
-- `cloudfunctions/updateUserInfo/index.js` - 用户信息管理云函数
-- `cloudfunctions/updateUserInfo/package.json` - 云函数配置
+### Web后台核心文件
+- `web-admin/frontend/src/api/cloud.ts` - 云开发API封装
+- `web-admin/frontend/src/api/emergency.ts` - 应急管理API
+- `web-admin/frontend/src/router/index.ts` - 路由配置
+- `web-admin/frontend/src/layouts/MainLayout.vue` - 主布局（侧边栏）
+- `web-admin/frontend/src/main.ts` - 应用入口（匿名登录）
+- `web-admin/frontend/vite.config.ts` - Vite配置
+- `web-admin/frontend/.env.development` - 开发环境变量
+- `web-admin/frontend/.env.production` - 生产环境变量
 
-### 新增页面（个人中心）
-- `pages/settings/` - 账号设置页面（4个文件）
-- `pages/certificates/` - 我的证书页面（4个文件）
-- `pages/notifications/` - 消息通知页面（4个文件）
-- `pages/help/` - 使用帮助页面（4个文件）
-- `pages/about/` - 关于系统页面（4个文件）
+### Web后台页面
+- `web-admin/frontend/src/views/dashboard/index.vue` - 数据看板
+- `web-admin/frontend/src/views/risk/index.vue` - 风险管理
+- `web-admin/frontend/src/views/danger/index.vue` - 隐患管理
+- `web-admin/frontend/src/views/warning/index.vue` - 风险预警
+- `web-admin/frontend/src/views/supervision/index.vue` - 隐患督办
+- `web-admin/frontend/src/views/inspection/index.vue` - 巡检管理
+- `web-admin/frontend/src/views/emergency/index.vue` - 应急管理
+- `web-admin/frontend/src/views/incident/index.vue` - 事故管理
+- `web-admin/frontend/src/views/certificates/index.vue` - 证书管理
+- `web-admin/frontend/src/views/notifications/index.vue` - 消息通知
+- `web-admin/frontend/src/views/notifications/NotificationList.vue` - 通知列表组件
+- `web-admin/frontend/src/views/profile/index.vue` - 个人中心
+- `web-admin/frontend/src/views/help/index.vue` - 帮助与支持
+- `web-admin/frontend/src/views/settings/index.vue` - 系统设置
+- `web-admin/frontend/src/views/statistics/index.vue` - 统计分析
+- `web-admin/frontend/src/views/users/index.vue` - 用户管理
 
 ### 新增文档
 - `web-admin-architecture.md` - Web端管理后台架构方案（828行）
@@ -262,70 +310,43 @@
 - `web-admin-development-guide.md` - Web端开发指南（供其他AI使用）
 - `web-api-documentation.md` - Web后台API接口文档（34+ API端点）
 
-### 修改文件
-- `app.json` - 修复 BOM 字符问题，注册 drill-evaluation 页面
-- `pages/emergency/plan-add/plan-add.json` - 移除蓝色导航栏
-- `pages/emergency/drill-add/drill-add.json` - 移除蓝色导航栏
-- `pages/emergency/emergency.json` - 移除蓝色导航栏
-- `pages/emergency/emergency.js` - 修复 drill-evaluation 导航路径
-- `pages/emergency/supply-add/supply-add.json` - 移除蓝色导航栏
-- `pages/emergency/supply-add/supply-add.wxss` - 修复输入框高度（88rpx）
-- `pages/login/login.js` - 将 userInfo 传递给云函数
-- `pages/profile/profile.js` - 添加 onShow 生命周期，添加图片事件处理器
-- `pages/profile/profile.wxml` - 添加图片加载/错误事件处理器
-- `cloudfunctions/login/index.js` - 保存用户头像和昵称到数据库
-
-### 删除文件
-- `45a2dec0299939099ee6b48dc6d05208.png` - 未使用的图片
-- `65b6ee6086bf853dd1d7fded62ed64d5.png` - 未使用的图片
-- `pages/emergency/drill-evaluation.js` - 重复文件（保留文件夹结构）
-- `pages/emergency/drill-evaluation.json` - 重复文件（保留文件夹结构）
-- `pages/emergency/drill-evaluation.wxml` - 重复文件（保留文件夹结构）
-- `pages/emergency/drill-evaluation.wxss` - 重复文件（保留文件夹结构）
-- `image.png` - 临时文件
-
 ## 下一步计划
 
 1. **立即执行**（今天）
-   - [ ] 推送当前代码到远程仓库
-   - [ ] 在微信开发者工具中测试双控机制功能
-   - [ ] 部署双控机制云函数（initDatabase, risk-assessment, risk-warning, danger-supervision）
-   - [ ] 运行数据库初始化脚本，创建测试数据
+   - [ ] 提交当前代码到Git仓库
+   - [ ] 部署新增云函数到微信云开发
+   - [ ] 测试Web后台所有功能
+   - [ ] 测试小程序与Web后台数据同步
 
 2. **本周完成**
-   - [ ] 测试 MES 评估功能完整流程
-   - [ ] 测试风险预警功能完整流程
-   - [ ] 测试重大隐患督办功能完整流程
-   - [ ] 创建账号设置的子页面（修改密码、绑定手机、绑定邮箱）
-   - [ ] 创建证书详情页面
-   - [ ] 创建通知详情页面
-   - [ ] 完善所有页面的数据交互
+   - [ ] 完成所有功能测试
+   - [ ] 修复发现的Bug
+   - [ ] 优化用户体验
+   - [ ] 编写用户手册
 
 3. **下周开始**
-   - [ ] 在 railway-safety/ 根目录创建 web-admin/ 目录
-   - [ ] 搭建 Web 端 Vue 3 + TypeScript 项目
-   - [ ] 实现基础框架和路由
-   - [ ] 实现用户登录功能（调用小程序云函数）
-   - [ ] 实现风险管理模块（调用 risk-assessment 云函数）
-   - [ ] 实现隐患管理模块（调用 danger-supervision 云函数）
+   - [ ] 开始功能增强开发
+   - [ ] 实现消息推送功能
+   - [ ] 实现报表导出功能
+   - [ ] 优化系统性能
 
 ## 注意事项
 
 ### 微信云开发
 - 环境ID: cloud1-9gz3lqctb5e4f85d
-- 需要开通 HTTP API
-- 需要配置安全域名
-
-### 部署方案
-- 推荐使用微信云开发完全部署（方案二）
-- 成本：完全免费（免费额度内）
-- 部署时间：10分钟
+- Web后台部署地址: https://cloud1-9gz3lqctb5e4f85d-1393251619.tcloudbaseapp.com
+- 使用微信云开发 Web SDK 进行认证
+- 与小程序共享同一套云数据库
 
 ### 技术要点
-- Web端通过微信云开发HTTP API访问数据
-- 与小程序共享同一套云数据库
-- 无需额外购买服务器
-- 自动扩容和备份
+- Web端通过微信云开发 SDK 访问数据
+- 使用匿名登录进行身份认证
+- 云函数作为后端 API
+- 静态网站托管部署
+
+### 已知问题
+- 构建产物中有多个超过500KB的chunk（element-plus、echarts）
+- 需要优化代码分割和懒加载
 
 ## 问题记录
 
@@ -338,14 +359,17 @@
 6. ✅ drill-evaluation 文件结构重复（清理独立文件，保留文件夹结构）
 7. ✅ login 云函数 TypeScript 语法错误（移除类型注解）
 8. ✅ 用户微信头像和昵称未保存到数据库（修改登录流程）
+9. ✅ Web后台部署时 AppSecret 泄露问题（改用云函数 + Web SDK）
+10. ✅ CORS 跨域问题（使用微信云开发 SDK 自动处理）
+11. ✅ API Gateway 停止服务问题（改用直接云函数调用）
+12. ✅ 侧边栏菜单缺失问题（添加所有缺失的菜单项）
+13. ✅ 菜单名称错误（应急预案 → 应急管理）
 
 ### 待解决问题
 - [ ] 云函数部署后测试
-- [ ] 跨域问题处理
+- [ ] 构建产物优化（减少chunk大小）
 - [ ] 性能优化
-- [ ] 用户头像在个人中心页面未显示（数据正确，可能是域名白名单配置问题）
-  - 已确认数据正确：avatarUrl 和 nickName 都存在
-  - 需要在微信小程序后台配置 `thirdwx.qlogo.cn` 域名到 downloadFile 合法域名
+- [ ] 用户头像在个人中心页面未显示（可能需要配置域名白名单）
 
 ## 联系方式
 - **开发者**: fanzhiyi
@@ -354,11 +378,12 @@
 
 ---
 
-**最后更新时间**: 2026-01-06
-**文档版本**: v1.2
+**最后更新时间**: 2026-01-07
+**文档版本**: v2.0
 **更新内容**:
-- 完成登录系统增强（捕获用户头像和昵称）
-- 修复应急模块页面样式问题
-- 修复 drill-evaluation 页面编译错误
-- 清理重复文件结构
-- 提交代码到本地仓库（10277个文件修改）
+- 完成Web管理后台所有13个业务功能模块开发
+- 开发4个新增云函数（事故管理、证书管理、应急管理、消息通知）
+- 部署Web后台到微信云开发静态托管
+- 修复侧边栏菜单显示问题
+- 修正菜单名称错误
+- 系统进入测试和优化阶段

@@ -5,41 +5,41 @@ Page({
     riskId: '',
     riskInfo: null,
     
-    // MES评估参数
+    // MES评估参数 - 符合GBT 33000-2025标准
     mValue: 1,
     mOptions: [
-      { label: '5分 - 无控制措施', value: 5, desc: '完全没有任何控制措施' },
-      { label: '3分 - 有应急措施', value: 3, desc: '有减轻后果的应急措施，包括警报系统、个体防护用品等' },
-      { label: '1分 - 有预防措施', value: 1, desc: '有预防措施、控制文件，如机电防护装置，但须保证有效' }
+      { label: '1分 - 措施完善且有效实施', value: 1, desc: '已建立完善的控制措施并有效实施' },
+      { label: '2分 - 措施基本完善', value: 2, desc: '有基本的控制措施但需优化' },
+      { label: '3分 - 措施不完善', value: 3, desc: '控制措施不完善，存在明显漏洞' },
+      { label: '4分 - 措施缺失', value: 4, desc: '基本无控制措施' },
+      { label: '5分 - 无措施', value: 5, desc: '完全没有控制措施' }
     ],
     
     e1Value: 3,
     e1Options: [
-      { label: '10分 - 连续暴露', value: 10, desc: '人员连续暴露于危险环境中' },
-      { label: '6分 - 每天暴露', value: 6, desc: '每天工作时间内暴露' },
-      { label: '3分 - 每周暴露', value: 3, desc: '每周一次，或偶然暴露' },
-      { label: '2分 - 每月暴露', value: 2, desc: '每月一次暴露' },
-      { label: '1分 - 每年暴露', value: 1, desc: '每年几次暴露' },
-      { label: '0.5分 - 更少暴露', value: 0.5, desc: '更少地暴露' }
+      { label: '1分 - 非常低', value: 1, desc: '每年少于1次' },
+      { label: '2分 - 低', value: 2, desc: '每季度1次' },
+      { label: '3分 - 中等', value: 3, desc: '每月1次' },
+      { label: '4分 - 高', value: 4, desc: '每周1次' },
+      { label: '5分 - 非常高', value: 5, desc: '每天或以上' }
     ],
     
     e2Value: 2,
     e2Options: [
-      { label: '10分 - 常态', value: 10, desc: '危险状态经常出现' },
-      { label: '6分 - 每天出现', value: 6, desc: '每天工作时间出现' },
-      { label: '3分 - 每周出现', value: 3, desc: '每周一次或偶尔出现' },
-      { label: '2分 - 每月出现', value: 2, desc: '每月一次出现' },
-      { label: '1分 - 每年出现', value: 1, desc: '每年几次出现' },
-      { label: '0.5分 - 更少出现', value: 0.5, desc: '更少地出现' }
+      { label: '1分 - 非常低', value: 1, desc: '每年少于1次' },
+      { label: '2分 - 低', value: 2, desc: '每季度1次' },
+      { label: '3分 - 中等', value: 3, desc: '每月1次' },
+      { label: '4分 - 高', value: 4, desc: '每周1次' },
+      { label: '5分 - 非常高', value: 5, desc: '每天或以上' }
     ],
     
     sValue: 4,
     sOptions: [
-      { label: '10分 - 多人死亡', value: 10, desc: '可能有多人死亡；财产损失>1000万；重大环境影响' },
-      { label: '8分 - 一人死亡', value: 8, desc: '1人死亡或多人永久失能；财产损失100万-1000万；中等环境影响' },
-      { label: '4分 - 永久失能', value: 4, desc: '永久失能（1人）；财产损失10万-100万；较轻环境影响' },
-      { label: '2分 - 需医院治疗', value: 2, desc: '需医院治疗，缺工；财产损失1万-10万；局部环境影响' },
-      { label: '1分 - 轻微伤害', value: 1, desc: '轻微，仅需急救；财产损失<1万；无环境影响' }
+      { label: '1分 - 轻微', value: 1, desc: '无人员伤亡，轻微财产损失' },
+      { label: '2分 - 一般', value: 2, desc: '轻微人员伤害，较小财产损失' },
+      { label: '3分 - 较大', value: 3, desc: '一般人员伤害，较大财产损失' },
+      { label: '4分 - 重大', value: 4, desc: '严重人员伤害，重大财产损失' },
+      { label: '5分 - 特大', value: 5, desc: '多人伤亡或重大财产损失' }
     ],
     
     // 计算结果
@@ -165,17 +165,17 @@ Page({
     const r = mValue * e * sValue
 
     let level, grade, color, checkFrequency
-    if (r > 180) {
+    if (r >= 13) {
       level = 1
       grade = '重大风险'
       color = '红'
       checkFrequency = '每周一次'
-    } else if (r >= 90) {
+    } else if (r >= 10) {
       level = 2
       grade = '较大风险'
       color = '橙'
       checkFrequency = '每月一次'
-    } else if (r >= 40) {
+    } else if (r >= 6) {
       level = 3
       grade = '一般风险'
       color = '黄'

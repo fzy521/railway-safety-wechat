@@ -1,0 +1,116 @@
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 物资详情内容 -->
+  <view wx:else class="content">
+    <!-- 顶部导航 -->
+    <view class="nav-bar">
+      <view class="nav-back" bindtap="goBack">
+        <text class="back-icon">←</text>
+      </view>
+      <view class="nav-title">物资详情</view>
+      <view class="nav-placeholder"></view>
+    </view>
+
+    <!-- 物资基本信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">基本信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">物资编号</text>
+          <text class="info-value">{{supply.id}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">物资名称</text>
+          <text class="info-value">{{supply.name}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">物资类别</text>
+          <text class="info-value">{{supply.categoryName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">库存状态</text>
+          <view class="status-badge {{supply.status}}">
+            <text>{{supply.statusText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 库存信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">库存信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="quantity-display">
+          <view class="quantity-item">
+            <text class="quantity-label">当前库存</text>
+            <text class="quantity-value {{supply.status}}">{{supply.quantity}}{{supply.unit}}</text>
+          </view>
+          <view class="quantity-divider"></view>
+          <view class="quantity-item">
+            <text class="quantity-label">最低库存</text>
+            <text class="quantity-value minimum">{{supply.minimumStock}}{{supply.unit}}</text>
+          </view>
+        </view>
+        <view class="stock-progress">
+          <view class="progress-bar">
+            <view class="progress-fill {{supply.status}}" style="width: {{supply.quantity / (supply.minimumStock * 2) * 100}}%"></view>
+          </view>
+          <text class="progress-text">库存比例: {{Math.round(supply.quantity / supply.minimumStock * 100)}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 存放信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">存放信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">存放位置</text>
+          <text class="info-value">{{supply.location}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">管理人</text>
+          <text class="info-value">{{supply.manager}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 检查信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">检查信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">上次检查</text>
+          <text class="info-value">{{supply.lastCheckDate}}</text>
+        </view>
+        <view class="info-row" wx:if="{{supply.expiryDate !== '无'}}">
+          <text class="info-label">到期日期</text>
+          <text class="info-value expiry">{{supply.expiryDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button class="action-btn" bindtap="checkSupply">
+        检查库存
+      </button>
+    </view>
+  </view>
+</view>

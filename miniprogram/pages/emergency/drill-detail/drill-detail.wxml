@@ -1,0 +1,143 @@
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 演练详情内容 -->
+  <view wx:else class="content">
+    <!-- 顶部导航 -->
+    <view class="nav-bar">
+      <view class="nav-back" bindtap="goBack">
+        <text class="back-icon">←</text>
+      </view>
+      <view class="nav-title">演练详情</view>
+      <view class="nav-placeholder"></view>
+    </view>
+
+    <!-- 演练基本信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">基本信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">演练编号</text>
+          <text class="info-value">{{drill.id}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">关联预案</text>
+          <text class="info-value">{{drill.planName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练类型</text>
+          <view class="status-badge type">
+            <text>{{drill.typeName}}</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练状态</text>
+          <view class="status-badge {{drill.effectiveness}}">
+            <text>{{drill.effectivenessText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 演练时间信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">时间信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">演练日期</text>
+          <text class="info-value">{{drill.date}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">开始时间</text>
+          <text class="info-value">{{drill.startTime}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">结束时间</text>
+          <text class="info-value">{{drill.endTime || '进行中'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练时长</text>
+          <text class="info-value">{{drill.duration}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 演练内容 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">演练内容</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">演练场景</text>
+          <text class="info-value">{{drill.scenario}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练目的</text>
+          <text class="info-value">{{drill.objectives}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 参与信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">参与信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">参与人员</text>
+          <text class="info-value">{{drill.participants}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">执行部门</text>
+          <text class="info-value">{{drill.executor}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">记录人</text>
+          <text class="info-value">{{drill.recorder}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 发现的问题 -->
+    <view wx:if="{{drill.issues}}" class="section">
+      <view class="section-header">
+        <text class="section-title">发现的问题</text>
+      </view>
+      
+      <view class="info-card issues">
+        <text class="issues-text">{{drill.issues}}</text>
+      </view>
+    </view>
+
+    <!-- 改进建议 -->
+    <view wx:if="{{drill.improvements}}" class="section">
+      <view class="section-header">
+        <text class="section-title">改进建议</text>
+      </view>
+      
+      <view class="info-card improvements">
+        <text class="improvements-text">{{drill.improvements}}</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button class="action-btn" bindtap="evaluateDrill" wx:if="{{drill.completionStatus === 'completed'}}">
+        演练评估
+      </button>
+    </view>
+  </view>
+</view>

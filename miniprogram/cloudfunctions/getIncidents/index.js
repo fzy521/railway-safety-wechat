@@ -1,5 +1,6 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
+const CloudFunctionUtils = require('../utils/cloudUtils')
 
 cloud.init({
   env: cloud.DYNAMIC_CURRENT_ENV
@@ -60,10 +61,19 @@ const mockIncidents = {
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
+  const utils = new CloudFunctionUtils()
 
   try {
     // 获取请求参数
     const { date, status, type, page = 1, size = 20 } = event
+
+    // 尝试从缓存获取数据（缓存有效期为30分钟）
+    const cacheKey = utils.generateCacheKey('getIncidents', { date, status, type, page, size })
+    const cachedData = await utils.getCache(cacheKey)
+    if (cachedData) {
+      console.log('从缓存返回事故数据')
+      return utils.standardResponse(true, cachedData, null, 200)
+    }
 
     // 模拟根据不同条件返回数据
     let incidents = mockIncidents.recentIncidents
@@ -83,22 +93,21 @@ exports.main = async (event, context) => {
     const end = start + size
     const paginatedIncidents = incidents.slice(start, end)
 
-    return {
-      success: true,
-      data: {
-        statistics: mockIncidents.statistics,
-        incidents: paginatedIncidents,
-        currentPage: page,
-        totalPages: Math.ceil(incidents.length / size),
-        totalCount: incidents.length
-      }
+    const result = {
+      statistics: mockIncidents.statistics,
+      incidents: paginatedIncidents,
+      currentPage: page,
+      totalPages: Math.ceil(incidents.length / size),
+      totalCount: incidents.length
     }
+
+    // 将数据存入缓存
+    await utils.setCache(cacheKey, result, 30)
+
+    return utils.standardResponse(true, result, null, 200)
 
   } catch (err) {
     console.error('获取事故记录失败:', err)
-    return {
-      success: false,
-      error: err.message
-    }
+    return utils.standardResponse(false, null, err.message, 500)
   }
 }

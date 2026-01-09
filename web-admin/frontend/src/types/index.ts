@@ -1,3 +1,14 @@
+// 云函数调用响应类型
+export interface ICallFunctionResponse {
+  success?: boolean
+  data?: any
+  message?: string
+  error?: string
+  requestId?: string
+  result?: any
+  user?: any
+}
+
 // 风险相关类型
 export interface Risk {
   _id: string
@@ -24,6 +35,8 @@ export interface Risk {
   nextReviewDate: string
   nextCheckDate: string
   status: string
+  complianceStatus?: string
+  controlMeasuresRequirements?: string
   createdAt: string
   updatedAt: string
 }
@@ -60,6 +73,10 @@ export interface Danger {
   findMethod: string
   inDangerLibrary: boolean
   status: string
+  complianceStatus?: string
+  actualProgress?: string
+  supervisionStartDate?: string
+  verificationApplyDate?: string
   createdAt: string
   updatedAt: string
 }

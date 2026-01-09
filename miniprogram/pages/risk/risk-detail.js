@@ -4,7 +4,9 @@ Page({
   data: {
     riskId: '',
     riskInfo: null,
-    loading: true
+    loading: true,
+    relatedDangers: [],
+    dangersLoading: true
   },
 
   onLoad(options) {
@@ -21,6 +23,7 @@ Page({
     })
     
     this.loadRiskDetail(options.riskId)
+    this.loadRelatedDangers(options.riskId)
   },
 
   loadRiskDetail(riskId) {
@@ -44,6 +47,25 @@ Page({
       },
       complete: () => {
         wx.hideLoading()
+      }
+    })
+  },
+
+  loadRelatedDangers(riskId) {
+    this.setData({ dangersLoading: true })
+    
+    wx.cloud.database().collection('hidden_danger_library').where({
+      'associatedRisks.riskId': riskId
+    }).get({
+      success: res => {
+        this.setData({
+          relatedDangers: res.data,
+          dangersLoading: false
+        })
+      },
+      fail: err => {
+        console.error('加载关联隐患失败:', err)
+        this.setData({ dangersLoading: false })
       }
     })
   },

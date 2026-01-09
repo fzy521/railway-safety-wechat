@@ -1,0 +1,119 @@
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 预案详情内容 -->
+  <view wx:else class="content">
+    <!-- 顶部导航 -->
+    <view class="nav-bar">
+      <view class="nav-back" bindtap="goBack">
+        <text class="back-icon">←</text>
+      </view>
+      <view class="nav-title">预案详情</view>
+      <view class="nav-placeholder"></view>
+    </view>
+
+    <!-- 预案基本信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">基本信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">预案编号</text>
+          <text class="info-value">{{plan.id}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">预案名称</text>
+          <text class="info-value">{{plan.name}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">预案类型</text>
+          <text class="info-value">{{plan.typeName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">版本</text>
+          <text class="info-value">{{plan.version}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">状态</text>
+          <view class="status-badge {{plan.status}}">
+            <text>{{plan.statusText}}</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="info-label">审批部门</text>
+          <text class="info-value">{{plan.approvalDept}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">演练频次</text>
+          <text class="info-value">{{plan.drillFrequency}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评审信息 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">评审信息</text>
+      </view>
+      
+      <view class="info-card">
+        <view class="info-row">
+          <text class="info-label">上次评审日期</text>
+          <text class="info-value">{{plan.lastReviewDate}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">下次评审日期</text>
+          <text class="info-value">{{plan.nextReviewDate}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">有效性评估</text>
+          <text class="info-value effectiveness">{{plan.effectiveness}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- PDF文档列表 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">预案文档</text>
+        <text class="section-count">{{pdfFiles.length}} 个文件</text>
+      </view>
+      
+      <!-- 有文档 -->
+      <view wx:if="{{pdfFiles.length > 0}}" class="pdf-list">
+        <view wx:for="{{pdfFiles}}" wx:key="id" class="pdf-item">
+          <view class="pdf-icon">
+            <text class="icon-text">PDF</text>
+          </view>
+          <view class="pdf-info">
+            <text class="pdf-name">{{item.fileName}}</text>
+            <text class="pdf-meta">{{item.fileSize}} · {{item.uploadTime}}</text>
+          </view>
+          <view class="pdf-actions">
+            <view class="action-btn preview" catchtap="previewPdf" data-url="{{item.fileUrl}}" data-name="{{item.fileName}}" data-cloud-path="{{item.cloudPath}}">
+              <text>预览</text>
+            </view>
+            <view class="action-btn download" catchtap="downloadPdf" data-url="{{item.fileUrl}}" data-name="{{item.fileName}}" data-cloud-path="{{item.cloudPath}}">
+              <text>下载</text>
+            </view>
+            <view class="action-btn delete" catchtap="deletePdf" data-id="{{item.id}}" data-name="{{item.fileName}}">
+              <text>删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 无文档 -->
+      <view wx:else class="empty-state">
+        <text class="empty-icon">📄</text>
+        <text class="empty-text">暂无预案文档</text>
+        <text class="empty-hint">请在添加预案时上传PDF文档</text>
+      </view>
+    </view>
+  </view>
+</view>
