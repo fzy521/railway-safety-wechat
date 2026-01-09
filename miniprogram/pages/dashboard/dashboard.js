@@ -54,10 +54,10 @@ Page({
     hazardChartData: {},
     updateTime: '',
     loading: false,
-    // WebSocket相关状态
-    wsConnected: false,
-    wsUrl: '', // WebSocket服务器地址（暂未配置）
-    enableWebSocket: false // 是否启用WebSocket（暂不启用）
+    // 实时数据库监听配置
+    enableRealtime: true, // 是否启用实时数据库监听
+    realtimeWatchers: [], // 存储所有监听器实例
+    realtimeConnected: false // 实时数据库连接状态
   },
 
   onLoad(options) {
@@ -68,8 +68,10 @@ Page({
       return;
     }
     this.loadDashboardData();
-    // 暂不启用WebSocket实时更新
-    // this.setupRealtimeUpdates();
+    // 启用实时数据库监听
+    if (this.data.enableRealtime) {
+      this.setupRealtimeUpdates();
+    }
     
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
@@ -82,8 +84,10 @@ Page({
       wx.redirectTo({ url: '/pages/login/login' });
       return;
     }
-    // 暂不启用WebSocket实时更新
-    // this.setupRealtimeUpdates();
+    // 启用实时数据库监听
+    if (this.data.enableRealtime && !this.data.realtimeConnected) {
+      this.setupRealtimeUpdates();
+    }
   },
 
   onHide() {
@@ -94,11 +98,6 @@ Page({
   onUnload() {
     console.log('数据看板页面卸载');
     this.stopRealtimeUpdates();
-    this.stopPolling();
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = null;
-    }
   },
 
   onPullDownRefresh() {
@@ -469,6 +468,8 @@ Page({
     const _ = db.command;
 
     try {
+      console.log('开始设置实时数据监听器');
+
       // 1. 监听风险预警数据变化
       this.riskWarningWatcher = db.collection('risk_warnings')
         .where({
@@ -514,27 +515,34 @@ Page({
           }
         });
 
+      this.setData({ realtimeConnected: true });
       console.log('实时数据监听器已启动');
     } catch (error) {
       console.error('设置实时数据监听失败:', error);
+      this.setData({ realtimeConnected: false });
     }
   },
 
   // 关闭实时数据监听器
   closeRealtimeWatchers() {
-    if (this.riskWarningWatcher) {
-      this.riskWarningWatcher.close();
-      this.riskWarningWatcher = null;
+    try {
+      if (this.riskWarningWatcher) {
+        this.riskWarningWatcher.close();
+        this.riskWarningWatcher = null;
+      }
+      if (this.hazardWatcher) {
+        this.hazardWatcher.close();
+        this.hazardWatcher = null;
+      }
+      if (this.incidentWatcher) {
+        this.incidentWatcher.close();
+        this.incidentWatcher = null;
+      }
+      this.setData({ realtimeConnected: false });
+      console.log('实时数据监听器已关闭');
+    } catch (error) {
+      console.error('关闭监听器失败:', error);
     }
-    if (this.hazardWatcher) {
-      this.hazardWatcher.close();
-      this.hazardWatcher = null;
-    }
-    if (this.incidentWatcher) {
-      this.incidentWatcher.close();
-      this.incidentWatcher = null;
-    }
-    console.log('实时数据监听器已关闭');
   },
 
   // 处理风险预警数据更新
