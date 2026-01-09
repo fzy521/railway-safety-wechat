@@ -76,7 +76,7 @@ Page({
         const data = result.result.data
 
         this.setData({
-          hazardList: reset ? data.hazards : [...this.data.hazardList, ...data.hazards],
+          hazardList: reset ? data.inspections : [...this.data.hazardList, ...data.inspections],
           statistics: data.statistics,
           hasMore: data.currentPage < data.totalPages,
           page: reset ? 1 : this.data.page
