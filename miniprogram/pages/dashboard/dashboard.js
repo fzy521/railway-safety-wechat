@@ -68,8 +68,8 @@ Page({
       return;
     }
     this.loadDashboardData();
-    // 暂不启用WebSocket实时更新
-    // this.setupRealtimeUpdates();
+    // 启用实时数据监听
+    this.setupRealtimeUpdates();
     
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
@@ -82,8 +82,8 @@ Page({
       wx.redirectTo({ url: '/pages/login/login' });
       return;
     }
-    // 暂不启用WebSocket实时更新
-    // this.setupRealtimeUpdates();
+    // 启用实时数据监听
+    this.setupRealtimeUpdates();
   },
 
   onHide() {
@@ -105,6 +105,12 @@ Page({
     this.loadDashboardData().then(() => {
       wx.stopPullDownRefresh();
     });
+  },
+
+  onUnload() {
+    console.log('数据看板页面卸载');
+    // 关闭实时数据监听器
+    this.stopRealtimeUpdates();
   },
 
   // 云函数调用封装
@@ -452,102 +458,142 @@ Page({
     }
   },
 
-  // 设置实时更新（WebSocket实现）
+  // 设置实时更新（使用微信云开发实时数据库）
   setupRealtimeUpdates() {
-    console.log('启动WebSocket实时数据更新');
-    // 检查是否启用WebSocket
-    if (!this.data.enableWebSocket || !this.data.wsUrl) {
-      console.log('WebSocket未配置，跳过连接');
-      return;
-    }
-    // 建立WebSocket连接
-    this.connectWebSocket();
+    console.log('启动实时数据更新监听');
+    this.setupRealtimeWatchers();
   },
 
   // 停止实时更新
   stopRealtimeUpdates() {
-    this.closeWebSocket();
+    this.closeRealtimeWatchers();
   },
 
-  // 建立WebSocket连接
-  connectWebSocket() {
+  // 设置实时数据监听器
+  setupRealtimeWatchers() {
+    const db = wx.cloud.database();
+    const _ = db.command;
+
     try {
-      // 检查WebSocket URL是否配置
-      if (!this.data.wsUrl) {
-        console.log('WebSocket URL未配置，跳过连接');
-        return;
-      }
+      // 1. 监听风险预警数据变化
+      this.riskWarningWatcher = db.collection('risk_warnings')
+        .where({
+          status: _.in(['待处理', '处理中'])
+        })
+        .watch({
+          onChange: (snapshot) => {
+            console.log('风险预警数据变化:', snapshot);
+            this.handleRiskWarningUpdate(snapshot);
+          },
+          onError: (err) => {
+            console.error('监听风险预警数据失败:', err);
+          }
+        });
 
-      // 确保关闭现有连接
-      this.closeWebSocket();
+      // 2. 监听隐患数据变化
+      this.hazardWatcher = db.collection('hidden_danger_library')
+        .where({
+          status: _.in(['待整改', '整改中', '待验证'])
+        })
+        .watch({
+          onChange: (snapshot) => {
+            console.log('隐患数据变化:', snapshot);
+            this.handleHazardUpdate(snapshot);
+          },
+          onError: (err) => {
+            console.error('监听隐患数据失败:', err);
+          }
+        });
 
-      // 创建WebSocket连接
-      this.socketTask = wx.connectSocket({
-        url: this.data.wsUrl,
-        header: {
-          'content-type': 'application/json'
-        },
-        protocols: ['protocol1'],
-        success: () => {
-          console.log('WebSocket连接请求成功');
-        },
-        fail: (error) => {
-          console.error('WebSocket连接请求失败:', error);
-          // 连接失败时回退到轮询
-          this.fallbackToPolling();
-        }
-      });
+      // 3. 监听事故数据变化
+      this.incidentWatcher = db.collection('incidents')
+        .where({
+          status: _.in(['处理中', '待处理'])
+        })
+        .watch({
+          onChange: (snapshot) => {
+            console.log('事故数据变化:', snapshot);
+            this.handleIncidentUpdate(snapshot);
+          },
+          onError: (err) => {
+            console.error('监听事故数据失败:', err);
+          }
+        });
 
-      // 监听WebSocket连接打开
-      this.socketTask.onOpen(() => {
-        console.log('WebSocket连接已打开');
-        this.setData({ wsConnected: true });
-        // 连接成功后可以发送初始化请求
-        this.sendWebSocketMessage({ action: 'subscribe', data: { channel: 'dashboard' } });
-      });
-
-      // 监听WebSocket接收消息
-      this.socketTask.onMessage((res) => {
-        console.log('收到WebSocket消息:', res.data);
-        try {
-          const data = JSON.parse(res.data);
-          this.handleWebSocketMessage(data);
-        } catch (error) {
-          console.error('解析WebSocket消息失败:', error);
-        }
-      });
-
-      // 监听WebSocket连接关闭
-      this.socketTask.onClose((res) => {
-        console.log('WebSocket连接已关闭:', res);
-        this.setData({ wsConnected: false });
-        // 尝试重新连接
-        this.reconnectWebSocket();
-      });
-
-      // 监听WebSocket错误
-      this.socketTask.onError((error) => {
-        console.error('WebSocket错误:', error);
-        this.setData({ wsConnected: false });
-        // 错误时回退到轮询
-        this.fallbackToPolling();
-      });
+      console.log('实时数据监听器已启动');
     } catch (error) {
-      console.error('建立WebSocket连接失败:', error);
-      // 连接失败时回退到轮询
-      this.fallbackToPolling();
+      console.error('设置实时数据监听失败:', error);
     }
   },
 
-  // 关闭WebSocket连接
-  closeWebSocket() {
-    if (this.socketTask) {
-      this.socketTask.close({
-        code: 1000,
-        reason: '主动关闭连接'
+  // 关闭实时数据监听器
+  closeRealtimeWatchers() {
+    if (this.riskWarningWatcher) {
+      this.riskWarningWatcher.close();
+      this.riskWarningWatcher = null;
+    }
+    if (this.hazardWatcher) {
+      this.hazardWatcher.close();
+      this.hazardWatcher = null;
+    }
+    if (this.incidentWatcher) {
+      this.incidentWatcher.close();
+      this.incidentWatcher = null;
+    }
+    console.log('实时数据监听器已关闭');
+  },
+
+  // 处理风险预警数据更新
+  handleRiskWarningUpdate(snapshot) {
+    const docs = snapshot.docs || [];
+    const pendingCount = docs.filter(item => item.status === '待处理').length;
+
+    this.setData({
+      'recentAlerts': docs.map(item => ({
+        id: item._id,
+        type: '风险预警',
+        level: item.warningLevel,
+        message: item.warningContent,
+        time: this.formatDate(new Date(item.createdAt))
+      }))
+    });
+
+    // 显示通知
+    if (snapshot.type === 'init') {
+      console.log('风险预警数据初始化完成');
+    } else {
+      wx.showToast({
+        title: `有${pendingCount}条风险预警待处理`,
+        icon: 'none',
+        duration: 2000
       });
-      this.socketTask = null;
-      console.log('WebSocket连接已关闭');
+    }
+  },
+
+  // 处理隐患数据更新
+  handleHazardUpdate(snapshot) {
+    const docs = snapshot.docs || [];
+    const pendingCount = docs.filter(item => item.status === '待整改').length;
+
+    if (snapshot.type === 'init') {
+      console.log('隐患数据初始化完成');
+    } else {
+      // 更新隐患统计
+      this.loadDashboardData();
+    }
+  },
+
+  // 处理事故数据更新
+  handleIncidentUpdate(snapshot) {
+    const docs = snapshot.docs || [];
+
+    if (snapshot.type === 'init') {
+      console.log('事故数据初始化完成');
+    } else {
+      // 更新事故统计
+      this.loadDashboardData();
+    }
+  },
     }
   },
 
