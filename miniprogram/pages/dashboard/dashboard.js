@@ -587,8 +587,6 @@ Page({
       this.loadDashboardData();
     }
   },
-    }
-  },
 
   // 辅助函数
   randomInt(min, max) {
