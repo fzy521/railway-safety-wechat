@@ -56,7 +56,8 @@ Page({
     loading: false,
     // WebSocket相关状态
     wsConnected: false,
-    wsUrl: 'wss://your-websocket-server.com/dashboard' // 替换为实际的WebSocket服务器地址
+    wsUrl: '', // WebSocket服务器地址（暂未配置）
+    enableWebSocket: false // 是否启用WebSocket（暂不启用）
   },
 
   onLoad(options) {
@@ -67,7 +68,8 @@ Page({
       return;
     }
     this.loadDashboardData();
-    this.setupRealtimeUpdates();
+    // 暂不启用WebSocket实时更新
+    // this.setupRealtimeUpdates();
     
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
@@ -80,7 +82,8 @@ Page({
       wx.redirectTo({ url: '/pages/login/login' });
       return;
     }
-    this.setupRealtimeUpdates();
+    // 暂不启用WebSocket实时更新
+    // this.setupRealtimeUpdates();
   },
 
   onHide() {
@@ -452,6 +455,11 @@ Page({
   // 设置实时更新（WebSocket实现）
   setupRealtimeUpdates() {
     console.log('启动WebSocket实时数据更新');
+    // 检查是否启用WebSocket
+    if (!this.data.enableWebSocket || !this.data.wsUrl) {
+      console.log('WebSocket未配置，跳过连接');
+      return;
+    }
     // 建立WebSocket连接
     this.connectWebSocket();
   },
@@ -464,9 +472,15 @@ Page({
   // 建立WebSocket连接
   connectWebSocket() {
     try {
+      // 检查WebSocket URL是否配置
+      if (!this.data.wsUrl) {
+        console.log('WebSocket URL未配置，跳过连接');
+        return;
+      }
+
       // 确保关闭现有连接
       this.closeWebSocket();
-      
+
       // 创建WebSocket连接
       this.socketTask = wx.connectSocket({
         url: this.data.wsUrl,
