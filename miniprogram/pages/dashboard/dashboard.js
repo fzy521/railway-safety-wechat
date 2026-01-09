@@ -68,8 +68,8 @@ Page({
       return;
     }
     this.loadDashboardData();
-    // 启用实时数据监听
-    this.setupRealtimeUpdates();
+    // 暂不启用WebSocket实时更新
+    // this.setupRealtimeUpdates();
     
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
@@ -82,8 +82,8 @@ Page({
       wx.redirectTo({ url: '/pages/login/login' });
       return;
     }
-    // 启用实时数据监听
-    this.setupRealtimeUpdates();
+    // 暂不启用WebSocket实时更新
+    // this.setupRealtimeUpdates();
   },
 
   onHide() {
@@ -105,12 +105,6 @@ Page({
     this.loadDashboardData().then(() => {
       wx.stopPullDownRefresh();
     });
-  },
-
-  onUnload() {
-    console.log('数据看板页面卸载');
-    // 关闭实时数据监听器
-    this.stopRealtimeUpdates();
   },
 
   // 云函数调用封装
