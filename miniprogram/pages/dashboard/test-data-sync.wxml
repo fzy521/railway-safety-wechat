@@ -1,0 +1,64 @@
+<view class="test-container">
+  <view class="header">
+    <text class="title">数据同步测试</text>
+    <text class="subtitle">验证小程序和Web后台的数据同步功能</text>
+  </view>
+
+  <view class="actions">
+    <button
+      type="primary"
+      bindtap="startTest"
+      disabled="{{isTesting}}"
+      loading="{{isTesting}}"
+    >
+      {{isTesting ? '测试中...' : '开始测试'}}
+    </button>
+
+    <button
+      type="warn"
+      bindtap="cleanupTestData"
+    >
+      清理测试数据
+    </button>
+  </view>
+
+  <view class="results-section">
+    <view class="section-header">
+      <text class="section-title">测试结果</text>
+      <text class="result-count">共 {{testResults.length}} 项</text>
+    </view>
+
+    <view class="results-list">
+      <view
+        wx:for="{{testResults}}"
+        wx:key="time"
+        class="result-item {{item.success ? 'success' : 'fail'}}"
+      >
+        <view class="result-icon">
+          <text>{{item.success ? '✅' : '❌'}}</text>
+        </view>
+        <view class="result-content">
+          <text class="result-name">{{item.name}}</text>
+          <text class="result-message">{{item.message}}</text>
+          <text class="result-time">{{item.time}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{testResults.length === 0}}" class="empty-state">
+        <text>暂无测试结果，点击"开始测试"按钮开始测试</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="info-card">
+      <text class="info-title">测试说明</text>
+      <text class="info-text">本测试将验证以下功能：</text>
+      <text class="info-text">1. 创建测试数据</text>
+      <text class="info-text">2. 查询数据</text>
+      <text class="info-text">3. 更新数据</text>
+      <text class="info-text">4. 删除数据</text>
+      <text class="info-text">5. 实时监听数据变化</text>
+    </view>
+  </view>
+</view>
