@@ -5,7 +5,7 @@
       <text class="update-label">最后更新:</text>
       <text class="update-value">{{updateTime}}</text>
       <text class="update-refresh" bindtap="loadDashboardData">
-        <text class="iconfont icon-refresh"></text>
+        <image src="/images/refresh.png" mode="aspectFit" class="refresh-icon"></image>
       </text>
     </view>
   </view>
@@ -21,7 +21,7 @@
       <!-- 今日事故数 -->
       <view class="overview-card danger">
         <view class="card-icon">
-          <text class="iconfont icon-warning"></text>
+          <image src="/images/exclamationcircle-f.png" mode="aspectFit" class="card-icon-img"></image>
         </view>
         <view class="card-value">{{safetyOverview.todayIncidents}}</view>
         <view class="card-label">今日事故数</view>
@@ -30,7 +30,7 @@
       <!-- 风险等级 -->
       <view class="overview-card risk">
         <view class="card-icon">
-          <text class="iconfont icon-risk"></text>
+          <image src="/images/bug-report.png" mode="aspectFit" class="card-icon-img"></image>
         </view>
         <view class="card-value">{{safetyOverview.riskLevel}}</view>
         <view class="card-label">当前风险等级</view>
@@ -39,7 +39,7 @@
       <!-- 安全率 -->
       <view class="overview-card safe">
         <view class="card-icon">
-          <text class="iconfont icon-safe"></text>
+          <image src="/images/check-circle-fill.png" mode="aspectFit" class="card-icon-img"></image>
         </view>
         <view class="card-value">{{safetyOverview.safetyRate}}%</view>
         <view class="card-label">安全率</view>
@@ -48,7 +48,7 @@
       <!-- 重大风险 -->
       <view class="overview-card danger">
         <view class="card-icon">
-          <text class="iconfont icon-major-risk"></text>
+          <image src="/images/database-fill.png" mode="aspectFit" class="card-icon-img"></image>
         </view>
         <view class="card-value">{{safetyOverview.majorRisks}}</view>
         <view class="card-label">重大风险</view>
@@ -97,7 +97,7 @@
     <view class="device-cards">
       <view class="device-card online">
         <view class="device-icon">
-          <text class="iconfont icon-device-online"></text>
+          <image src="/images/user-fill.png" mode="aspectFit" class="device-icon-img"></image>
         </view>
         <view class="device-info">
           <view class="device-value">{{onlineDevices}}</view>
@@ -113,7 +113,7 @@
       
       <view class="device-card offline">
         <view class="device-icon">
-          <text class="iconfont icon-device-offline"></text>
+          <image src="/images/poweroff.png" mode="aspectFit" class="device-icon-img"></image>
         </view>
         <view class="device-info">
           <view class="device-value">{{offlineDevices}}</view>
